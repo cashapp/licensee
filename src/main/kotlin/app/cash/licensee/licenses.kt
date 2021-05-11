@@ -97,6 +97,9 @@ private val licenseUrlToSpdxLicense = spdxLicensesJson
 
     (json.otherUrls + spdxUrl).map { it to spdxIdentifierToLicense[json.id] }
   }
+  // This creates behavior where we do not overwrite keys. Take, for example, MPL-2.0 and
+  // MPL-2.0-no-copyleft-exception which use the same URL. For now we'll blanket prefer the first.
+  .distinctBy { it.first }
   .toMap()
 
 private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
