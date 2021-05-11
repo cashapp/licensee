@@ -1,0 +1,5 @@
+gradle
+.gradle
+
+# Track build/ directories when they're inside expected/
+!*/expected/build/

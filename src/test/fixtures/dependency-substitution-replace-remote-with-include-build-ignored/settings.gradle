@@ -1,0 +1,7 @@
+include ':'
+
+includeBuild('other') {
+  dependencySubstitution {
+    substitute module('com.example:example') with project(':')
+  }
+}

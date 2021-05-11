@@ -1,0 +1,18 @@
+apply plugin: 'com.android.application'
+apply plugin: 'app.cash.licensee'
+
+dependencies {
+  implementation project(':other')
+}
+
+licensee {
+  allowIdentifier('Apache-2.0')
+}
+
+android {
+  compileSdkVersion versions.compileSdk
+
+  defaultConfig {
+    minSdkVersion versions.minSdk
+  }
+}

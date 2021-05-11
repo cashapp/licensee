@@ -1,0 +1,12 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>example</artifactId>
+  <version>1.0.0</version>
+  <licenses>
+    <license>
+      <name>MPL-2.0</name>
+      <url>http://www.mozilla.org/MPL/2.0/</url>
+    </license>
+  </licenses>
+</project>

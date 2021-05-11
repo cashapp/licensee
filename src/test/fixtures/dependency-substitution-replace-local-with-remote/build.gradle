@@ -1,0 +1,33 @@
+buildscript {
+  apply from: '../../../../dependencies.gradle'
+
+  dependencies {
+    classpath deps.androidGradlePlugin
+    classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
+  }
+  repositories {
+    maven {
+      url "file://${projectDir.absolutePath}/../../../../build/localMaven"
+    }
+    mavenCentral()
+    google()
+  }
+}
+
+allprojects {
+  configurations.all {
+    resolutionStrategy {
+      dependencySubstitution {
+        substitute project(':other') with module('com.example:example:1.0.0')
+      }
+    }
+  }
+
+  repositories {
+    maven {
+      url "file://${rootDir.absolutePath}/repo"
+    }
+    mavenCentral()
+    google()
+  }
+}

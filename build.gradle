@@ -1,0 +1,119 @@
+buildscript {
+  apply from: 'dependencies.gradle'
+
+  dependencies {
+    classpath deps.kotlinGradlePlugin
+    classpath "org.jetbrains.kotlin:kotlin-serialization:${versions.kotlin}"
+    classpath 'com.diffplug.spotless:spotless-plugin-gradle:5.1.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.14.2'
+    classpath 'org.jetbrains.dokka:dokka-gradle-plugin:0.10.0'
+    classpath 'de.undercouch:gradle-download-task:4.1.1'
+  }
+
+  repositories {
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
+
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
+apply plugin: 'java-gradle-plugin'
+
+gradlePlugin {
+  plugins {
+    licensee {
+      id = "app.cash.licensee"
+      displayName = "Licensee"
+      description = "TODO"
+      implementationClass = "app.cash.licensee.LicenseePlugin"
+    }
+  }
+}
+
+dependencies {
+  compileOnly gradleApi()
+  compileOnly deps.androidGradlePlugin
+  implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0'
+
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation 'com.google.truth:truth:1.1.2'
+  testImplementation 'com.google.testparameterinjector:test-parameter-injector:1.3'
+  testImplementation gradleTestKit()
+}
+
+repositories {
+  mavenCentral()
+  google()
+}
+
+test {
+  dependsOn(':installArchives')
+  systemProperty('licenseeVersion', VERSION_NAME)
+}
+
+def fixtures = file('src/test/fixtures')
+def minimalJarBase64 = 'UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA=='
+tasks.register('writeFixtureJars') { task ->
+  task.doFirst {
+    fixtures.eachFileRecurse { File file ->
+      if (file.toString().contains('/repo/') && file.name.endsWith('.jar')) {
+        file.bytes = minimalJarBase64.decodeBase64()
+      }
+    }
+  }
+}
+def checkFixtureJars = tasks.register('checkFixtureJars') { task ->
+  task.doFirst {
+    fixtures.eachFileRecurse { File file ->
+      if (file.toString().contains('/repo/') && file.name.endsWith('.jar')) {
+        def fileBase64 = file.readBytes().encodeBase64().toString()
+        if (fileBase64 != minimalJarBase64) {
+          throw new RuntimeException(
+            "Expected '$minimalJarBase64' but was '$fileBase64'\n\n" +
+              "Invoke 'writeFixtureJars' task to fix.")
+        }
+      }
+    }
+  }
+}
+tasks.named('check').configure { check ->
+  check.dependsOn(checkFixtureJars)
+}
+
+tasks.register('updateLicenses', de.undercouch.gradle.tasks.download.Download) { task ->
+  task.src('https://spdx.org/licenses/licenses.json')
+  task.dest(file('src/main/resources/app/cash/licensee'))
+}
+
+apply plugin: 'com.vanniktech.maven.publish'
+
+mavenPublish {
+  targets {
+    installArchives {
+      def url = file("${rootProject.buildDir}/localMaven").toURI().toString()
+      releaseRepositoryUrl = url
+      snapshotRepositoryUrl = url
+    }
+  }
+}
+
+signing {
+  def signingKey = findProperty('signingKey')
+  def signingPassword = ''
+  useInMemoryPgpKeys(signingKey, signingPassword)
+}
+
+apply plugin: 'com.diffplug.spotless'
+spotless {
+  kotlin {
+    target('**/*.kt')
+    licenseHeaderFile(rootProject.file('gradle/license-header.txt'))
+    // Spotless doesn't read .editorconfig yet: https://github.com/diffplug/spotless/issues/142
+    ktlint('0.41.0').userData([
+      'insert_final_newline': 'true',
+      'end_of_line': 'lf',
+      'indent_size': '2',
+    ])
+  }
+}

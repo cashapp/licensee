@@ -1,0 +1,35 @@
+buildscript {
+  apply from: '../../../../dependencies.gradle'
+
+  dependencies {
+    classpath deps.androidGradlePlugin
+    classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
+  }
+  repositories {
+    maven {
+      url "file://${projectDir.absolutePath}/../../../../build/localMaven"
+    }
+    mavenCentral()
+    google()
+  }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'app.cash.licensee'
+
+dependencies {
+  implementation files('example-1.0.0.jar')
+}
+
+repositories {
+  mavenCentral()
+  google()
+}
+
+android {
+  compileSdkVersion versions.compileSdk
+
+  defaultConfig {
+    minSdkVersion versions.minSdk
+  }
+}

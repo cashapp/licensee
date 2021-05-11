@@ -1,0 +1,13 @@
+apply plugin: 'com.android.library'
+
+dependencies {
+  api 'com.example:example:1.0.0'
+}
+
+android {
+  compileSdkVersion versions.compileSdk
+
+  defaultConfig {
+    minSdkVersion versions.minSdk
+  }
+}
