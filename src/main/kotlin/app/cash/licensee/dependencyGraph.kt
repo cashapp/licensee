@@ -37,13 +37,53 @@ internal data class IgnoredData(
   val transitive: Boolean,
 ) : Serializable
 
-internal fun loadDependencyCoordinatesInto(
+internal fun loadDependencyCoordinates(
   logger: Logger,
   root: ResolvedComponentResult,
   config: DependencyConfig,
+): DependencyResolutionResult {
+  val warnings = mutableListOf<String>()
+
+  val unusedGroupIds = config.ignoredGroupIds.keys.toMutableSet()
+  val unusedCoordinates = mutableSetOf<Pair<String, String>>()
+  for ((groupId, artifacts) in config.ignoredCoordinates) {
+    val redundant = groupId in config.ignoredGroupIds
+    for (artifactId in artifacts.keys) {
+      if (redundant) {
+        warnings += "Ignore for $groupId:$artifactId is redundant as $groupId is also ignored"
+      } else {
+        unusedCoordinates += groupId to artifactId
+      }
+    }
+  }
+
+  val coordinates = mutableSetOf<DependencyCoordinates>()
+  loadDependencyCoordinates(logger, root, config, unusedGroupIds, unusedCoordinates, coordinates, mutableSetOf(), depth = 1)
+
+  for (unusedGroupId in unusedGroupIds) {
+    warnings += "Dependency ignore for $unusedGroupId is unused"
+  }
+  for ((groupId, artifactId) in unusedCoordinates) {
+    warnings += "Dependency ignore for $groupId:$artifactId is unused"
+  }
+
+  return DependencyResolutionResult(coordinates, warnings)
+}
+
+internal data class DependencyResolutionResult(
+  val coordinates: Set<DependencyCoordinates>,
+  val configWarnings: List<String>,
+)
+
+private fun loadDependencyCoordinates(
+  logger: Logger,
+  root: ResolvedComponentResult,
+  config: DependencyConfig,
+  unusedGroupIds: MutableSet<String>,
+  unusedCoordinates: MutableSet<Pair<String, String>>,
   destination: MutableSet<DependencyCoordinates>,
-  seen: MutableSet<ComponentIdentifier> = mutableSetOf(),
-  depth: Int = 0,
+  seen: MutableSet<ComponentIdentifier>,
+  depth: Int,
 ) {
   val id = root.id
 
@@ -52,8 +92,11 @@ internal fun loadDependencyCoordinatesInto(
   when (id) {
     is ProjectComponentIdentifier -> {} // Local dependency, do nothing
     is ModuleComponentIdentifier -> {
-      val ignoredData = config.ignoredGroupIds[id.group]
+      val ignoredData = null
+        ?: config.ignoredGroupIds[id.group]
+          ?.also { unusedGroupIds -= id.group }
         ?: config.ignoredCoordinates[id.group]?.get(id.module)
+          ?.also { unusedCoordinates -= id.group to id.module }
       if (ignoredData != null) {
         ignoreSuffix = buildString {
           append(" ignoring")
@@ -92,13 +135,8 @@ internal fun loadDependencyCoordinatesInto(
       if (dependency is ResolvedDependencyResult) {
         val selected = dependency.selected
         if (seen.add(selected.id)) {
-          loadDependencyCoordinatesInto(
-            logger = logger,
-            root = selected,
-            config = config,
-            destination = destination,
-            seen = seen,
-            depth = depth + 1
+          loadDependencyCoordinates(
+            logger, selected, config, unusedGroupIds, unusedCoordinates, destination, seen, depth + 1
           )
         }
       }
