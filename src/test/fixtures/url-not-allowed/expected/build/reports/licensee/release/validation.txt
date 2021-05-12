@@ -1,0 +1,2 @@
+com.example:example:1.0.0
+ - ERROR: Unknown license URL 'https://example.com/license' is NOT allowed

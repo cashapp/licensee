@@ -58,8 +58,8 @@ private fun configureAndroidApplicationPlugin(
       it.validationConfig = extension.toLicenseValidationConfig()
       it.setClasspath(variant.runtimeConfiguration, CLASSES.type)
 
-      it.outputFile =
-        project.buildDir.resolve("generated/licensee/${variant.name}/artifacts.json")
+      it.outputDir =
+        project.buildDir.resolve("reports/licensee/${variant.name}/")
     }
 
     rootTask.configure {

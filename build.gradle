@@ -50,6 +50,13 @@ repositories {
 test {
   dependsOn(':installArchives')
   systemProperty('licenseeVersion', VERSION_NAME)
+
+  testLogging {
+    if (System.getenv("CI") == "true") {
+      events = ["failed", "skipped", "passed"]
+    }
+    exceptionFormat "full"
+  }
 }
 
 def fixtures = file('src/test/fixtures')

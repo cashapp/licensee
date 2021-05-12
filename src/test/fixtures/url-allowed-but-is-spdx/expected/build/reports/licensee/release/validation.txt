@@ -1,0 +1,2 @@
+com.example:example:1.0.0
+ - WARNING: License URL 'https://www.apache.org/licenses/LICENSE-2.0' was allowed but could use SPDX identifier 'Apache-2.0'

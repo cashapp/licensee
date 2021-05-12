@@ -27,7 +27,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import kotlin.properties.Delegates
@@ -57,8 +57,8 @@ internal open class LicenseeTask : DefaultTask() {
     }.artifacts.artifactFiles
   }
 
-  @get:OutputFile
-  lateinit var outputFile: File
+  @get:OutputDirectory
+  lateinit var outputDir: File
 
   private val _logger: Logger = Logging.getLogger(LicenseeTask::class.java)
 
@@ -150,13 +150,14 @@ internal open class LicenseeTask : DefaultTask() {
       }
     }
 
-    val output = outputFormat.encodeToString(listSerializer, artifactDetails)
+    val artifactsJson = outputFormat.encodeToString(listOfArtifactDetail, artifactDetails)
 
-    outputFile.parentFile.mkdirs()
-    outputFile.writeText(output)
-    if (!output.endsWith("\n")) {
+    val artifactsJsonFile = File(outputDir, "artifacts.json")
+    artifactsJsonFile.parentFile.mkdirs()
+    artifactsJsonFile.writeText(artifactsJson)
+    if (!artifactsJson.endsWith("\n")) {
       // Force a trailing newline because it makes editing expected files easier.
-      outputFile.appendText("\n")
+      artifactsJsonFile.appendText("\n")
     }
 
     if (logger.isInfoEnabled) {
@@ -199,41 +200,63 @@ internal open class LicenseeTask : DefaultTask() {
       logger.info("")
     }
     val validationResult = validateArtifacts(validationConfig, artifactDetails)
+
+    val validationReport = StringBuilder()
+
+    fun logResult(configResult: ValidationResult, prefix: String = "") {
+      when (configResult) {
+        is ValidationResult.Error -> {
+          val message = prefix + "ERROR: " + configResult.message
+          validationReport.appendLine(message)
+          logger.error(message)
+        }
+        is ValidationResult.Warning -> {
+          val message = prefix + "WARNING: " + configResult.message
+          validationReport.appendLine(message)
+          logger.warn(message)
+        }
+        is ValidationResult.Info -> {
+          val message = prefix + configResult.message
+          validationReport.appendLine(message)
+          logger.info(message)
+        }
+      }
+    }
     for (configResult in validationResult.configResults) {
       logResult(configResult)
     }
+    if (validationResult.configResults.isNotEmpty() && validationResult.artifactResults.isNotEmpty()) {
+      validationReport.appendLine()
+      // We know these are always at warning or error level, so use lifecycle for space.
+      logger.lifecycle("")
+    }
     for ((artifactDetail, results) in validationResult.artifactResults) {
+      val coordinateHeader = buildString {
+        append(artifactDetail.groupId)
+        append(':')
+        append(artifactDetail.artifactId)
+        append(':')
+        append(artifactDetail.version)
+      }
+      validationReport.appendLine(coordinateHeader)
+
       val hasNonInfo = results.any { it !is ValidationResult.Info }
-      val logger: (String) -> Unit = if (hasNonInfo) logger::lifecycle else logger::info
-      logger(
-        buildString {
-          append(artifactDetail.groupId)
-          append(':')
-          append(artifactDetail.artifactId)
-          append(':')
-          append(artifactDetail.version)
-        }
-      )
+      if (hasNonInfo) {
+        logger.lifecycle(coordinateHeader)
+      } else {
+        logger.info(coordinateHeader)
+      }
       for (result in results) {
         logResult(result, prefix = " - ")
       }
     }
+
+    val validationReportFile = File(outputDir, "validation.txt")
+    validationReportFile.parentFile.mkdirs()
+    validationReportFile.writeText(validationReport.toString())
+
     if (validationResult.containsErrors) {
       throw RuntimeException("Artifacts failed validation. See output above.")
-    }
-  }
-
-  private fun logResult(configResult: ValidationResult, prefix: String = "") {
-    when (configResult) {
-      is ValidationResult.Error -> {
-        logger.error(prefix + "ERROR: " + configResult.message)
-      }
-      is ValidationResult.Warning -> {
-        logger.warn(prefix + "WARNING: " + configResult.message)
-      }
-      is ValidationResult.Info -> {
-        logger.info(prefix + configResult.message)
-      }
     }
   }
 }
@@ -248,4 +271,4 @@ internal data class PomLicense(
 )
 
 private val outputFormat = Json { prettyPrint = true }
-private val listSerializer = ListSerializer(ArtifactDetail.serializer())
+private val listOfArtifactDetail = ListSerializer(ArtifactDetail.serializer())

@@ -1,0 +1,3 @@
+com.example:example:1.0.0
+ - Unknown license URL 'https://example.com/license' is NOT allowed
+ - Coordinate version is allowed
