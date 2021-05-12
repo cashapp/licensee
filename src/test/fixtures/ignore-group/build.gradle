@@ -23,7 +23,7 @@ dependencies {
 
 licensee {
   allowIdentifier('Apache-2.0')
-  ignoreDependency('com.example')
+  ignoreDependencies('com.example')
 }
 
 repositories {

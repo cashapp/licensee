@@ -43,8 +43,9 @@ internal open class LicenseeTask : DefaultTask() {
   var classpath: FileCollection by Delegates.notNull()
     private set
 
-  @Internal
-  private lateinit var configuration: Configuration
+  @get:Internal
+  var configuration: Configuration by Delegates.notNull()
+    private set
 
   fun setClasspath(configuration: Configuration, usage: String) {
     this.configuration = configuration
@@ -60,6 +61,8 @@ internal open class LicenseeTask : DefaultTask() {
   lateinit var outputFile: File
 
   private val _logger: Logger = Logging.getLogger(LicenseeTask::class.java)
+
+  @Internal
   override fun getLogger() = _logger
 
   @TaskAction
@@ -148,7 +151,7 @@ internal open class LicenseeTask : DefaultTask() {
 
     outputFile.parentFile.mkdirs()
     outputFile.writeText(output)
-    if (output.endsWith("\n")) {
+    if (!output.endsWith("\n")) {
       // Force a trailing newline because it makes editing expected files easier.
       outputFile.appendText("\n")
     }

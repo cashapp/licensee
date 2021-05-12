@@ -6,7 +6,8 @@
         "spdxLicenses": [
             {
                 "identifier": "Apache-2.0",
-                "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                "name": "Apache License 2.0",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0"
             }
         ]
     },
@@ -17,7 +18,8 @@
         "spdxLicenses": [
             {
                 "identifier": "Apache-2.0",
-                "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                "name": "Apache License 2.0",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0"
             }
         ]
     }
