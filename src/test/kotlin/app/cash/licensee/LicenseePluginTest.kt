@@ -32,6 +32,11 @@ class LicenseePluginTest {
       "artifact-with-classifier",
       "artifact-with-extension",
       "compile-only-ignored",
+      "coordinate-allow-unused",
+      "coordinate-allowed",
+      "coordinate-allowed-override-spdx",
+      "coordinate-allowed-override-url",
+      "coordinate-allowed-with-reason",
       "dependency-substitution-replace-local-with-remote",
       "dependency-substitution-replace-remote-with-local-ignored",
       "dependency-substitution-replace-remote-with-include-build-ignored",
@@ -49,36 +54,21 @@ class LicenseePluginTest {
       "project-android-ignored",
       "project-java-ignored",
       "repository-include-exclude",
+      "spdx-allow-unused",
+      "spdx-allowed",
+      "spdx-allowed-but-no-match",
       "transitive-android-project-api",
       "transitive-android-project-implementation",
       "transitive-java-project-api",
       "transitive-java-project-implementation",
+      "url-allow-unused",
+      "url-allowed",
+      "url-allowed-but-is-spdx",
+      "url-allowed-but-no-match",
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
-    val gradleRoot = File(fixtureDir, "gradle").also { it.mkdir() }
-    File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
-
-    GradleRunner.create()
-      .withProjectDir(fixtureDir)
-      .withArguments("clean", "assemble", "licensee", "--stacktrace", versionProperty)
-      .forwardOutput()
-      .build()
-
-    val expectedDir = File(fixtureDir, "expected")
-    if (!expectedDir.exists()) {
-      throw AssertionError("Missing expected/ directory")
-    }
-
-    val expectedFiles = expectedDir.walk().filter { it.isFile }.toList()
-    assertThat(expectedFiles).isNotEmpty()
-    for (expectedFile in expectedFiles) {
-      val actualFile = File(fixtureDir, expectedFile.relativeTo(expectedDir).toString())
-      if (!actualFile.exists()) {
-        throw AssertionError("Expected $actualFile but does not exist")
-      }
-      assertThat(actualFile.readText()).isEqualTo(expectedFile.readText())
-    }
+    executeFixture(fixtureDir) { build() }
 
     // Ensure up-to-date functionality works.
     val secondRun = GradleRunner.create()
@@ -88,6 +78,43 @@ class LicenseePluginTest {
       .build()
     secondRun.tasks.filter { it.path.contains(":licensee") }.forEach {
       assertEquals("Second invocation of ${it.path}", UP_TO_DATE, it.outcome)
+    }
+  }
+
+  @Test fun failure(
+    @TestParameter(
+      "coordinate-version-mismatch",
+      "no-license-not-allowed",
+      "spdx-not-allowed",
+      "url-not-allowed",
+    ) fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    executeFixture(fixtureDir) { buildAndFail() }
+  }
+
+  private fun executeFixture(fixtureDir: File, buildAction: GradleRunner.() -> Unit) {
+    val expectedDir = File(fixtureDir, "expected")
+    if (!expectedDir.exists()) {
+      throw AssertionError("Missing expected/ directory")
+    }
+
+    val gradleRoot = File(fixtureDir, "gradle").also { it.mkdir() }
+    File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
+    GradleRunner.create()
+      .withProjectDir(fixtureDir)
+      .withArguments("clean", "assemble", "licensee", "--stacktrace", "--continue", versionProperty)
+      .forwardOutput()
+      .buildAction()
+
+    val expectedFiles = expectedDir.walk().filter { it.isFile }.toList()
+    assertThat(expectedFiles).isNotEmpty()
+    for (expectedFile in expectedFiles) {
+      val actualFile = File(fixtureDir, expectedFile.relativeTo(expectedDir).toString())
+      if (!actualFile.exists()) {
+        throw AssertionError("Expected $actualFile but does not exist")
+      }
+      assertThat(actualFile.readText()).isEqualTo(expectedFile.readText())
     }
   }
 

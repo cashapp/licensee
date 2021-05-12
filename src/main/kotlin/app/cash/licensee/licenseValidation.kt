@@ -94,10 +94,14 @@ internal fun validateArtifacts(
             artifactResults[index] = ValidationResult.Info(result.message)
           }
         }
-      } else if (validationConfig.allowedCoordinates.keys.any { it.group == artifact.groupId && it.artifact == artifact.artifactId }) {
-        artifactResults += ValidationResult.Warning(
-          "Coordinates match an allowed artifact but version does not match"
-        )
+      } else {
+        val candidate = validationConfig.allowedCoordinates.keys
+          .firstOrNull { it.group == artifact.groupId && it.artifact == artifact.artifactId }
+        if (candidate != null) {
+          artifactResults += ValidationResult.Warning(
+            "Coordinates match an allowed dependency but version does not match (${candidate.version} != ${artifact.version})"
+          )
+        }
       }
     }
 

@@ -1,0 +1,12 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>example</artifactId>
+  <version>1.0.0</version>
+  <licenses>
+    <license>
+      <name>Custom</name>
+      <url>https://example.com/license</url>
+    </license>
+  </licenses>
+</project>

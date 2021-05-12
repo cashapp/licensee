@@ -1,0 +1,1 @@
+WARNING: Allowed license URL 'https://example.com/license' is unused
