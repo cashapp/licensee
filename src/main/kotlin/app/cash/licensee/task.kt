@@ -113,15 +113,18 @@ internal open class LicenseeTask : DefaultTask() {
       logger.info("")
     }
     val rootCoordinate = configuration.incoming.resolutionResult.root
-    val coordinates = mutableSetOf<DependencyCoordinates>()
-    loadDependencyCoordinatesInto(logger, rootCoordinate, dependencyConfig, coordinates)
+    val dependencyResult = loadDependencyCoordinates(logger, rootCoordinate, dependencyConfig)
+    for (configWarning in dependencyResult.configWarnings) {
+      logger.warn("WARNING: $configWarning")
+    }
 
     if (logger.isInfoEnabled) {
       logger.info("")
       logger.info("STEP 2: Load dependency pom info")
       logger.info("")
     }
-    val coordinatesToPomInfo = coordinates.associateWith { loadPomInfo(project, logger, it) }
+    val coordinatesToPomInfo =
+      dependencyResult.coordinates.associateWith { loadPomInfo(project, logger, it) }
 
     if (logger.isInfoEnabled) {
       logger.info("")
@@ -195,11 +198,11 @@ internal open class LicenseeTask : DefaultTask() {
       }
       logger.info("")
     }
-    val validateArtifacts = validateArtifacts(validationConfig, artifactDetails)
-    for (configResult in validateArtifacts.configResults) {
+    val validationResult = validateArtifacts(validationConfig, artifactDetails)
+    for (configResult in validationResult.configResults) {
       logResult(configResult)
     }
-    for ((artifactDetail, results) in validateArtifacts.artifactResults) {
+    for ((artifactDetail, results) in validationResult.artifactResults) {
       val hasNonInfo = results.any { it !is ValidationResult.Info }
       val logger: (String) -> Unit = if (hasNonInfo) logger::lifecycle else logger::info
       logger(
@@ -215,7 +218,7 @@ internal open class LicenseeTask : DefaultTask() {
         logResult(result, prefix = " - ")
       }
     }
-    if (validateArtifacts.containsErrors) {
+    if (validationResult.containsErrors) {
       throw RuntimeException("Artifacts failed validation. See output above.")
     }
   }
