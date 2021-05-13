@@ -104,7 +104,7 @@ Licensee requires a supported language/platform plugin to also be applied to the
  * `java-library` (TODO https://github.com/square/licensee/issues/2)
  * `java` (TODO https://github.com/square/licensee/issues/2)
  * `com.android.application`
- * `com.android.library` (TODO https://github.com/square/licensee/issues/1)
+ * `com.android.library`
  * `org.jetbrains.kotlin.jvm` (TODO https://github.com/square/licensee/issues/2)
  * `org.jetbrains.kotlin.js` (TODO https://github.com/square/licensee/issues/12)
  * `org.jetbrains.kotlin.multiplatform` (TODO https://github.com/square/licensee/issues/12)
