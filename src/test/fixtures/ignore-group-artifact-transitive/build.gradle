@@ -26,6 +26,7 @@ licensee {
   allow('Apache-2.0')
   ignoreDependencies('com.example', 'example-a') {
     transitive true
+    because 'reasons'
   }
 }
 
