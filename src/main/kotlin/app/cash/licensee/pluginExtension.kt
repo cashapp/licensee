@@ -15,6 +15,8 @@
  */
 package app.cash.licensee
 
+import app.cash.licensee.LicenseeExtension.AllowDependencyOptions
+import app.cash.licensee.LicenseeExtension.IgnoreDependencyOptions
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.util.ClosureBackedAction
@@ -74,6 +76,7 @@ interface LicenseeExtension {
     options: Action<AllowDependencyOptions> = Action { },
   )
 
+  /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun allowDependency(
     groupId: String,
@@ -83,6 +86,7 @@ interface LicenseeExtension {
     allowDependency(groupId, artifactId, version, {})
   }
 
+  /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun allowDependency(
     groupId: String,
@@ -138,21 +142,25 @@ interface LicenseeExtension {
     options: Action<IgnoreDependencyOptions> = Action { },
   )
 
+  /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun ignoreDependencies(groupId: String) {
     ignoreDependencies(groupId, options = {})
   }
 
+  /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun ignoreDependencies(groupId: String, options: Closure<IgnoreDependencyOptions>) {
     ignoreDependencies(groupId, options = ClosureBackedAction.of(options))
   }
 
+  /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun ignoreDependencies(groupId: String, artifactId: String) {
     ignoreDependencies(groupId, artifactId, {})
   }
 
+  /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun ignoreDependencies(
     groupId: String,
@@ -161,15 +169,15 @@ interface LicenseeExtension {
   ) {
     ignoreDependencies(groupId, artifactId, ClosureBackedAction.of(options))
   }
-}
 
-interface AllowDependencyOptions {
-  fun because(reason: String)
-}
+  interface AllowDependencyOptions {
+    fun because(reason: String)
+  }
 
-interface IgnoreDependencyOptions {
-  fun because(reason: String)
-  var transitive: Boolean
+  interface IgnoreDependencyOptions {
+    fun because(reason: String)
+    var transitive: Boolean
+  }
 }
 
 internal class MutableLicenseeExtension : LicenseeExtension {
