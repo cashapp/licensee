@@ -22,8 +22,8 @@ dependencies {
 }
 
 licensee {
-  allowIdentifier('Apache-2.0')
-  allowIdentifier('MPL-2.0')
+  allow('Apache-2.0')
+  allow('MPL-2.0')
 }
 
 repositories {

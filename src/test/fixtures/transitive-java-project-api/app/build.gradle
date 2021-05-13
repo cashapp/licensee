@@ -6,7 +6,7 @@ dependencies {
 }
 
 licensee {
-  allowIdentifier('Apache-2.0')
+  allow('Apache-2.0')
 }
 
 android {
