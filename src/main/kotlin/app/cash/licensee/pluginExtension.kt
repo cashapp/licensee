@@ -126,7 +126,7 @@ interface LicenseeExtension {
    * ```groovy
    * licensee {
    *   ignoreDependencies('com.other.sdk', 'sdk') {
-   *     transitive true
+   *     transitive = true
    *     because "commercial SDK"
    *   }
    * }
@@ -169,7 +169,7 @@ interface AllowDependencyOptions {
 
 interface IgnoreDependencyOptions {
   fun because(reason: String)
-  fun transitive(transitive: Boolean)
+  var transitive: Boolean
 }
 
 internal class MutableLicenseeExtension : LicenseeExtension {
@@ -229,9 +229,11 @@ internal class MutableLicenseeExtension : LicenseeExtension {
         setReason = reason
       }
 
-      override fun transitive(transitive: Boolean) {
-        setTransitive = transitive
-      }
+      override var transitive: Boolean
+        get() = setTransitive
+        set(value) {
+          setTransitive = value
+        }
     })
 
     if (setTransitive && setReason == null) {
