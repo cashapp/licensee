@@ -45,26 +45,31 @@ class LicenseePluginFixtureTest {
       "ignore-group-artifact",
       "ignore-group-artifact-transitive",
       "ignore-group-transitive",
-      "implementation",
       "local-file-ignored",
       "local-file-tree-ignored",
       "plugin-android-application",
       "plugin-android-application-product-flavors",
       "plugin-android-library",
       "plugin-android-library-product-flavors",
+      "plugin-java",
+      "plugin-java-library",
+      "plugin-kotlin-jvm",
       "pom-with-inheritance-from-both",
       "pom-with-inheritance-from-child",
       "pom-with-inheritance-from-parent",
-      "project-android-ignored",
-      "project-java-ignored",
+      "project-android-to-android-ignored",
+      "project-android-to-java-ignored",
+      "project-java-to-java-ignored",
       "repository-include-exclude",
       "spdx-allow-unused",
       "spdx-allowed",
       "spdx-allowed-but-no-match",
-      "transitive-android-project-api",
-      "transitive-android-project-implementation",
-      "transitive-java-project-api",
-      "transitive-java-project-implementation",
+      "transitive-android-to-android-api",
+      "transitive-android-to-android-implementation",
+      "transitive-android-to-java-api",
+      "transitive-android-to-java-implementation",
+      "transitive-java-to-java-api",
+      "transitive-java-to-java-implementation",
       "url-allow-unused",
       "url-allowed",
       "url-allowed-but-is-spdx",
@@ -78,6 +83,7 @@ class LicenseePluginFixtureTest {
     // Ensure up-to-date functionality works.
     val secondRun = GradleRunner.create()
       .withProjectDir(fixtureDir)
+      .withDebug(true) // Run in-process
       .withArguments("licensee", "--stacktrace", versionProperty)
       .forwardOutput()
       .build()
@@ -114,15 +120,13 @@ class LicenseePluginFixtureTest {
 
   @Test fun unsupportedPlugin(
     @TestParameter(
-      "plugin-java-library-fails",
-      "plugin-java-fails",
       "plugin-missing-fails",
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).contains(
-      "'app.cash.licensee' plugin only works with 'com.android.application' or 'com.android.library' plugin"
+      "'app.cash.licensee' requires compatible language/platform plugin to be applied"
     )
   }
 
@@ -140,6 +144,7 @@ class LicenseePluginFixtureTest {
     File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
     return GradleRunner.create()
       .withProjectDir(fixtureDir)
+      .withDebug(true) // Run in-process
       .withArguments("clean", "assemble", "licensee", "--stacktrace", "--continue", versionProperty)
       .forwardOutput()
   }

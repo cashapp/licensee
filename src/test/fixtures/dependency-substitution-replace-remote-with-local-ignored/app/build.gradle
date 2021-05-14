@@ -1,14 +1,6 @@
-apply plugin: 'com.android.application'
+apply plugin: 'java'
 apply plugin: 'app.cash.licensee'
 
 dependencies {
   implementation 'com.example:example:1.0.0'
-}
-
-android {
-  compileSdkVersion versions.compileSdk
-
-  defaultConfig {
-    minSdkVersion versions.minSdk
-  }
 }

@@ -2,7 +2,6 @@ buildscript {
   apply from: '../../../../dependencies.gradle'
 
   dependencies {
-    classpath deps.androidGradlePlugin
     classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
   }
   repositories {
@@ -10,11 +9,10 @@ buildscript {
       url "file://${projectDir.absolutePath}/../../../../build/localMaven"
     }
     mavenCentral()
-    google()
   }
 }
 
-apply plugin: 'com.android.application'
+apply plugin: 'java-library'
 apply plugin: 'app.cash.licensee'
 
 dependencies {
@@ -29,15 +27,5 @@ licensee {
 repositories {
   maven {
     url "file://${rootDir.absolutePath}/repo"
-  }
-  mavenCentral()
-  google()
-}
-
-android {
-  compileSdkVersion versions.compileSdk
-
-  defaultConfig {
-    minSdkVersion versions.minSdk
   }
 }

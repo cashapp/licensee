@@ -2,7 +2,6 @@ buildscript {
   apply from: '../../../../dependencies.gradle'
 
   dependencies {
-    classpath deps.androidGradlePlugin
     classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
   }
   repositories {
@@ -10,7 +9,6 @@ buildscript {
       url "file://${projectDir.absolutePath}/../../../../build/localMaven"
     }
     mavenCentral()
-    google()
   }
 }
 
@@ -21,10 +19,5 @@ allprojects {
         substitute module('com.example:example:1.0.0') with project(':other')
       }
     }
-  }
-
-  repositories {
-    mavenCentral()
-    google()
   }
 }

@@ -47,6 +47,12 @@ repositories {
   google()
 }
 
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(8)
+  }
+}
+
 test {
   dependsOn(':installArchives')
   systemProperty('licenseeVersion', VERSION_NAME)

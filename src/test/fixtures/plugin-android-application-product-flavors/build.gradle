@@ -47,4 +47,8 @@ android {
     google { dimension 'store' }
     amazon { dimension 'store' }
   }
+
+  lintOptions {
+    checkReleaseBuilds false
+  }
 }
