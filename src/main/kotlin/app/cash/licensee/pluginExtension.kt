@@ -26,14 +26,14 @@ interface LicenseeExtension {
    *
    * ```
    * licensee {
-   *   allowIdentifier("Apache-2.0")
+   *   allow("Apache-2.0")
    * }
    * ```
    *
    * A full list of identifiers is available at [https://spdx.org/licenses/].
    *
    */
-  fun allowIdentifier(id: String)
+  fun allow(spdxId: String)
 
   /**
    * Allow artifacts with an unknown (non-SPDX) license which matches a URL.
@@ -131,8 +131,8 @@ internal class MutableLicenseeExtension : LicenseeExtension {
     )
   }
 
-  override fun allowIdentifier(id: String) {
-    allowedIdentifiers += id
+  override fun allow(spdxId: String) {
+    allowedIdentifiers += spdxId
   }
 
   override fun allowUrl(url: String) {
