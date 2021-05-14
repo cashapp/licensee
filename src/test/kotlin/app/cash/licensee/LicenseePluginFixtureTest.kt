@@ -48,6 +48,10 @@ class LicenseePluginFixtureTest {
       "implementation",
       "local-file-ignored",
       "local-file-tree-ignored",
+      "plugin-android-application",
+      "plugin-android-application-product-flavors",
+      "plugin-android-library",
+      "plugin-android-library-product-flavors",
       "pom-with-inheritance-from-both",
       "pom-with-inheritance-from-child",
       "pom-with-inheritance-from-parent",
@@ -110,16 +114,15 @@ class LicenseePluginFixtureTest {
 
   @Test fun unsupportedPlugin(
     @TestParameter(
-      "android-library-plugin-fails",
-      "java-library-plugin-fails",
-      "java-plugin-fails",
-      "no-plugin-fails",
+      "plugin-java-library-fails",
+      "plugin-java-fails",
+      "plugin-missing-fails",
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).contains(
-      "'app.cash.licensee' plugin only works with 'com.android.application' plugin"
+      "'app.cash.licensee' plugin only works with 'com.android.application' or 'com.android.library' plugin"
     )
   }
 
