@@ -1,0 +1,6 @@
+apply plugin: 'java'
+apply plugin: 'app.cash.licensee'
+
+dependencies {
+  implementation project(':other')
+}

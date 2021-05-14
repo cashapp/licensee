@@ -101,11 +101,11 @@ to "leaf" modules (those without downstream dependencies) such as applications a
 If you are building a library, however, apply it to each library module.
 
 Licensee requires a supported language/platform plugin to also be applied to the same module:
- * `java-library` (TODO https://github.com/square/licensee/issues/2)
- * `java` (TODO https://github.com/square/licensee/issues/2)
+ * `java-library`
+ * `java`
  * `com.android.application`
  * `com.android.library`
- * `org.jetbrains.kotlin.jvm` (TODO https://github.com/square/licensee/issues/2)
+ * `org.jetbrains.kotlin.jvm`
  * `org.jetbrains.kotlin.js` (TODO https://github.com/square/licensee/issues/12)
  * `org.jetbrains.kotlin.multiplatform` (TODO https://github.com/square/licensee/issues/12)
 

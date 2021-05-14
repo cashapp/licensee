@@ -23,6 +23,8 @@ import com.android.build.gradle.internal.publishing.AndroidArtifacts.ArtifactTyp
 import org.gradle.api.DomainObjectCollection
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.attributes.Usage.JAVA_RUNTIME
+import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
 import java.util.Locale.ROOT
 
 @Suppress("unused") // Instantiated reflectively by Gradle.
@@ -34,7 +36,7 @@ class LicenseePlugin : Plugin<Project> {
     var foundCompatiblePlugin = false
     project.afterEvaluate {
       check(foundCompatiblePlugin) {
-        "'app.cash.licensee' plugin only works with 'com.android.application' or 'com.android.library' plugin"
+        "'app.cash.licensee' requires compatible language/platform plugin to be applied"
       }
     }
 
@@ -45,6 +47,11 @@ class LicenseePlugin : Plugin<Project> {
     project.plugins.withId("com.android.library") {
       foundCompatiblePlugin = true
       configureAndroidLibraryPlugin(project, extension)
+    }
+    // Note: java-library applies java so we only need to ever look for the latter.
+    project.plugins.withId("java") {
+      foundCompatiblePlugin = true
+      configureJavaPlugin(project, extension)
     }
   }
 }
@@ -81,12 +88,29 @@ private inline fun <reified T : BaseExtension> configureAndroidPlugin(
       it.validationConfig = extension.toLicenseValidationConfig()
       it.setClasspath(variant.runtimeConfiguration, CLASSES.type)
 
-      it.outputDir =
-        project.buildDir.resolve("reports/licensee/${variant.name}/")
+      it.outputDir = project.buildDir.resolve("reports/licensee/${variant.name}/")
     }
 
     rootTask.configure {
       it.dependsOn(task)
     }
+  }
+}
+
+private fun configureJavaPlugin(
+  project: Project,
+  extension: MutableLicenseeExtension,
+) {
+  val task = project.tasks.register("licensee", LicenseeTask::class.java) {
+    it.dependencyConfig = extension.toDependencyTreeConfig()
+    it.validationConfig = extension.toLicenseValidationConfig()
+
+    val configuration = project.configurations.getByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME)
+    it.setClasspath(configuration, JAVA_RUNTIME)
+
+    it.outputDir = project.buildDir.resolve("reports/licensee/")
+  }
+  project.tasks.named("check").configure {
+    it.dependsOn(task)
   }
 }
