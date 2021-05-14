@@ -20,7 +20,7 @@ apply plugin: 'app.cash.licensee'
 licensee {
   allow('Apache-2.0')
   ignoreDependencies('com.example') {
-    transitive true
+    transitive = true
   }
 }
 

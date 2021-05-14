@@ -219,7 +219,7 @@ Since it is especially dangerous, a reason string is required.
 ```groovy
 licensee {
   ignoreDependencies('com.other.sdk', 'sdk') {
-    transitive true
+    transitive = true
     because "commercial SDK"
   }
 }
