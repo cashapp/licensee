@@ -223,7 +223,7 @@ internal class MutableLicenseeExtension : LicenseeExtension {
     options: Action<IgnoreDependencyOptions>,
   ) {
     var setReason: String? = null
-    var setTransitive: Boolean = false
+    var setTransitive = false
     options.execute(object : IgnoreDependencyOptions {
       override fun because(reason: String) {
         setReason = reason
@@ -233,6 +233,21 @@ internal class MutableLicenseeExtension : LicenseeExtension {
         setTransitive = transitive
       }
     })
+
+    if (setTransitive && setReason == null) {
+      throw RuntimeException(
+        buildString {
+          append("Transitive dependency ignore on '")
+          append(groupId)
+          if (artifactId != null) {
+            append(':')
+            append(artifactId)
+          }
+          append("' is dangerous and requires a reason string")
+        }
+      )
+    }
+
     val ignoredData = IgnoredData(setReason, setTransitive)
     if (artifactId == null) {
       ignoredGroupIds[groupId] = ignoredData

@@ -26,7 +26,7 @@ import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(TestParameterInjector::class)
-class LicenseePluginTest {
+class LicenseePluginFixtureTest {
   @Test fun success(
     @TestParameter(
       "artifact-with-classifier",
@@ -68,7 +68,8 @@ class LicenseePluginTest {
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
-    executeFixture(fixtureDir) { build() }
+    createRunner(fixtureDir).build()
+    assertExpectedFiles(fixtureDir)
 
     // Ensure up-to-date functionality works.
     val secondRun = GradleRunner.create()
@@ -90,32 +91,21 @@ class LicenseePluginTest {
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
-    executeFixture(fixtureDir) { buildAndFail() }
+    createRunner(fixtureDir).buildAndFail()
+    assertExpectedFiles(fixtureDir)
   }
 
-  private fun executeFixture(fixtureDir: File, buildAction: GradleRunner.() -> Unit) {
-    val expectedDir = File(fixtureDir, "expected")
-    if (!expectedDir.exists()) {
-      throw AssertionError("Missing expected/ directory")
-    }
-
-    val gradleRoot = File(fixtureDir, "gradle").also { it.mkdir() }
-    File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
-    GradleRunner.create()
-      .withProjectDir(fixtureDir)
-      .withArguments("clean", "assemble", "licensee", "--stacktrace", "--continue", versionProperty)
-      .forwardOutput()
-      .buildAction()
-
-    val expectedFiles = expectedDir.walk().filter { it.isFile }.toList()
-    assertThat(expectedFiles).isNotEmpty()
-    for (expectedFile in expectedFiles) {
-      val actualFile = File(fixtureDir, expectedFile.relativeTo(expectedDir).toString())
-      if (!actualFile.exists()) {
-        throw AssertionError("Expected $actualFile but does not exist")
-      }
-      assertThat(actualFile.readText()).isEqualTo(expectedFile.readText())
-    }
+  @Test fun transitiveReasonRequired(
+    @TestParameter(
+      "ignore-group-artifact-transitive-requires-reason",
+      "ignore-group-transitive-requires-reason",
+    ) fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir).buildAndFail()
+    assertThat(result.output).containsMatch(
+      "Transitive dependency ignore on 'com\\.example(:example)?' is dangerous and requires a reason string"
+    )
   }
 
   @Test fun unsupportedPlugin(
@@ -127,14 +117,7 @@ class LicenseePluginTest {
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
-    val gradleRoot = File(fixtureDir, "gradle").also { it.mkdir() }
-    File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
-
-    val result = GradleRunner.create()
-      .withProjectDir(fixtureDir)
-      .withArguments("clean", "assemble", "licensee", "--stacktrace", versionProperty)
-      .forwardOutput()
-      .buildAndFail()
+    val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).contains(
       "'app.cash.licensee' plugin only works with 'com.android.application' plugin"
     )
@@ -147,6 +130,32 @@ class LicenseePluginTest {
       .flatMap { it.parameters[0].getAnnotation(TestParameter::class.java).value.toList() }
     val actualDirs = fixturesDir.listFiles().filter { it.isDirectory }.map { it.name }
     assertThat(expectedDirs).containsExactlyElementsIn(actualDirs)
+  }
+
+  private fun createRunner(fixtureDir: File): GradleRunner {
+    val gradleRoot = File(fixtureDir, "gradle").also { it.mkdir() }
+    File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
+    return GradleRunner.create()
+      .withProjectDir(fixtureDir)
+      .withArguments("clean", "assemble", "licensee", "--stacktrace", "--continue", versionProperty)
+      .forwardOutput()
+  }
+
+  private fun assertExpectedFiles(fixtureDir: File) {
+    val expectedDir = File(fixtureDir, "expected")
+    if (!expectedDir.exists()) {
+      throw AssertionError("Missing expected/ directory")
+    }
+
+    val expectedFiles = expectedDir.walk().filter { it.isFile }.toList()
+    assertThat(expectedFiles).isNotEmpty()
+    for (expectedFile in expectedFiles) {
+      val actualFile = File(fixtureDir, expectedFile.relativeTo(expectedDir).toString())
+      if (!actualFile.exists()) {
+        throw AssertionError("Expected $actualFile but does not exist")
+      }
+      assertThat(actualFile.readText()).isEqualTo(expectedFile.readText())
+    }
   }
 }
 
