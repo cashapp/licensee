@@ -22,7 +22,7 @@ import org.gradle.util.ClosureBackedAction
 @Suppress("unused") // Public API for Gradle build scripts.
 interface LicenseeExtension {
   /**
-   * Allow artifacts with a license which matches a SPDX identifier.
+   * Allow artifacts with a license that matches a SPDX identifier.
    *
    * ```
    * licensee {
@@ -30,8 +30,7 @@ interface LicenseeExtension {
    * }
    * ```
    *
-   * A full list of identifiers is available at [https://spdx.org/licenses/].
-   *
+   * A full list of supported identifiers is available at [https://spdx.org/licenses/].
    */
   fun allow(spdxId: String)
 
@@ -46,12 +45,43 @@ interface LicenseeExtension {
    */
   fun allowUrl(url: String)
 
+  /**
+   * Allow an artifact with a specific groupId, artifactId, and version.
+   * This is useful for artifacts which contain no license data or have invalid/incorrect license data.
+   *
+   * ```groovy
+   * licensee {
+   *   allowDependency('com.example', 'example', '1.0')
+   * }
+   * ```
+   *
+   * A reason string can be supplied to document why the dependency is being allowed despite missing or invalid license data.
+   *
+   * ```groovy
+   * licensee {
+   *   allowDependency('com.jetbrains', 'annotations', '16.0.1') {
+   *     because 'Apache-2.0, but typo in license URL fixed in newer versions'
+   *   }
+   * }
+   * ```
+   *
+   * Reason strings will be included in validation reports.
+   */
   fun allowDependency(
     groupId: String,
     artifactId: String,
     version: String,
-    options: Action<AllowDependencyOptions>,
+    options: Action<AllowDependencyOptions> = Action { },
   )
+
+  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
+  fun allowDependency(
+    groupId: String,
+    artifactId: String,
+    version: String,
+  ) {
+    allowDependency(groupId, artifactId, version, {})
+  }
 
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun allowDependency(
@@ -63,40 +93,73 @@ interface LicenseeExtension {
     allowDependency(groupId, artifactId, version, ClosureBackedAction.of(options))
   }
 
-  fun allowDependency(groupId: String, artifactId: String, version: String) {
-    allowDependency(groupId, artifactId, version, {})
-  }
-
+  /**
+   *
+   * Ignore a single dependency or group of dependencies during dependency graph resolution.
+   * Artifacts targeted with this method will not be analyzed for license information and will not show up in any report files.
+   *
+   * This function can be used to ignore internal, closed-source libraries and commercial libraries for which you've purchased a license.
+   *
+   * There are overloads which accept either a groupId or a groupId:artifactId pair.
+   *
+   * ```groovy
+   * licensee {
+   *   ignoreDependencies('com.mycompany.internal')
+   *   ignoreDependencies('com.mycompany.utils', 'utils')
+   * }
+   * ```
+   *
+   * A reason string can be supplied to document why the dependencies are being ignored.
+   *
+   * ```groovy
+   * licensee {
+   *   ignoreDependencies('com.example.sdk', 'sdk') {
+   *     because "commercial SDK"
+   *   }
+   * }
+   * ```
+   *
+   * An ignore can be marked as transitive which will ignore an entire branch of the dependency tree.
+   * This will ignore the target artifact's dependencies regardless of the artifact coordinates or license info.
+   * Since it is especially dangerous, a reason string is required.
+   *
+   * ```groovy
+   * licensee {
+   *   ignoreDependencies('com.other.sdk', 'sdk') {
+   *     transitive true
+   *     because "commercial SDK"
+   *   }
+   * }
+   * ```
+   */
   fun ignoreDependencies(
     groupId: String,
-    artifactId: String?,
-    options: Action<IgnoreDependencyOptions>,
+    artifactId: String? = null,
+    options: Action<IgnoreDependencyOptions> = Action { },
   )
 
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun ignoreDependencies(
-    groupId: String,
-    artifactId: String?,
-    options: Closure<IgnoreDependencyOptions>,
-  ) {
-    ignoreDependencies(groupId, artifactId, ClosureBackedAction.of(options))
-  }
-
   fun ignoreDependencies(groupId: String) {
-    ignoreDependencies(groupId, null, {})
-  }
-
-  fun ignoreDependencies(groupId: String, options: Action<IgnoreDependencyOptions>) {
-    ignoreDependencies(groupId, null, options)
+    ignoreDependencies(groupId, options = {})
   }
 
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun ignoreDependencies(groupId: String, options: Closure<IgnoreDependencyOptions>) {
-    ignoreDependencies(groupId, null, ClosureBackedAction.of(options))
+    ignoreDependencies(groupId, options = ClosureBackedAction.of(options))
   }
 
-  fun ignoreDependencies(groupId: String, artifactId: String?) {
+  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
+  fun ignoreDependencies(groupId: String, artifactId: String) {
     ignoreDependencies(groupId, artifactId, {})
+  }
+
+  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
+  fun ignoreDependencies(
+    groupId: String,
+    artifactId: String,
+    options: Closure<IgnoreDependencyOptions>,
+  ) {
+    ignoreDependencies(groupId, artifactId, ClosureBackedAction.of(options))
   }
 }
 
