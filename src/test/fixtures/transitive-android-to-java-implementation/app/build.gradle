@@ -15,4 +15,8 @@ android {
   defaultConfig {
     minSdkVersion versions.minSdk
   }
+
+  lintOptions {
+    checkReleaseBuilds false
+  }
 }
