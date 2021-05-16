@@ -34,17 +34,23 @@ class LicenseePluginFixtureTest {
       "compile-only-ignored",
       "coordinate-allow-unused",
       "coordinate-allowed",
+      "coordinate-allowed-kts",
       "coordinate-allowed-override-spdx",
       "coordinate-allowed-override-url",
       "coordinate-allowed-with-reason",
+      "coordinate-allowed-with-reason-kts",
       "dependency-substitution-replace-local-with-remote",
       "dependency-substitution-replace-remote-with-local-ignored",
       "dependency-substitution-replace-remote-with-include-build-ignored",
       "exclude-ignored",
       "ignore-group",
       "ignore-group-artifact",
+      "ignore-group-artifact-kts",
       "ignore-group-artifact-transitive",
+      "ignore-group-artifact-transitive-kts",
+      "ignore-group-kts",
       "ignore-group-transitive",
+      "ignore-group-transitive-kts",
       "local-file-ignored",
       "local-file-tree-ignored",
       "plugin-android-application",
@@ -64,6 +70,7 @@ class LicenseePluginFixtureTest {
       "spdx-allow-unused",
       "spdx-allowed",
       "spdx-allowed-but-no-match",
+      "spdx-allowed-kts",
       "transitive-android-to-android-api",
       "transitive-android-to-android-implementation",
       "transitive-android-to-java-api",
@@ -74,6 +81,7 @@ class LicenseePluginFixtureTest {
       "url-allowed",
       "url-allowed-but-is-spdx",
       "url-allowed-but-no-match",
+      "url-allowed-kts",
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
@@ -108,7 +116,9 @@ class LicenseePluginFixtureTest {
   @Test fun transitiveReasonRequired(
     @TestParameter(
       "ignore-group-artifact-transitive-requires-reason",
+      "ignore-group-artifact-transitive-requires-reason-kts",
       "ignore-group-transitive-requires-reason",
+      "ignore-group-transitive-requires-reason-kts",
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
