@@ -106,7 +106,7 @@ Licensee requires a supported language/platform plugin to also be applied to the
  * `com.android.application`
  * `com.android.library`
  * `org.jetbrains.kotlin.jvm`
- * `org.jetbrains.kotlin.js` (TODO https://github.com/square/licensee/issues/12)
+ * `org.jetbrains.kotlin.js`
  * `org.jetbrains.kotlin.multiplatform` (TODO https://github.com/square/licensee/issues/12)
 
 Configure the list of allowed licenses using the `licensee` DSL:
