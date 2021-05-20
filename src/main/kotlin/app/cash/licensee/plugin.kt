@@ -23,13 +23,16 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME
 import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
+import org.gradle.api.reporting.ReportingExtension
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.common
+import java.io.File
 import java.util.Locale.ROOT
 
 private const val baseTaskName = "licensee"
+private const val reportFolder = "licensee"
 
 @Suppress("unused") // Instantiated reflectively by Gradle.
 class LicenseePlugin : Plugin<Project> {
@@ -131,8 +134,8 @@ private fun configureAndroidVariants(
       it.validationConfig = extension.toLicenseValidationConfig()
       it.setClasspath(variant.runtimeConfiguration, CLASSES.type)
 
-      val outputDirName = if (prefix) "android$suffix" else variant.name
-      it.outputDir = project.buildDir.resolve("reports/licensee/$outputDirName/")
+      val reportBase = project.extensions.getByType(ReportingExtension::class.java).file(reportFolder)
+      it.outputDir = File(reportBase, if (prefix) "android$suffix" else variant.name)
     }
 
     rootTask.configure {
@@ -168,7 +171,8 @@ private fun configureKotlinMultiplatformTargets(
       val runtimeConfiguration = project.configurations.getByName(runtimeConfigurationName)
       it.setClasspath(runtimeConfiguration, JAVA_RUNTIME)
 
-      it.outputDir = project.buildDir.resolve("reports/licensee/${target.name}/")
+      val reportBase = project.extensions.getByType(ReportingExtension::class.java).file(reportFolder)
+      it.outputDir = File(reportBase, target.name)
     }
 
     rootTask.configure {
@@ -188,7 +192,7 @@ private fun configureJavaPlugin(
     val configuration = project.configurations.getByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME)
     it.setClasspath(configuration, JAVA_RUNTIME)
 
-    it.outputDir = project.buildDir.resolve("reports/licensee/")
+    it.outputDir = project.extensions.getByType(ReportingExtension::class.java).file(reportFolder)
   }
   project.tasks.named("check").configure {
     it.dependsOn(task)
