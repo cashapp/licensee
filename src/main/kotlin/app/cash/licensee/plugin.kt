@@ -48,7 +48,15 @@ class LicenseePlugin : Plugin<Project> {
       foundCompatiblePlugin = true
       configureAndroidLibraryPlugin(project, extension)
     }
-    // Note: java-library applies java so we only need to ever look for the latter.
+
+    project.plugins.withId("org.jetbrains.kotlin.js") {
+      foundCompatiblePlugin = true
+      // The JS plugin uses the same runtime configuration name as the Java plugin.
+      configureJavaPlugin(project, extension)
+    }
+
+    // Note: java-library applies java so we only need to look for the latter.
+    // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
     project.plugins.withId("java") {
       foundCompatiblePlugin = true
       configureJavaPlugin(project, extension)
