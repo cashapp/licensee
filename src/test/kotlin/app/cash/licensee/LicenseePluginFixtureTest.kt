@@ -59,6 +59,7 @@ class LicenseePluginFixtureTest {
       "plugin-android-library-product-flavors",
       "plugin-java",
       "plugin-java-library",
+      "plugin-kotlin-js",
       "plugin-kotlin-jvm",
       "pom-with-inheritance-from-both",
       "pom-with-inheritance-from-child",
