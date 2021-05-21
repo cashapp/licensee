@@ -40,8 +40,13 @@ internal fun normalizeLicenseInfo(
       unknownLicenses
     )
   }
+
+  artifactDetails.sortWith(detailsComparator)
   return artifactDetails
 }
+
+private val detailsComparator =
+  compareBy(ArtifactDetail::groupId, ArtifactDetail::artifactId, ArtifactDetail::version)
 
 @Serializable
 private data class SpdxLicensesJson(
