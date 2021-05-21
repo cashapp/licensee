@@ -1,0 +1,71 @@
+buildscript {
+  apply from: '../../../../dependencies.gradle'
+
+  dependencies {
+    classpath deps.androidGradlePlugin
+    classpath deps.kotlinGradlePlugin
+    classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
+  }
+  repositories {
+    maven {
+      url "file://${projectDir.absolutePath}/../../../../build/localMaven"
+    }
+    mavenCentral()
+    google()
+  }
+}
+
+apply plugin: 'org.jetbrains.kotlin.multiplatform'
+apply plugin: 'com.android.library'
+apply plugin: 'app.cash.licensee'
+
+kotlin {
+  android()
+  jvm()
+
+  sourceSets {
+    commonMain {
+      dependencies {
+        implementation 'com.example:example-a:1.0.0'
+      }
+    }
+    androidMain {
+      dependencies {
+        implementation 'com.example:example-b:1.0.0'
+      }
+    }
+    jvmMain {
+      dependencies {
+        implementation 'com.example:example-c:1.0.0'
+      }
+    }
+  }
+}
+
+licensee {
+  allow('Apache-2.0')
+}
+
+repositories {
+  maven {
+    url "file://${rootDir.absolutePath}/repo"
+  }
+  mavenCentral()
+  google()
+}
+
+android {
+  compileSdkVersion versions.compileSdk
+
+  defaultConfig {
+    minSdkVersion versions.minSdk
+  }
+
+  flavorDimensions 'price', 'store'
+  productFlavors {
+    free { dimension 'price' }
+    paid { dimension 'price' }
+    google { dimension 'store' }
+    amazon { dimension 'store' }
+  }
+}

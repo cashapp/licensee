@@ -16,16 +16,20 @@
 package app.cash.licensee
 
 import com.android.build.gradle.AppExtension
-import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts.ArtifactType.CLASSES
-import org.gradle.api.DomainObjectCollection
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME
 import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
+import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.common
 import java.util.Locale.ROOT
+
+private const val baseTaskName = "licensee"
 
 @Suppress("unused") // Instantiated reflectively by Gradle.
 class LicenseePlugin : Plugin<Project> {
@@ -40,15 +44,6 @@ class LicenseePlugin : Plugin<Project> {
       }
     }
 
-    project.plugins.withId("com.android.application") {
-      foundCompatiblePlugin = true
-      configureAndroidApplicationPlugin(project, extension)
-    }
-    project.plugins.withId("com.android.library") {
-      foundCompatiblePlugin = true
-      configureAndroidLibraryPlugin(project, extension)
-    }
-
     project.plugins.withId("org.jetbrains.kotlin.js") {
       foundCompatiblePlugin = true
       // The JS plugin uses the same runtime configuration name as the Java plugin.
@@ -61,42 +56,119 @@ class LicenseePlugin : Plugin<Project> {
       foundCompatiblePlugin = true
       configureJavaPlugin(project, extension)
     }
+
+    // The Android and Kotlin MPP plugins interact. Therefore we defer handling either until after
+    // evaluation where we can determine whether neither, one, or both are in use.
+    var androidPlugin: AndroidPlugin? = null
+    var kotlinMppPlugin = false
+    project.plugins.withId("com.android.application") {
+      foundCompatiblePlugin = true
+      androidPlugin = AndroidPlugin.Application
+    }
+    project.plugins.withId("com.android.library") {
+      foundCompatiblePlugin = true
+      androidPlugin = AndroidPlugin.Library
+    }
+    project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
+      foundCompatiblePlugin = true
+      kotlinMppPlugin = true
+    }
+    project.afterEvaluate {
+      @Suppress("NAME_SHADOWING") // Local read for smart cast.
+      val androidPlugin = androidPlugin
+
+      var rootTask: TaskProvider<Task>? = null
+      if (kotlinMppPlugin) {
+        rootTask = project.tasks.register(baseTaskName)
+        if (androidPlugin != null) {
+          configureKotlinMultiplatformTargets(project, extension, rootTask, skipAndroid = true)
+          configureAndroidVariants(project, extension, rootTask, androidPlugin, prefix = true)
+        } else {
+          configureKotlinMultiplatformTargets(project, extension, rootTask)
+        }
+      } else if (androidPlugin != null) {
+        rootTask = project.tasks.register(baseTaskName)
+        configureAndroidVariants(project, extension, rootTask, androidPlugin)
+      }
+
+      if (rootTask != null) {
+        project.tasks.named("check").configure {
+          it.dependsOn(rootTask)
+        }
+      }
+    }
   }
 }
 
-private fun configureAndroidApplicationPlugin(
-  project: Project,
-  extension: MutableLicenseeExtension,
-) {
-  configureAndroidPlugin(project, extension, AppExtension::applicationVariants)
+private enum class AndroidPlugin {
+  Application,
+  Library,
 }
 
-private fun configureAndroidLibraryPlugin(
+private fun configureAndroidVariants(
   project: Project,
   extension: MutableLicenseeExtension,
+  rootTask: TaskProvider<Task>,
+  android: AndroidPlugin,
+  prefix: Boolean = false,
 ) {
-  configureAndroidPlugin(project, extension, LibraryExtension::libraryVariants)
-}
-
-private inline fun <reified T : BaseExtension> configureAndroidPlugin(
-  project: Project,
-  extension: MutableLicenseeExtension,
-  variants: T.() -> DomainObjectCollection<out BaseVariant>
-) {
-  val rootTask = project.tasks.register("licensee")
-  project.tasks.named("check").configure {
-    it.dependsOn(rootTask)
+  val extensions = project.extensions
+  val variants = when (android) {
+    AndroidPlugin.Application -> extensions.getByType(AppExtension::class.java).applicationVariants
+    AndroidPlugin.Library -> extensions.getByType(LibraryExtension::class.java).libraryVariants
   }
-
-  val android = project.extensions.getByType(T::class.java)
-  android.variants().all { variant ->
+  variants.all { variant ->
     val suffix = variant.name.capitalize(ROOT)
-    val task = project.tasks.register("licensee$suffix", LicenseeTask::class.java) {
+    val taskName = buildString {
+      append(baseTaskName)
+      if (prefix) {
+        append("Android")
+      }
+      append(suffix)
+    }
+    val task = project.tasks.register(taskName, LicenseeTask::class.java) {
       it.dependencyConfig = extension.toDependencyTreeConfig()
       it.validationConfig = extension.toLicenseValidationConfig()
       it.setClasspath(variant.runtimeConfiguration, CLASSES.type)
 
-      it.outputDir = project.buildDir.resolve("reports/licensee/${variant.name}/")
+      val outputDirName = if (prefix) "android$suffix" else variant.name
+      it.outputDir = project.buildDir.resolve("reports/licensee/$outputDirName/")
+    }
+
+    rootTask.configure {
+      it.dependsOn(task)
+    }
+  }
+}
+
+private fun configureKotlinMultiplatformTargets(
+  project: Project,
+  extension: MutableLicenseeExtension,
+  rootTask: TaskProvider<Task>,
+  skipAndroid: Boolean = false,
+) {
+  val kotlin = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
+  val targets = kotlin.targets
+  targets.all { target ->
+    if (target.platformType == common) {
+      return@all // All common dependencies end up in platform targets.
+    }
+    if (target.platformType == androidJvm) {
+      if (skipAndroid) return@all
+      throw AssertionError("Found Android Kotlin target but no Android plugin was detected")
+    }
+
+    val suffix = target.name.capitalize(ROOT)
+    val task = project.tasks.register("$baseTaskName$suffix", LicenseeTask::class.java) {
+      it.dependencyConfig = extension.toDependencyTreeConfig()
+      it.validationConfig = extension.toLicenseValidationConfig()
+
+      val runtimeConfigurationName =
+        target.compilations.getByName("main").compileDependencyConfigurationName
+      val runtimeConfiguration = project.configurations.getByName(runtimeConfigurationName)
+      it.setClasspath(runtimeConfiguration, JAVA_RUNTIME)
+
+      it.outputDir = project.buildDir.resolve("reports/licensee/${target.name}/")
     }
 
     rootTask.configure {
@@ -109,7 +181,7 @@ private fun configureJavaPlugin(
   project: Project,
   extension: MutableLicenseeExtension,
 ) {
-  val task = project.tasks.register("licensee", LicenseeTask::class.java) {
+  val task = project.tasks.register(baseTaskName, LicenseeTask::class.java) {
     it.dependencyConfig = extension.toDependencyTreeConfig()
     it.validationConfig = extension.toLicenseValidationConfig()
 
