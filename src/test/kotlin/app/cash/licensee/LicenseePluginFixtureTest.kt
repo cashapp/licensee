@@ -21,6 +21,7 @@ import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.Assert.assertEquals
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
@@ -31,6 +32,8 @@ class LicenseePluginFixtureTest {
     @TestParameter(
       "artifact-with-classifier",
       "artifact-with-extension",
+      "artifact-with-gradle-metadata-android",
+      "artifact-with-gradle-metadata-jvm",
       "compile-only-ignored",
       "coordinate-allow-unused",
       "coordinate-allowed",
@@ -93,6 +96,9 @@ class LicenseePluginFixtureTest {
       "url-allowed-kts",
     ) fixtureName: String,
   ) {
+    // TODO https://github.com/cashapp/licensee/issues/30
+    assumeFalse(fixtureName == "artifact-with-gradle-metadata-android")
+
     val fixtureDir = File(fixturesDir, fixtureName)
     createRunner(fixtureDir).build()
     assertExpectedFiles(fixtureDir)

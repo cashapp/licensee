@@ -151,6 +151,11 @@ internal fun loadPomInfo(
   depth: Int = 0,
 ): PomInfo {
   val pomCoordinates = with(id) { "$group:$artifact:$version@pom" }
+  val pomDependency = project.dependencies.create(pomCoordinates)
+  val pomConfiguration = project.configurations.detachedConfiguration(pomDependency)
+  val pomFile =
+    pomConfiguration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap { it.allModuleArtifacts }.singleOrNull()?.file
+
   if (logger.isInfoEnabled) {
     logger.info(
       buildString {
@@ -158,14 +163,12 @@ internal fun loadPomInfo(
           append("  ")
         }
         append(pomCoordinates)
+        append(' ')
+        append(if (pomFile == null) "missing" else "found")
       }
     )
   }
 
-  val pomDependency = project.dependencies.create(pomCoordinates)
-  val pomConfiguration = project.configurations.detachedConfiguration(pomDependency)
-  val pomFile =
-    pomConfiguration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap { it.allModuleArtifacts }.singleOrNull()?.file
   if (pomFile == null) {
     return PomInfo(emptySet())
   }
