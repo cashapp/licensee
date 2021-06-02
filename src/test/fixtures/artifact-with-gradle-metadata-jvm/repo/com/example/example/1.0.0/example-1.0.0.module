@@ -1,0 +1,67 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.example",
+    "module": "example",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.7",
+      "buildId": "3hecgwys45at3ctis6w4afip3e"
+    }
+  },
+  "variants": [
+    {
+      "name": "metadataApiElements-published",
+      "attributes": {
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.platform.type": "common"
+      },
+      "dependencies": [
+      ],
+      "files": [
+        {
+          "name": "example-metadata-1.0.0.jar",
+          "url": "example-1.0.0.jar",
+          "size": 5032,
+          "sha512": "908daed9548c9afe51b8228239d59f03c6836a1914dda4977cc93bf2c59ca7d84a7cc7681fddff4998dfe6f4235d3f466bb7c7dbf10389cede4e8c5b65a0668e",
+          "sha256": "06e932258a346703fe36c420409e6f07cc0dc49dfd0fe6b3592d23730e0c086e",
+          "sha1": "db4824c27a8e6630cd1d7a8687e8ffdfcac078bb",
+          "md5": "884bd1e7ad5c2d463819dc024432d031"
+        }
+      ]
+    },
+    {
+      "name": "jvmApiElements-published",
+      "attributes": {
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../example-jvm/1.0.0/example-jvm-1.0.0.module",
+        "group": "com.example",
+        "module": "example-jvm",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "jvmRuntimeElements-published",
+      "attributes": {
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../example-jvm/1.0.0/example-jvm-1.0.0.module",
+        "group": "com.example",
+        "module": "example-jvm",
+        "version": "1.0.0"
+      }
+    }
+  ]
+}

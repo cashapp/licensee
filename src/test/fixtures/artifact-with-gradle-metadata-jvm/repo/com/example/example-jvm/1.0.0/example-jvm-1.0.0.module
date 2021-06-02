@@ -1,0 +1,73 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "url": "../../example/1.0.0/example-1.0.0.module",
+    "group": "com.example",
+    "module": "example",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.7",
+      "buildId": "3hecgwys45at3ctis6w4afip3e"
+    }
+  },
+  "variants": [
+    {
+      "name": "jvmApiElements-published",
+      "attributes": {
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [],
+      "files": [
+        {
+          "name": "example.jar",
+          "url": "example-jvm-1.0.0.jar",
+          "size": 46974,
+          "sha512": "8dea205ec6ca2378946b2547d23c3b5ddac3ff1a51b9fc2f75e3ebf4be9ccda2c27b7571483b7e5da0e6baa7d0be0439b670cb971bf7efdb76d6371906ed9c92",
+          "sha256": "eb38bdae9761d16b331ecd5f28f48275658dc42140d8c37800dd0752e7c079e9",
+          "sha1": "59d20349a1dd5463dec397a7f71937dabd0e6918",
+          "md5": "f5773e711dac3c82be776f59437c91ed"
+        }
+      ]
+    },
+    {
+      "name": "jvmRuntimeElements-published",
+      "attributes": {
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [],
+      "files": [
+        {
+          "name": "example.jar",
+          "url": "example-jvm-1.0.0.jar",
+          "size": 46974,
+          "sha512": "8dea205ec6ca2378946b2547d23c3b5ddac3ff1a51b9fc2f75e3ebf4be9ccda2c27b7571483b7e5da0e6baa7d0be0439b670cb971bf7efdb76d6371906ed9c92",
+          "sha256": "eb38bdae9761d16b331ecd5f28f48275658dc42140d8c37800dd0752e7c079e9",
+          "sha1": "59d20349a1dd5463dec397a7f71937dabd0e6918",
+          "md5": "f5773e711dac3c82be776f59437c91ed"
+        }
+      ]
+    },
+    {
+      "name": "metadataApiElements-published",
+      "attributes": {
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.platform.type": "common"
+      },
+      "available-at": {
+        "url": "../../example/1.0.0/example-metadata-1.0.0.module",
+        "group": "com.example",
+        "module": "example-metadata",
+        "version": "1.0.0"
+      }
+    }
+  ]
+}
