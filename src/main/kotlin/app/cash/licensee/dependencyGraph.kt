@@ -152,9 +152,15 @@ internal fun loadPomInfo(
 ): PomInfo {
   val pomCoordinates = with(id) { "$group:$artifact:$version@pom" }
   val pomDependency = project.dependencies.create(pomCoordinates)
-  val pomConfiguration = project.configurations.detachedConfiguration(pomDependency)
-  val pomFile =
-    pomConfiguration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap { it.allModuleArtifacts }.singleOrNull()?.file
+  val pomConfiguration = project.configurations
+    .detachedConfiguration(pomDependency)
+    .resolvedConfiguration
+    .lenientConfiguration
+
+  val resolvedFiles = pomConfiguration
+    .allModuleDependencies
+    .flatMap { it.allModuleArtifacts }
+    .map { it.file }
 
   if (logger.isInfoEnabled) {
     logger.info(
@@ -164,17 +170,18 @@ internal fun loadPomInfo(
         }
         append(pomCoordinates)
         append(' ')
-        append(if (pomFile == null) "missing" else "found")
-      }
+        append(resolvedFiles)
+      },
+      pomConfiguration.unresolvedModuleDependencies.singleOrNull()?.problem,
     )
   }
 
-  if (pomFile == null) {
+  if (resolvedFiles.isEmpty()) {
     return PomInfo(emptySet())
   }
 
   val factory = DocumentBuilderFactory.newInstance()
-  val pomDocument = factory.newDocumentBuilder().parse(pomFile)
+  val pomDocument = factory.newDocumentBuilder().parse(resolvedFiles.single())
 
   var licensesNode: Node? = null
   var parentNode: Node? = null
