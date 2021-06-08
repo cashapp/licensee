@@ -15,10 +15,6 @@
  */
 package app.cash.licensee
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-
 internal fun normalizeLicenseInfo(
   coordinateToPomInfo: Map<DependencyCoordinates, PomInfo>,
 ): List<ArtifactDetail> {
@@ -48,68 +44,16 @@ internal fun normalizeLicenseInfo(
 private val detailsComparator =
   compareBy(ArtifactDetail::groupId, ArtifactDetail::artifactId, ArtifactDetail::version)
 
-@Serializable
-private data class SpdxLicensesJson(
-  val licenses: List<SpdxLicenseJson>,
-)
-
-@Serializable
-private data class SpdxLicenseJson(
-  @SerialName("licenseId") val id: String,
-  val name: String,
-  @SerialName("detailsUrl") val spdxUrl: String,
-  @SerialName("seeAlso") val otherUrls: List<String>,
-)
-
-private val spdxLicensesJson = run {
-  val data = SpdxLicensesJson::class.java.getResourceAsStream("/app/cash/licensee/licenses.json")!!.use { it.reader().readText() }
-  val format = Json {
-    ignoreUnknownKeys = true
-  }
-  val licenses = format.decodeFromString(SpdxLicensesJson.serializer(), data)
-  licenses.licenses
+private val spdxLicenses = run {
+  val json = SpdxLicenses::class.java.getResourceAsStream("/app/cash/licensee/licenses.json")!!.use { it.reader().readText() }
+  SpdxLicenses.parseJson(json)
 }
 
-private val spdxIdentifierToLicense = spdxLicensesJson.map { json ->
-  val firstUrl = json.otherUrls[0]
-  val targetUrl = if (firstUrl.startsWith("http://")) {
-    // Assume an 'https' variant is reachable.
-    "https" + firstUrl.substring(4)
-  } else {
-    firstUrl
-  }
-  SpdxLicense(json.id, json.name, targetUrl)
-}.associateBy { it.identifier }
-
-private const val spdxBaseUrl = "https://spdx.org/licenses/"
-private val licenseUrlToSpdxLicense = spdxLicensesJson
-  .flatMap { json ->
-    val urls = mutableListOf<String>()
-
-    val spdxRelativeUrl = json.spdxUrl
-    check(spdxRelativeUrl.startsWith("./"))
-    val spdxUrl = spdxBaseUrl + spdxRelativeUrl.substring(2)
-    urls += spdxUrl
-
-    for (otherUrl in json.otherUrls) {
-      if (otherUrl.startsWith("http://")) {
-        // Assume an 'https' variant is reachable.
-        val httpsUrl = "https" + otherUrl.substring(4)
-        urls += httpsUrl
-      }
-      urls += otherUrl
-    }
-
-    (json.otherUrls + spdxUrl).map { it to spdxIdentifierToLicense[json.id] }
-  }
-  // This creates behavior where we do not overwrite keys. Take, for example, MPL-2.0 and
-  // MPL-2.0-no-copyleft-exception which use the same URL. For now we'll blanket prefer the first.
-  .distinctBy { it.first }
-  .toMap()
-
 private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
-  licenseUrlToSpdxLicense[url]?.let { license ->
-    return license
+  if (url != null) {
+    spdxLicenses.findByUrl(url)?.let { license ->
+      return license
+    }
   }
 
   val fallbackId = when (url) {
@@ -122,5 +66,5 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
 
     else -> null
   }
-  return fallbackId?.let(spdxIdentifierToLicense::get)
+  return fallbackId?.let(spdxLicenses::findByIdentifier)
 }
