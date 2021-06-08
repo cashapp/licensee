@@ -33,7 +33,7 @@ You may have seen the new dependency in a [dependency tree diff][dtd], but did y
 ```diff
 -+--- com.example:example:1.0
 ++--- com.example:example:1.1
-+     \--- com.other:gpl-code:2.5
++     \--- com.other:other:2.5
 ```
 
 With the Licensee plugin applied, you don't have to.
@@ -49,7 +49,7 @@ Now attempting to upgrade the dependency will fail the build.
 
 ```
 > Task :app:licensee FAILED
-com.other:gpl-code:2.5
+com.other:other:2.5
  - SPDX identifier 'GPL-3.0-or-later' is NOT allowed
 ```
 
@@ -119,8 +119,9 @@ licensee {
 For more configuration options, see the [configuration section](#Configuration).
 
 The `licensee` task will be added to your build and automatically added as a dependency of the
-`check` task. Android modules will have variant-specific versions of this task (such as
-`licenseeDebug` and `licenseeRelease`) with the `licensee` task merely aggregating them together.
+`check` task. Android and Kotlin multiplatform modules will have variant-specific versions of this
+task (such as `licenseeDebug` and `licenseeJs`) with the `licensee` task merely aggregating them
+together.
 
 In addition to failing the build on detection of a disallowed license,
 the plugin will always generate some report files.
@@ -138,7 +139,8 @@ or for Android modules `<buildDir>/reports/licensee/<variant name>/`.
 
 ## Configuration
 
-The following functions are available on the `licensee` DSL and/or `app.cash.licensee.LicenseeException` type.
+The following functions are available on the `licensee` DSL and/or
+`app.cash.licensee.LicenseeExtension` type.
 
 ### `allow`
 
