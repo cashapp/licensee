@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 
+## [1.0.2] - 2021-06-09
+
+**Changed**
+
+ - Report the offending project when the plugin fails to apply due to a missing sibling language/platform plugin.
+
+
 ## [1.0.1] - 2021-06-08
 
 **Changed**

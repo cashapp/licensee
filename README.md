@@ -66,7 +66,7 @@ buildscript {
     mavenCental()
   }
   dependencies {
-    classpath 'app.cash.licensee:licensee-gradle-plugin:1.0.1'
+    classpath 'app.cash.licensee:licensee-gradle-plugin:1.0.2'
   }
 }
 
