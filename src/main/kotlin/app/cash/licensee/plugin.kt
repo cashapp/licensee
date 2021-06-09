@@ -43,7 +43,12 @@ class LicenseePlugin : Plugin<Project> {
     var foundCompatiblePlugin = false
     project.afterEvaluate {
       check(foundCompatiblePlugin) {
-        "'app.cash.licensee' requires compatible language/platform plugin to be applied"
+        val name = if (project === project.rootProject) {
+          "root project"
+        } else {
+          "project ${project.path}"
+        }
+        "'app.cash.licensee' requires compatible language/platform plugin to be applied ($name)"
       }
     }
 

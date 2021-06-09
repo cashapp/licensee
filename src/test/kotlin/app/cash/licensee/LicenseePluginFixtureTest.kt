@@ -143,15 +143,23 @@ class LicenseePluginFixtureTest {
     )
   }
 
-  @Test fun unsupportedPlugin(
-    @TestParameter(
-      "plugin-missing-fails",
-    ) fixtureName: String,
+  @Test fun pluginMissingOnRootFails(
+    @TestParameter("plugin-missing-on-root-fails") fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).contains(
-      "'app.cash.licensee' requires compatible language/platform plugin to be applied"
+      "'app.cash.licensee' requires compatible language/platform plugin to be applied (root project)"
+    )
+  }
+
+  @Test fun pluginMissingOnSubprojectFails(
+    @TestParameter("plugin-missing-on-subproject-fails") fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir).buildAndFail()
+    assertThat(result.output).contains(
+      "'app.cash.licensee' requires compatible language/platform plugin to be applied (project :some:thing)"
     )
   }
 
