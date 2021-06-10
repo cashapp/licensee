@@ -241,7 +241,7 @@ internal fun loadPomInfo(
         depth = depth + 1
       )
       licenses += parentPomInfo.licenses
-      if (scm == null && parentPomInfo.scm != null) {
+      if (scm == null) {
         scm = parentPomInfo.scm
       }
     }
