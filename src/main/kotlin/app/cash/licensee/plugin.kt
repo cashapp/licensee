@@ -125,7 +125,7 @@ private fun configureAndroidVariants(
     AndroidPlugin.Application -> extensions.getByType(AppExtension::class.java).applicationVariants
     AndroidPlugin.Library -> extensions.getByType(LibraryExtension::class.java).libraryVariants
   }
-  variants.all { variant ->
+  variants.configureEach { variant ->
     val suffix = variant.name.capitalize(ROOT)
     val taskName = buildString {
       append(baseTaskName)
@@ -157,12 +157,12 @@ private fun configureKotlinMultiplatformTargets(
 ) {
   val kotlin = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
   val targets = kotlin.targets
-  targets.all { target ->
+  targets.configureEach { target ->
     if (target.platformType == common) {
-      return@all // All common dependencies end up in platform targets.
+      return@configureEach // All common dependencies end up in platform targets.
     }
     if (target.platformType == androidJvm) {
-      if (skipAndroid) return@all
+      if (skipAndroid) return@configureEach
       throw AssertionError("Found Android Kotlin target but no Android plugin was detected")
     }
 
