@@ -14,4 +14,7 @@
       <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
+  <scm>
+    <url>https://github.com/cashapp/licensee</url>
+  </scm>
 </project>

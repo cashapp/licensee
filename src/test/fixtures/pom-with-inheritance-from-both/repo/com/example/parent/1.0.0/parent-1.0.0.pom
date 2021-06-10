@@ -10,4 +10,7 @@
       <url>http://www.mozilla.org/MPL/2.0/</url>
     </license>
   </licenses>
+  <scm>
+    <url>https://github.com/cashapp/licensee-parent</url>
+  </scm>
 </project>

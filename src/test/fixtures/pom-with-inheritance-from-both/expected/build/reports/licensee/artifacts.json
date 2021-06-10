@@ -14,6 +14,9 @@
                 "name": "Mozilla Public License 2.0",
                 "url": "https://www.mozilla.org/MPL/2.0/"
             }
-        ]
+        ],
+        "scm": {
+            "url": "https://github.com/cashapp/licensee"
+        }
     }
 ]
