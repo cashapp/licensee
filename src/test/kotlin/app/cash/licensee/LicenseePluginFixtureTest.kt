@@ -34,6 +34,7 @@ class LicenseePluginFixtureTest {
       "artifact-with-extension",
       "artifact-with-gradle-metadata-android",
       "artifact-with-gradle-metadata-jvm",
+      "artifact-with-scm",
       "compile-only-ignored",
       "coordinate-allow-unused",
       "coordinate-allowed",
