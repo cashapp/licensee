@@ -177,17 +177,19 @@ internal fun loadPomInfo(
   }
 
   if (resolvedFiles.isEmpty()) {
-    return PomInfo(emptySet())
+    return PomInfo(emptySet(), null)
   }
 
   val factory = DocumentBuilderFactory.newInstance()
   val pomDocument = factory.newDocumentBuilder().parse(resolvedFiles.single())
 
   var licensesNode: Node? = null
+  var scmNode: Node? = null
   var parentNode: Node? = null
   for (childNode in pomDocument.documentElement.childNodes) {
     when (childNode.nodeName) {
       "licenses" -> licensesNode = childNode
+      "scm" -> scmNode = childNode
       "parent" -> parentNode = childNode
     }
   }
@@ -210,6 +212,16 @@ internal fun loadPomInfo(
       }
     }
   }
+
+  var scm: PomScm? = null
+  if (scmNode != null) {
+    for (propertyNode in scmNode.childNodes) {
+      if (propertyNode.nodeName == "url") {
+        scm = PomScm(propertyNode.textContent)
+      }
+    }
+  }
+
   if (parentNode != null) {
     var group: String? = null
     var artifact: String? = null
@@ -229,10 +241,13 @@ internal fun loadPomInfo(
         depth = depth + 1
       )
       licenses += parentPomInfo.licenses
+      if (scm == null) {
+        scm = parentPomInfo.scm
+      }
     }
   }
 
-  return PomInfo(licenses)
+  return PomInfo(licenses, scm)
 }
 
 private operator fun NodeList.iterator(): Iterator<Node> = iterator {

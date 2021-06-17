@@ -32,8 +32,12 @@ internal fun normalizeLicenseInfo(
     }
 
     artifactDetails += ArtifactDetail(
-      id.group, id.artifact, id.version, spdxLicenses,
-      unknownLicenses
+      id.group,
+      id.artifact,
+      id.version,
+      spdxLicenses,
+      unknownLicenses,
+      pomInfo.scm?.url?.let(::ArtifactScm)
     )
   }
 

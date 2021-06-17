@@ -25,6 +25,7 @@ data class ArtifactDetail(
   // TODO do we need to include extension and classifier?
   val spdxLicenses: Set<SpdxLicense> = emptySet(),
   val unknownLicenses: Set<UnknownLicense> = emptySet(),
+  val scm: ArtifactScm? = null,
 )
 
 @Serializable
@@ -38,4 +39,9 @@ data class SpdxLicense(
 data class UnknownLicense(
   val name: String?,
   val url: String?,
+)
+
+@Serializable
+data class ArtifactScm(
+  val url: String,
 )
