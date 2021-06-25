@@ -2,12 +2,16 @@ $dokka.format:html-v1
 $dokka.linkExtension:html
 $dokka.location:app.cash.licensee////PointingToDeclaration/licensee/app.cash.licensee/index.html
 $dokka.location:app.cash.licensee/ArtifactDetail///PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/index.html
-$dokka.location:app.cash.licensee/ArtifactDetail/ArtifactDetail/#kotlin.String#kotlin.String#kotlin.String#kotlin.collections.Set[app.cash.licensee.SpdxLicense]#kotlin.collections.Set[app.cash.licensee.UnknownLicense]/PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/-artifact-detail.html
+$dokka.location:app.cash.licensee/ArtifactDetail/ArtifactDetail/#kotlin.String#kotlin.String#kotlin.String#kotlin.collections.Set[app.cash.licensee.SpdxLicense]#kotlin.collections.Set[app.cash.licensee.UnknownLicense]#app.cash.licensee.ArtifactScm?/PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/-artifact-detail.html
 $dokka.location:app.cash.licensee/ArtifactDetail/artifactId/#/PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/artifact-id.html
 $dokka.location:app.cash.licensee/ArtifactDetail/groupId/#/PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/group-id.html
+$dokka.location:app.cash.licensee/ArtifactDetail/scm/#/PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/scm.html
 $dokka.location:app.cash.licensee/ArtifactDetail/spdxLicenses/#/PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/spdx-licenses.html
 $dokka.location:app.cash.licensee/ArtifactDetail/unknownLicenses/#/PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/unknown-licenses.html
 $dokka.location:app.cash.licensee/ArtifactDetail/version/#/PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/version.html
+$dokka.location:app.cash.licensee/ArtifactScm///PointingToDeclaration/licensee/app.cash.licensee/-artifact-scm/index.html
+$dokka.location:app.cash.licensee/ArtifactScm/ArtifactScm/#kotlin.String/PointingToDeclaration/licensee/app.cash.licensee/-artifact-scm/-artifact-scm.html
+$dokka.location:app.cash.licensee/ArtifactScm/url/#/PointingToDeclaration/licensee/app.cash.licensee/-artifact-scm/url.html
 $dokka.location:app.cash.licensee/LicenseeExtension.AllowDependencyOptions///PointingToDeclaration/licensee/app.cash.licensee/-licensee-extension/-allow-dependency-options/index.html
 $dokka.location:app.cash.licensee/LicenseeExtension.AllowDependencyOptions/because/#kotlin.String/PointingToDeclaration/licensee/app.cash.licensee/-licensee-extension/-allow-dependency-options/because.html
 $dokka.location:app.cash.licensee/LicenseeExtension.IgnoreDependencyOptions///PointingToDeclaration/licensee/app.cash.licensee/-licensee-extension/-ignore-dependency-options/index.html
