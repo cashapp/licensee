@@ -3,6 +3,17 @@
 ## [Unreleased]
 
 
+## [1.1.0] - 2021-06-25
+
+**Added**
+
+ - Include SCM URL in the JSON output if available from an artifacts POM.
+
+**Fixed**
+
+ - Support older versions of Gradle because they leak ancient versions of the Kotlin stdlib onto the plugin classpath.
+
+
 ## [1.0.2] - 2021-06-09
 
 **Changed**
