@@ -94,6 +94,7 @@ class LicenseePluginFixtureTest {
       "url-allowed-but-is-spdx",
       "url-allowed-but-no-match",
       "url-allowed-kts",
+      "url-missing-name-fallback-is-spdx",
     ) fixtureName: String,
   ) {
     // TODO https://github.com/cashapp/licensee/issues/30
@@ -120,6 +121,7 @@ class LicenseePluginFixtureTest {
       "coordinate-version-mismatch",
       "no-license-not-allowed",
       "spdx-not-allowed",
+      "url-missing-name-fallback-no-match",
       "url-not-allowed",
     ) fixtureName: String,
   ) {
