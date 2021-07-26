@@ -58,17 +58,25 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
     spdxLicenses.findByUrl(url)?.let { license ->
       return license
     }
+    val fallbackId = when (url) {
+      "http://www.apache.org/licenses/LICENSE-2.0.txt",
+      "https://www.apache.org/licenses/LICENSE-2.0.txt",
+      -> "Apache-2.0"
+
+      "http://creativecommons.org/publicdomain/zero/1.0/",
+      -> "CC0-1.0"
+
+      else -> null
+    }
+    fallbackId?.let(spdxLicenses::findByIdentifier)?.let { license ->
+      return license
+    }
+  } else if (name != null) {
+    // Only fallback to name-based matching if the URL is null.
+    spdxLicenses.findByIdentifier(name)?.let { license ->
+      return license
+    }
   }
 
-  val fallbackId = when (url) {
-    "http://www.apache.org/licenses/LICENSE-2.0.txt",
-    "https://www.apache.org/licenses/LICENSE-2.0.txt",
-    -> "Apache-2.0"
-
-    "http://creativecommons.org/publicdomain/zero/1.0/",
-    -> "CC0-1.0"
-
-    else -> null
-  }
-  return fallbackId?.let(spdxLicenses::findByIdentifier)
+  return null
 }

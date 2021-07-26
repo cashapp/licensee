@@ -61,8 +61,10 @@ internal fun validateArtifacts(
       }
     }
     for (unknownLicense in artifact.unknownLicenses) {
-      artifactResults += if (unknownLicense.url in validationConfig.allowedUrls) {
-        unusedAllowedUrls -= unknownLicense.url!!
+      artifactResults += if (unknownLicense.url == null) {
+        ValidationResult.Error("Unknown license name '${unknownLicense.name}' with no URL is NOT allowed")
+      } else if (unknownLicense.url in validationConfig.allowedUrls) {
+        unusedAllowedUrls -= unknownLicense.url
         ValidationResult.Info("Unknown license URL '${unknownLicense.url}' allowed")
       } else {
         ValidationResult.Error("Unknown license URL '${unknownLicense.url}' is NOT allowed")
