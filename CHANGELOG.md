@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 
+## [1.2.0] - 2021-07-27
+
+**Added**
+
+ - If the license information in a Maven POM is missing a URL, fallback to matching the name against the SPDX identifier list.
+
+
 ## [1.1.0] - 2021-06-25
 
 **Added**
@@ -35,6 +42,9 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.0.1...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/cashapp/licensee/releases/tag/1.2.0
+[1.1.0]: https://github.com/cashapp/licensee/releases/tag/1.1.0
+[1.0.2]: https://github.com/cashapp/licensee/releases/tag/1.0.2
 [1.0.1]: https://github.com/cashapp/licensee/releases/tag/1.0.1
 [1.0.0]: https://github.com/cashapp/licensee/releases/tag/1.0.0
