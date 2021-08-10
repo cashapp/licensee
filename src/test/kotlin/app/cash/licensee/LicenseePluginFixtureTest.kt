@@ -46,6 +46,7 @@ class LicenseePluginFixtureTest {
       "dependency-substitution-replace-remote-with-local-ignored",
       "dependency-substitution-replace-remote-with-include-build-ignored",
       "exclude-ignored",
+      "flat-dir-repository-ignored",
       "ignore-group",
       "ignore-group-artifact",
       "ignore-group-artifact-kts",

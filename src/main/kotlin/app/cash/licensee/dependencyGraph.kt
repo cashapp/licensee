@@ -90,27 +90,35 @@ private fun loadDependencyCoordinates(
   var processTransitiveDependencies = true
   var ignoreSuffix: String? = null
   when (id) {
-    is ProjectComponentIdentifier -> {} // Local dependency, do nothing
+    is ProjectComponentIdentifier -> {
+      // Local dependency, do nothing.
+      ignoreSuffix = " ignoring because project dependency"
+    }
     is ModuleComponentIdentifier -> {
-      val ignoredData = null
-        ?: config.ignoredGroupIds[id.group]
-          ?.also { unusedGroupIds -= id.group }
-        ?: config.ignoredCoordinates[id.group]?.get(id.module)
-          ?.also { unusedCoordinates -= id.group to id.module }
-      if (ignoredData != null) {
-        ignoreSuffix = buildString {
-          append(" ignoring")
-          if (ignoredData.transitive) {
-            append(" [transitive=true]")
-          }
-          if (ignoredData.reason != null) {
-            append(" because ")
-            append(ignoredData.reason)
-          }
-        }
-        processTransitiveDependencies = !ignoredData.transitive
+      if (id.group == "" && id.version == "") {
+        // Assuming flat-dir repository dependency, do nothing.
+        ignoreSuffix = " ignoring because flat-dir repository artifact has no metadata"
       } else {
-        destination += DependencyCoordinates(id.group, id.module, id.version)
+        val ignoredData = null
+          ?: config.ignoredGroupIds[id.group]
+            ?.also { unusedGroupIds -= id.group }
+          ?: config.ignoredCoordinates[id.group]?.get(id.module)
+            ?.also { unusedCoordinates -= id.group to id.module }
+        if (ignoredData != null) {
+          ignoreSuffix = buildString {
+            append(" ignoring")
+            if (ignoredData.transitive) {
+              append(" [transitive=true]")
+            }
+            if (ignoredData.reason != null) {
+              append(" because ")
+              append(ignoredData.reason)
+            }
+          }
+          processTransitiveDependencies = !ignoredData.transitive
+        } else {
+          destination += DependencyCoordinates(id.group, id.module, id.version)
+        }
       }
     }
     else -> error("Unknown dependency ${id::class.java}: $id")
