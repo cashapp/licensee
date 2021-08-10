@@ -170,6 +170,24 @@ interface LicenseeExtension {
     ignoreDependencies(groupId, artifactId, ClosureBackedAction.of(options))
   }
 
+  /**
+   * Build behavior when a license violation is found.
+   *
+   * ```
+   * licensee {
+   *   violationAction(LOG)
+   * }
+   * ```
+   *
+   * The default behavior is to [fail][ViolationAction.FAIL].
+   *
+   * Note: Setting this to [ignore][ViolationAction.IGNORE] does not affect the contents of the
+   * `validation.txt` file which always contains all artifacts and their validation status.
+   *
+   * @see ViolationAction
+   */
+  fun violationAction(level: ViolationAction)
+
   interface AllowDependencyOptions {
     fun because(reason: String)
   }
@@ -180,12 +198,22 @@ interface LicenseeExtension {
   }
 }
 
+@Suppress("unused") // Public API.
+enum class ViolationAction {
+  FAIL,
+  LOG,
+  IGNORE,
+}
+
 internal class MutableLicenseeExtension : LicenseeExtension {
   private val allowedIdentifiers = mutableSetOf<String>()
   private val allowedUrls = mutableSetOf<String>()
   private val allowedDependencies = mutableMapOf<DependencyCoordinates, String?>()
   private val ignoredGroupIds = mutableMapOf<String, IgnoredData>()
   private val ignoredCoordinates = mutableMapOf<String, MutableMap<String, IgnoredData>>()
+
+  var violationAction = ViolationAction.FAIL
+    private set
 
   fun toDependencyTreeConfig(): DependencyConfig {
     return DependencyConfig(
@@ -264,5 +292,9 @@ internal class MutableLicenseeExtension : LicenseeExtension {
     } else {
       ignoredCoordinates.getOrPut(groupId, ::LinkedHashMap)[artifactId] = ignoredData
     }
+  }
+
+  override fun violationAction(level: ViolationAction) {
+    violationAction = level
   }
 }

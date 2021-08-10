@@ -15,6 +15,8 @@
  */
 package app.cash.licensee
 
+import app.cash.licensee.ViolationAction.FAIL
+import app.cash.licensee.ViolationAction.IGNORE
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
@@ -22,6 +24,10 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
+import org.gradle.api.logging.LogLevel.ERROR
+import org.gradle.api.logging.LogLevel.INFO
+import org.gradle.api.logging.LogLevel.LIFECYCLE
+import org.gradle.api.logging.LogLevel.WARN
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.Classpath
@@ -38,6 +44,9 @@ internal open class LicenseeTask : DefaultTask() {
 
   @get:Input
   lateinit var validationConfig: ValidationConfig
+
+  @get:Input
+  lateinit var violationAction: ViolationAction
 
   @get:Classpath
   var classpath: FileCollection by Delegates.notNull()
@@ -203,17 +212,21 @@ internal open class LicenseeTask : DefaultTask() {
 
     val validationReport = StringBuilder()
 
+    val errorLevel = if (violationAction == IGNORE) INFO else ERROR
+    val warningLevel = if (violationAction == IGNORE) INFO else WARN
+    val lifecycleLevel = if (violationAction == IGNORE) INFO else LIFECYCLE
+
     fun logResult(configResult: ValidationResult, prefix: String = "") {
       when (configResult) {
         is ValidationResult.Error -> {
           val message = prefix + "ERROR: " + configResult.message
           validationReport.appendLine(message)
-          logger.error(message)
+          logger.log(errorLevel, message)
         }
         is ValidationResult.Warning -> {
           val message = prefix + "WARNING: " + configResult.message
           validationReport.appendLine(message)
-          logger.warn(message)
+          logger.log(warningLevel, message)
         }
         is ValidationResult.Info -> {
           val message = prefix + configResult.message
@@ -228,7 +241,7 @@ internal open class LicenseeTask : DefaultTask() {
     if (validationResult.configResults.isNotEmpty() && validationResult.artifactResults.isNotEmpty()) {
       validationReport.appendLine()
       // We know these are always at warning or error level, so use lifecycle for space.
-      logger.lifecycle("")
+      logger.log(lifecycleLevel, "")
     }
     for ((artifactDetail, results) in validationResult.artifactResults) {
       val coordinateHeader = buildString {
@@ -242,7 +255,7 @@ internal open class LicenseeTask : DefaultTask() {
 
       val hasNonInfo = results.any { it !is ValidationResult.Info }
       if (hasNonInfo) {
-        logger.lifecycle(coordinateHeader)
+        logger.log(lifecycleLevel, coordinateHeader)
       } else {
         logger.info(coordinateHeader)
       }
@@ -255,7 +268,7 @@ internal open class LicenseeTask : DefaultTask() {
     validationReportFile.parentFile.mkdirs()
     validationReportFile.writeText(validationReport.toString())
 
-    if (validationResult.containsErrors) {
+    if (violationAction == FAIL && validationResult.containsErrors) {
       throw RuntimeException("Artifacts failed validation. See output above.")
     }
   }

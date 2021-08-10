@@ -137,6 +137,7 @@ private fun configureAndroidVariants(
     val task = project.tasks.register(taskName, LicenseeTask::class.java) {
       it.dependencyConfig = extension.toDependencyTreeConfig()
       it.validationConfig = extension.toLicenseValidationConfig()
+      it.violationAction = extension.violationAction
       it.setClasspath(variant.runtimeConfiguration, CLASSES.type)
 
       val reportBase = project.extensions.getByType(ReportingExtension::class.java).file(reportFolder)
@@ -170,6 +171,7 @@ private fun configureKotlinMultiplatformTargets(
     val task = project.tasks.register("$baseTaskName$suffix", LicenseeTask::class.java) {
       it.dependencyConfig = extension.toDependencyTreeConfig()
       it.validationConfig = extension.toLicenseValidationConfig()
+      it.violationAction = extension.violationAction
 
       val runtimeConfigurationName =
         target.compilations.getByName("main").compileDependencyConfigurationName
@@ -193,6 +195,7 @@ private fun configureJavaPlugin(
   val task = project.tasks.register(baseTaskName, LicenseeTask::class.java) {
     it.dependencyConfig = extension.toDependencyTreeConfig()
     it.validationConfig = extension.toLicenseValidationConfig()
+    it.violationAction = extension.violationAction
 
     val configuration = project.configurations.getByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME)
     it.setClasspath(configuration, JAVA_RUNTIME)
