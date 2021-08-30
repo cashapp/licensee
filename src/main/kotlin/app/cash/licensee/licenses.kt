@@ -66,6 +66,9 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       "http://creativecommons.org/publicdomain/zero/1.0/",
       -> "CC0-1.0"
 
+      "http://www.opensource.org/licenses/LGPL-2.1",
+      -> "LGPL-2.1-only"
+
       else -> null
     }
     fallbackId?.let(spdxLicenses::findByIdentifier)?.let { license ->
