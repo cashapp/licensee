@@ -64,6 +64,7 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       -> "Apache-2.0"
 
       "http://creativecommons.org/publicdomain/zero/1.0/",
+      "http://repository.jboss.org/licenses/cc0-1.0.txt",
       -> "CC0-1.0"
 
       else -> null
