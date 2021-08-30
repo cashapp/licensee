@@ -67,6 +67,9 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       "http://creativecommons.org/publicdomain/zero/1.0/",
       -> "CC0-1.0"
 
+      "http://www.opensource.org/licenses/LGPL-2.1",
+      -> "LGPL-2.1-only"
+
       "https://opensource.org/licenses/mit-license",
       "http://www.opensource.org/licenses/mit-license.php",
       -> "MIT"
