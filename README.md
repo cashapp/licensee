@@ -128,7 +128,7 @@ the plugin will always generate some report files.
 
  1. `artifacts.json`
 
-    A JSON file with license information on every artifact in the depenency graph.
+    A JSON file with license information on every artifact in the dependency graph.
 
  2. `validation.txt`
 
