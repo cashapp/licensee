@@ -185,7 +185,7 @@ internal fun loadPomInfo(
   }
 
   if (resolvedFiles.isEmpty()) {
-    return PomInfo(emptySet(), null)
+    return PomInfo(emptySet(), null, false)
   }
 
   val factory = DocumentBuilderFactory.newInstance()

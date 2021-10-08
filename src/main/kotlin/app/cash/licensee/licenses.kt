@@ -30,15 +30,16 @@ internal fun normalizeLicenseInfo(
         unknownLicenses += UnknownLicense(license.name, license.url)
       }
     }
-
-    artifactDetails += ArtifactDetail(
-      id.group,
-      id.artifact,
-      id.version,
-      spdxLicenses,
-      unknownLicenses,
-      pomInfo.scm?.url?.let(::ArtifactScm)
-    )
+    if(pomInfo.hasFiles) {
+      artifactDetails += ArtifactDetail(
+        id.group,
+        id.artifact,
+        id.version,
+        spdxLicenses,
+        unknownLicenses,
+        pomInfo.scm?.url?.let(::ArtifactScm)
+      )
+    }
   }
 
   artifactDetails.sortWith(detailsComparator)
