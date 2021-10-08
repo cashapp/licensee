@@ -74,6 +74,9 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       "http://www.opensource.org/licenses/mit-license.php",
       -> "MIT"
 
+      "http://www.opensource.org/licenses/bsd-license",
+      -> "BSD-2-Clause"
+
       else -> null
     }
     fallbackId?.let(spdxLicenses::findByIdentifier)?.let { license ->
