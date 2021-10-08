@@ -77,6 +77,9 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       "http://www.opensource.org/licenses/bsd-license",
       -> "BSD-2-Clause"
 
+      "http://www.gnu.org/software/classpath/license.html",
+      -> "GPL-2.0-with-classpath-exception"
+
       else -> null
     }
     fallbackId?.let(spdxLicenses::findByIdentifier)?.let { license ->
