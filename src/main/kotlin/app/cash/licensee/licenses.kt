@@ -72,7 +72,14 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
 
       "https://opensource.org/licenses/mit-license",
       "http://www.opensource.org/licenses/mit-license.php",
+      "http://opensource.org/licenses/MIT",
       -> "MIT"
+
+      "http://www.opensource.org/licenses/bsd-license",
+      -> "BSD-2-Clause"
+
+      "http://www.gnu.org/software/classpath/license.html",
+      -> "GPL-2.0-with-classpath-exception"
 
       else -> null
     }
