@@ -81,6 +81,9 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       "http://www.gnu.org/software/classpath/license.html",
       -> "GPL-2.0-with-classpath-exception"
 
+      "http://www.eclipse.org/org/documents/epl-v10.php",
+      -> "EPL-1.0"
+
       else -> null
     }
     fallbackId?.let(spdxLicenses::findByIdentifier)?.let { license ->
