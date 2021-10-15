@@ -4,6 +4,7 @@
   <artifactId>parent</artifactId>
   <version>1.0.0</version>
   <packaging>pom</packaging>
+  <name>Parent</name>
   <licenses>
     <license>
       <name>Apache-2.0</name>

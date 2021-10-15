@@ -275,6 +275,7 @@ internal open class LicenseeTask : DefaultTask() {
 }
 
 internal data class PomInfo(
+  val name: String?,
   val licenses: Set<PomLicense>,
   val scm: PomScm?,
 )

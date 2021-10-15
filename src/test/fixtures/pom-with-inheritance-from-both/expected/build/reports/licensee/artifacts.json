@@ -3,6 +3,7 @@
         "groupId": "com.example",
         "artifactId": "example",
         "version": "1.0.0",
+        "name": "Example",
         "spdxLicenses": [
             {
                 "identifier": "Apache-2.0",

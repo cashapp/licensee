@@ -185,7 +185,7 @@ internal fun loadPomInfo(
   }
 
   if (resolvedFiles.isEmpty()) {
-    return PomInfo(emptySet(), null)
+    return PomInfo(null, emptySet(), null)
   }
 
   val factory = DocumentBuilderFactory.newInstance()
@@ -194,11 +194,13 @@ internal fun loadPomInfo(
   var licensesNode: Node? = null
   var scmNode: Node? = null
   var parentNode: Node? = null
+  var artifactName: String? = null
   for (childNode in pomDocument.documentElement.childNodes) {
     when (childNode.nodeName) {
       "licenses" -> licensesNode = childNode
       "scm" -> scmNode = childNode
       "parent" -> parentNode = childNode
+      "name" -> artifactName = childNode.textContent
     }
   }
 
@@ -252,10 +254,13 @@ internal fun loadPomInfo(
       if (scm == null) {
         scm = parentPomInfo.scm
       }
+      if (artifactName == null) {
+        artifactName = parentPomInfo.name
+      }
     }
   }
 
-  return PomInfo(licenses, scm)
+  return PomInfo(artifactName, licenses, scm)
 }
 
 private operator fun NodeList.iterator(): Iterator<Node> = iterator {
