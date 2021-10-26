@@ -3,6 +3,20 @@
 ## [Unreleased]
 
 
+## [1.3.0] - 2021-10-26
+
+**Added**
+
+- `violationAction` build DSL which allows you to choose whether to fail, log, or ignore license
+  validation problems.
+- New fallback URLs for popular licenses such as MIT, Apache 2, LGPL, GPL, BSD, and EPL.
+
+**Fixed**
+
+- Ignore flat-dir repositories which contain no artifact metadata.
+- Support Kotlin multiplatform projects whose JVM target uses `withJava()`.
+
+
 ## [1.2.0] - 2021-07-27
 
 **Added**
@@ -42,7 +56,8 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.3.0...HEAD
+[1.2.0]: https://github.com/cashapp/licensee/releases/tag/1.3.0
 [1.2.0]: https://github.com/cashapp/licensee/releases/tag/1.2.0
 [1.1.0]: https://github.com/cashapp/licensee/releases/tag/1.1.0
 [1.0.2]: https://github.com/cashapp/licensee/releases/tag/1.0.2
