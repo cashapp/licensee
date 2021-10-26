@@ -22,6 +22,7 @@ data class ArtifactDetail(
   val groupId: String,
   val artifactId: String,
   val version: String,
+  val name: String? = null,
   // TODO do we need to include extension and classifier?
   val spdxLicenses: Set<SpdxLicense> = emptySet(),
   val unknownLicenses: Set<UnknownLicense> = emptySet(),

@@ -3,6 +3,7 @@
   <groupId>com.example</groupId>
   <artifactId>example</artifactId>
   <version>1.0.0</version>
+  <name>Example</name>
   <parent>
     <groupId>com.example</groupId>
     <artifactId>parent</artifactId>
