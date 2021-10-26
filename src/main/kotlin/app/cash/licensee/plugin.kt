@@ -41,6 +41,11 @@ class LicenseePlugin : Plugin<Project> {
     project.extensions.add(LicenseeExtension::class.java, "licensee", extension)
 
     var foundCompatiblePlugin = false
+    // The Android and Kotlin MPP plugins interact. Therefore, we defer handling either until after
+    // evaluation where we can determine whether neither, one, or both are in use.
+    var androidPlugin: AndroidPlugin? = null
+    var kotlinMppPlugin = false
+
     project.afterEvaluate {
       check(foundCompatiblePlugin) {
         val name = if (project === project.rootProject) {
@@ -61,14 +66,15 @@ class LicenseePlugin : Plugin<Project> {
     // Note: java-library applies java so we only need to look for the latter.
     // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
     project.plugins.withId("java") {
-      foundCompatiblePlugin = true
-      configureJavaPlugin(project, extension)
+      if (foundCompatiblePlugin) {
+        // jvm { withJava() } will cause the Java plugin to be applied which we can safely ignore.
+        check(kotlinMppPlugin)
+      } else {
+        foundCompatiblePlugin = true
+        configureJavaPlugin(project, extension)
+      }
     }
 
-    // The Android and Kotlin MPP plugins interact. Therefore we defer handling either until after
-    // evaluation where we can determine whether neither, one, or both are in use.
-    var androidPlugin: AndroidPlugin? = null
-    var kotlinMppPlugin = false
     project.plugins.withId("com.android.application") {
       foundCompatiblePlugin = true
       androidPlugin = AndroidPlugin.Application
@@ -81,6 +87,7 @@ class LicenseePlugin : Plugin<Project> {
       foundCompatiblePlugin = true
       kotlinMppPlugin = true
     }
+
     project.afterEvaluate {
       @Suppress("NAME_SHADOWING") // Local read for smart cast.
       val androidPlugin = androidPlugin
