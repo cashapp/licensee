@@ -62,6 +62,8 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
     val fallbackId = when (url) {
       "http://www.apache.org/licenses/LICENSE-2.0.txt",
       "https://www.apache.org/licenses/LICENSE-2.0.txt",
+      "http://www.apache.org/licenses/LICENSE-2.0.html",
+      "https://www.apache.org/licenses/LICENSE-2.0.html",
       "http://www.opensource.org/licenses/apache2.0.php",
       -> "Apache-2.0"
 
