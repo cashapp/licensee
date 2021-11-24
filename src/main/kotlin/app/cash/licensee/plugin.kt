@@ -40,60 +40,20 @@ class LicenseePlugin : Plugin<Project> {
     val extension = MutableLicenseeExtension()
     project.extensions.add(LicenseeExtension::class.java, "licensee", extension)
 
-    var foundCompatiblePlugin = false
-    // The Android and Kotlin MPP plugins interact. Therefore, we defer handling either until after
-    // evaluation where we can determine whether neither, one, or both are in use.
-    var androidPlugin: AndroidPlugin? = null
-    var kotlinMppPlugin = false
-
     project.afterEvaluate {
-      check(foundCompatiblePlugin) {
-        val name = if (project === project.rootProject) {
-          "root project"
-        } else {
-          "project ${project.path}"
-        }
-        "'app.cash.licensee' requires compatible language/platform plugin to be applied ($name)"
-      }
-    }
-
-    project.plugins.withId("org.jetbrains.kotlin.js") {
-      foundCompatiblePlugin = true
-      // The JS plugin uses the same runtime configuration name as the Java plugin.
-      configureJavaPlugin(project, extension)
-    }
-
-    // Note: java-library applies java so we only need to look for the latter.
-    // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
-    project.plugins.withId("java") {
-      if (foundCompatiblePlugin) {
-        // jvm { withJava() } will cause the Java plugin to be applied which we can safely ignore.
-        check(kotlinMppPlugin)
+      val androidPlugin = if (project.plugins.hasPlugin("com.android.application")) {
+        AndroidPlugin.Application
+      } else if (project.plugins.hasPlugin("com.android.library")) {
+        AndroidPlugin.Library
       } else {
-        foundCompatiblePlugin = true
-        configureJavaPlugin(project, extension)
+        null
       }
-    }
-
-    project.plugins.withId("com.android.application") {
-      foundCompatiblePlugin = true
-      androidPlugin = AndroidPlugin.Application
-    }
-    project.plugins.withId("com.android.library") {
-      foundCompatiblePlugin = true
-      androidPlugin = AndroidPlugin.Library
-    }
-    project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
-      foundCompatiblePlugin = true
-      kotlinMppPlugin = true
-    }
-
-    project.afterEvaluate {
-      @Suppress("NAME_SHADOWING") // Local read for smart cast.
-      val androidPlugin = androidPlugin
 
       var rootTask: TaskProvider<Task>? = null
-      if (kotlinMppPlugin) {
+      if (project.plugins.hasPlugin("org.jetbrains.kotlin.js")) {
+        // The JS plugin uses the same runtime configuration name as the Java plugin.
+        configureJavaPlugin(project, extension)
+      } else if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
         rootTask = project.tasks.register(baseTaskName)
         if (androidPlugin != null) {
           configureKotlinMultiplatformTargets(project, extension, rootTask, skipAndroid = true)
@@ -101,9 +61,22 @@ class LicenseePlugin : Plugin<Project> {
         } else {
           configureKotlinMultiplatformTargets(project, extension, rootTask)
         }
+      } else if (project.plugins.hasPlugin("java")) {
+        // Note: java-library applies java so we only need to look for the latter.
+        // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
+        configureJavaPlugin(project, extension)
       } else if (androidPlugin != null) {
         rootTask = project.tasks.register(baseTaskName)
         configureAndroidVariants(project, extension, rootTask, androidPlugin)
+      } else {
+        val name = if (project === project.rootProject) {
+          "root project"
+        } else {
+          "project ${project.path}"
+        }
+        throw IllegalStateException(
+          "'app.cash.licensee' requires compatible language/platform plugin to be applied ($name)"
+        )
       }
 
       if (rootTask != null) {
