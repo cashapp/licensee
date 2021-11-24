@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2021-10-26
+
+**Fixed**
+
+- Support Kotlin multiplatform projects with the 'application' plugin applied.
+
 
 ## [1.3.0] - 2021-10-26
 
@@ -56,8 +62,9 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.3.0...HEAD
-[1.2.0]: https://github.com/cashapp/licensee/releases/tag/1.3.0
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.3.1...HEAD
+[1.3.1]: https://github.com/cashapp/licensee/releases/tag/1.3.1
+[1.3.0]: https://github.com/cashapp/licensee/releases/tag/1.3.0
 [1.2.0]: https://github.com/cashapp/licensee/releases/tag/1.2.0
 [1.1.0]: https://github.com/cashapp/licensee/releases/tag/1.1.0
 [1.0.2]: https://github.com/cashapp/licensee/releases/tag/1.0.2
