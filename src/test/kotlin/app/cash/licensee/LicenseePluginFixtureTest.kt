@@ -74,6 +74,7 @@ class LicenseePluginFixtureTest {
       "plugin-kotlin-mpp-with-android-application-product-flavors",
       "plugin-kotlin-mpp-with-android-library",
       "plugin-kotlin-mpp-with-android-library-product-flavors",
+      "plugin-kotlin-mpp-with-application",
       "pom-with-inheritance-from-both",
       "pom-with-inheritance-from-child",
       "pom-with-inheritance-from-parent",
