@@ -65,13 +65,21 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       "http://www.apache.org/licenses/LICENSE-2.0.html",
       "https://www.apache.org/licenses/LICENSE-2.0.html",
       "http://www.opensource.org/licenses/apache2.0.php",
+      "https://spdx.org/licenses/Apache-2.0",
+      "https://aws.amazon.com/apache2.0",
       -> "Apache-2.0"
 
       "http://creativecommons.org/publicdomain/zero/1.0/",
+      "https://creativecommons.org/publicdomain/zero/1.0/",
       -> "CC0-1.0"
 
       "http://www.opensource.org/licenses/LGPL-2.1",
+      "http://www.gnu.org/licenses/lgpl-2.1.html",
+      "https://www.gnu.org/licenses/old-licenses/lgpl-2.1",
       -> "LGPL-2.1-only"
+
+      "http://www.gnu.org/licenses/lgpl-3.0.txt",
+      -> "LGPL-3.0-only"
 
       "https://opensource.org/licenses/mit-license",
       "http://www.opensource.org/licenses/mit-license.php",
@@ -79,13 +87,31 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       -> "MIT"
 
       "http://www.opensource.org/licenses/bsd-license",
+      "http://www.opensource.org/licenses/bsd-license.php",
       -> "BSD-2-Clause"
+
+      "http://www.eclipse.org/org/documents/edl-v10.php",
+      -> "BSD-3-Clause"
+
+      "http://www.gnu.org/licenses/gpl-2.0.html",
+      -> "GPL-2.0"
 
       "http://www.gnu.org/software/classpath/license.html",
       -> "GPL-2.0-with-classpath-exception"
 
       "http://www.eclipse.org/org/documents/epl-v10.php",
       -> "EPL-1.0"
+
+      "http://www.opensource.org/licenses/cpl1.0.txt",
+      -> "CPL-1.0"
+
+      "http://www.mozilla.org/MPL/2.0/index.txt",
+      -> "MPL-2.0"
+
+      "http://www.eclipse.org/legal/epl-2.0",
+      "https://www.eclipse.org/legal/epl-v20.html",
+      "https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt",
+      -> "EPL-2.0"
 
       else -> null
     }
