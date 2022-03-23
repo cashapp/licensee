@@ -1,4 +1,4 @@
-gradle
+*/gradle/wrapper/*
 .gradle
 
 # Track build/ directories when they're inside expected/
