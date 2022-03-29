@@ -70,8 +70,10 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       "http://creativecommons.org/publicdomain/zero/1.0/",
       -> "CC0-1.0"
 
+      "http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html",
+      "https://www.opensource.org/licenses/LGPL-2.1",
       "http://www.opensource.org/licenses/LGPL-2.1",
-      -> "LGPL-2.1-only"
+      -> "LGPL-2.1"
 
       "https://opensource.org/licenses/mit-license",
       "http://www.opensource.org/licenses/mit-license.php",
@@ -86,6 +88,10 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
 
       "http://www.eclipse.org/org/documents/epl-v10.php",
       -> "EPL-1.0"
+
+      "http://www.eclipse.org/legal/epl-2.0",
+      "https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt",
+      -> "EPL-2.0"
 
       else -> null
     }
