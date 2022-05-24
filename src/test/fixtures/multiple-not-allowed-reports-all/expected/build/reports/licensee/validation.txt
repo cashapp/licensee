@@ -1,0 +1,3 @@
+com.example:example:1.0.0
+ - ERROR: SPDX identifier 'Apache-2.0' is NOT allowed
+ - ERROR: Unknown license URL 'https://example.com/license' is NOT allowed

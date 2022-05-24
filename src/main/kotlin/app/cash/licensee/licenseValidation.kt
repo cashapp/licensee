@@ -45,33 +45,59 @@ internal fun validateArtifacts(
     val dependencyCoordinates =
       DependencyCoordinates(artifact.groupId, artifact.artifactId, artifact.version)
 
+    // True on first match. Per https://maven.apache.org/ref/3.5.4/maven-model/maven.html#project,
+    // > If multiple licenses are listed, it is assumed that the user can select any of them, not
+    // > that they must accept all.
+    var validated = false
+
     for (spdxLicense in artifact.spdxLicenses) {
-      artifactResults += if (spdxLicense.identifier in validationConfig.allowedIdentifiers) {
+      if (spdxLicense.identifier in validationConfig.allowedIdentifiers) {
         unusedAllowedIdentifiers -= spdxLicense.identifier
-        ValidationResult.Info(
+        artifactResults += ValidationResult.Info(
           "SPDX identifier '${spdxLicense.identifier}' allowed"
         )
-      } else if (spdxLicense.url in validationConfig.allowedUrls) {
+        validated = true
+        break
+      }
+      if (spdxLicense.url in validationConfig.allowedUrls) {
         unusedAllowedUrls -= spdxLicense.url
-        ValidationResult.Warning(
+        artifactResults += ValidationResult.Warning(
           "License URL '${spdxLicense.url}' was allowed but could use SPDX identifier '${spdxLicense.identifier}'"
         )
-      } else {
-        ValidationResult.Error("SPDX identifier '${spdxLicense.identifier}' is NOT allowed")
+        validated = true
+        break
       }
     }
-    for (unknownLicense in artifact.unknownLicenses) {
-      artifactResults += if (unknownLicense.url == null) {
-        ValidationResult.Error("Unknown license name '${unknownLicense.name}' with no URL is NOT allowed")
-      } else if (unknownLicense.url in validationConfig.allowedUrls) {
-        unusedAllowedUrls -= unknownLicense.url
-        ValidationResult.Info("Unknown license URL '${unknownLicense.url}' allowed")
-      } else {
-        ValidationResult.Error("Unknown license URL '${unknownLicense.url}' is NOT allowed")
+
+    if (!validated) {
+      for (unknownLicense in artifact.unknownLicenses) {
+        if (unknownLicense.url != null && unknownLicense.url in validationConfig.allowedUrls) {
+          unusedAllowedUrls -= unknownLicense.url
+          artifactResults += ValidationResult.Info("Unknown license URL '${unknownLicense.url}' allowed")
+          validated = true
+          break
+        }
       }
     }
-    if (artifact.spdxLicenses.isEmpty() && artifact.unknownLicenses.isEmpty()) {
-      artifactResults += ValidationResult.Error("Artifact declares no licenses!")
+
+    if (!validated) {
+      for (spdxLicense in artifact.spdxLicenses) {
+        artifactResults += ValidationResult.Error(
+          "SPDX identifier '${spdxLicense.identifier}' is NOT allowed"
+        )
+      }
+      for (unknownLicense in artifact.unknownLicenses) {
+        artifactResults += ValidationResult.Error(
+          if (unknownLicense.url == null) {
+            "Unknown license name '${unknownLicense.name}' with no URL is NOT allowed"
+          } else {
+            "Unknown license URL '${unknownLicense.url}' is NOT allowed"
+          }
+        )
+      }
+      if (artifact.spdxLicenses.isEmpty() && artifact.unknownLicenses.isEmpty()) {
+        artifactResults += ValidationResult.Error("Artifact declares no licenses!")
+      }
     }
 
     if (artifactResults.any { it is ValidationResult.Error }) {
