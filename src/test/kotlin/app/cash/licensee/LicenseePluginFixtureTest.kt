@@ -57,6 +57,8 @@ class LicenseePluginFixtureTest {
       "ignore-group-transitive-kts",
       "local-file-ignored",
       "local-file-tree-ignored",
+      "multiple-with-spdx-allowed",
+      "multiple-with-url-allowed",
       "plugin-android-application",
       "plugin-android-application-product-flavors",
       "plugin-android-library",
@@ -122,6 +124,7 @@ class LicenseePluginFixtureTest {
   @Test fun failure(
     @TestParameter(
       "coordinate-version-mismatch",
+      "multiple-not-allowed-reports-all",
       "no-license-not-allowed",
       "spdx-not-allowed",
       "url-missing-name-fallback-no-match",
