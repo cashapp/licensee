@@ -250,7 +250,9 @@ internal fun loadPomInfo(
         id = DependencyCoordinates(group, artifact, version),
         depth = depth + 1
       )
-      licenses += parentPomInfo.licenses
+      if (licenses.isEmpty()) {
+        licenses += parentPomInfo.licenses
+      }
       if (scm == null) {
         scm = parentPomInfo.scm
       }
