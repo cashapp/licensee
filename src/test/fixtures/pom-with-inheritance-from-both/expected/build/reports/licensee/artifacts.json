@@ -9,11 +9,6 @@
                 "identifier": "Apache-2.0",
                 "name": "Apache License 2.0",
                 "url": "https://www.apache.org/licenses/LICENSE-2.0"
-            },
-            {
-                "identifier": "MPL-2.0",
-                "name": "Mozilla Public License 2.0",
-                "url": "https://www.mozilla.org/MPL/2.0/"
             }
         ],
         "scm": {

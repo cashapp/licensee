@@ -21,7 +21,6 @@ dependencies {
 
 licensee {
   allow('Apache-2.0')
-  allow('MPL-2.0')
 }
 
 repositories {
