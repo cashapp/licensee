@@ -7,7 +7,6 @@ buildscript {
     classpath 'com.diffplug.spotless:spotless-plugin-gradle:5.1.0'
     classpath 'com.vanniktech:gradle-maven-publish-plugin:0.14.2'
     classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.4.32'
-    classpath 'de.undercouch:gradle-download-task:4.1.1'
   }
 
   repositories {
@@ -36,6 +35,7 @@ dependencies {
   compileOnly deps.androidGradlePlugin
   compileOnly deps.kotlinGradlePlugin
   implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0'
+  implementation 'io.cloudflight.license.spdx:spdx-catalog:3.16.6'
 
   testImplementation 'junit:junit:4.13.2'
   testImplementation 'com.google.truth:truth:1.1.2'
@@ -101,11 +101,6 @@ def checkFixtureJars = tasks.register('checkFixtureJars') { task ->
 }
 tasks.named('check').configure { check ->
   check.dependsOn(checkFixtureJars)
-}
-
-tasks.register('updateLicenses', de.undercouch.gradle.tasks.download.Download) { task ->
-  task.src('https://spdx.org/licenses/licenses.json')
-  task.dest(file('src/main/resources/app/cash/licensee'))
 }
 
 apply plugin: 'com.vanniktech.maven.publish'

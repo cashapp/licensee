@@ -15,6 +15,9 @@
  */
 package app.cash.licensee
 
+import io.cloudflight.license.spdx.LicenseQuery
+import io.cloudflight.license.spdx.SpdxLicenses
+
 internal fun normalizeLicenseInfo(
   coordinateToPomInfo: Map<DependencyCoordinates, PomInfo>,
 ): List<ArtifactDetail> {
@@ -49,55 +52,16 @@ internal fun normalizeLicenseInfo(
 private val detailsComparator =
   compareBy(ArtifactDetail::groupId, ArtifactDetail::artifactId, ArtifactDetail::version)
 
-private val spdxLicenses = run {
-  val json = SpdxLicenses::class.java.getResourceAsStream("/app/cash/licensee/licenses.json")!!.use { it.reader().readText() }
-  SpdxLicenses.parseJson(json)
-}
-
 private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
-  if (url != null) {
-    spdxLicenses.findByUrl(url)?.let { license ->
-      return license
-    }
-    val fallbackId = when (url) {
-      "http://www.apache.org/licenses/LICENSE-2.0.txt",
-      "https://www.apache.org/licenses/LICENSE-2.0.txt",
-      "http://www.apache.org/licenses/LICENSE-2.0.html",
-      "https://www.apache.org/licenses/LICENSE-2.0.html",
-      "http://www.opensource.org/licenses/apache2.0.php",
-      -> "Apache-2.0"
-
-      "http://creativecommons.org/publicdomain/zero/1.0/",
-      -> "CC0-1.0"
-
-      "http://www.opensource.org/licenses/LGPL-2.1",
-      -> "LGPL-2.1-only"
-
-      "https://opensource.org/licenses/mit-license",
-      "http://www.opensource.org/licenses/mit-license.php",
-      "http://opensource.org/licenses/MIT",
-      -> "MIT"
-
-      "http://www.opensource.org/licenses/bsd-license",
-      -> "BSD-2-Clause"
-
-      "http://www.gnu.org/software/classpath/license.html",
-      -> "GPL-2.0-with-classpath-exception"
-
-      "http://www.eclipse.org/org/documents/epl-v10.php",
-      -> "EPL-1.0"
-
-      else -> null
-    }
-    fallbackId?.let(spdxLicenses::findByIdentifier)?.let { license ->
-      return license
-    }
-  } else if (name != null) {
-    // Only fallback to name-based matching if the URL is null.
-    spdxLicenses.findByIdentifier(name)?.let { license ->
-      return license
-    }
+  val spdxLicense = SpdxLicenses.findLicense(LicenseQuery(url = url, name = name))
+  return if (spdxLicense != null) {
+    val licenseUrl = if (spdxLicense.seeAlso.isNotEmpty())
+    // Assume an 'https' variant is reachable.
+      spdxLicense.seeAlso.first().replace("http://", "https://")
+    else
+      url ?: spdxLicense.reference
+    SpdxLicense(identifier = spdxLicense.licenseId, name = spdxLicense.name, licenseUrl)
+  } else {
+    null
   }
-
-  return null
 }
