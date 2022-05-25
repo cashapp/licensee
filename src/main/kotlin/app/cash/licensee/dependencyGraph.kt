@@ -162,6 +162,10 @@ internal fun loadPomInfo(
   val pomDependency = project.dependencies.create(pomCoordinates)
   val pomConfiguration = project.configurations
     .detachedConfiguration(pomDependency)
+    .apply {
+      // See https://docs.gradle.org/current/userguide/dependency_verification.html#sub:disabling-specific-verification.
+      resolutionStrategy.disableDependencyVerification()
+    }
     .resolvedConfiguration
     .lenientConfiguration
 

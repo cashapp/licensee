@@ -45,6 +45,8 @@ class LicenseePluginFixtureTest {
       "dependency-substitution-replace-local-with-remote",
       "dependency-substitution-replace-remote-with-local-ignored",
       "dependency-substitution-replace-remote-with-include-build-ignored",
+      // TODO The following test does not work. See https://github.com/cashapp/licensee/issues/78.
+      "dependency-verification-disabled",
       "exclude-ignored",
       "flat-dir-repository-ignored",
       "ignore-group",
