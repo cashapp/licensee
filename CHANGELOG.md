@@ -2,7 +2,20 @@
 
 ## [Unreleased]
 
-## [1.3.0] - 2021-10-26
+## [1.4.0] - 2022-05-26
+
+**Changed**
+
+- Update SPDX database to version 3.17 (2022-05-08).
+
+**Fixed**
+
+- Do not require accepting all licenses defined in a Maven POM. The specification says that multiple licenses are a logical OR, not a logical AND.
+- Licenses defined in parent poms are only used when the child contains no licenses. Previously both would be honored, but the Maven POM spec defines them as overriding.
+- Disable dependency verification on the Gradle configuration through which the Maven POMs are resolved.
+
+
+## [1.3.1] - 2021-10-26
 
 **Fixed**
 
@@ -62,7 +75,8 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.3.1...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/cashapp/licensee/releases/tag/1.4.0
 [1.3.1]: https://github.com/cashapp/licensee/releases/tag/1.3.1
 [1.3.0]: https://github.com/cashapp/licensee/releases/tag/1.3.0
 [1.2.0]: https://github.com/cashapp/licensee/releases/tag/1.2.0
