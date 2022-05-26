@@ -27,7 +27,6 @@ internal class SpdxLicenses(
   fun findByUrl(url: String) = urlToLicense[url]
 
   companion object {
-    private const val spdxBaseUrl = "https://spdx.org/licenses/"
     private val format = Json {
       ignoreUnknownKeys = true
     }
@@ -37,7 +36,7 @@ internal class SpdxLicenses(
 
       val identifierToLicense = licenses.licenses
         .map { license ->
-          val firstUrl = license.otherUrls[0]
+          val firstUrl = license.otherUrls.firstOrNull() ?: license.spdxUrl
           val targetUrl = if (firstUrl.startsWith("http://")) {
             // Assume an 'https' variant is reachable.
             "https" + firstUrl.substring(4)
@@ -50,12 +49,7 @@ internal class SpdxLicenses(
 
       val urlToLicense = licenses.licenses
         .flatMap { license ->
-          val urls = mutableListOf<String>()
-
-          val spdxRelativeUrl = license.spdxUrl
-          check(spdxRelativeUrl.startsWith("./"))
-          val spdxUrl = spdxBaseUrl + spdxRelativeUrl.substring(2)
-          urls += spdxUrl
+          val urls = mutableListOf(license.spdxUrl)
 
           for (otherUrl in license.otherUrls) {
             if (otherUrl.startsWith("http://")) {
