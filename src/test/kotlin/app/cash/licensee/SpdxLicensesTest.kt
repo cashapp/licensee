@@ -26,7 +26,7 @@ class SpdxLicensesTest {
       |  {
       |    "licenseId": "FOO-1.0",
       |    "name": "Foo License",
-      |    "detailsUrl": "./FOO-1.0.html",
+      |    "detailsUrl": "https://spdx.org/licenses/FOO-1.0.html",
       |    "seeAlso": [
       |      "http://example.com/foo"
       |    ]
@@ -34,7 +34,7 @@ class SpdxLicensesTest {
       |  {
       |    "licenseId": "FOO-1.0-some-variant",
       |    "name": "Foo Variant License",
-      |    "detailsUrl": "./FOO-1.0-some-variant.html",
+      |    "detailsUrl": "https://spdx.org/licenses/FOO-1.0-some-variant.html",
       |    "seeAlso": [
       |      "http://example.com/foo"
       |    ]
@@ -42,7 +42,7 @@ class SpdxLicensesTest {
       |  {
       |    "licenseId": "BAR-1.0-some-variant",
       |    "name": "Bar Variant License",
-      |    "detailsUrl": "./BAR-1.0-some-variant.html",
+      |    "detailsUrl": "https://spdx.org/licenses/BAR-1.0-some-variant.html",
       |    "seeAlso": [
       |      "http://example.com/bar"
       |    ]
@@ -50,7 +50,7 @@ class SpdxLicensesTest {
       |  {
       |    "licenseId": "BAR-1.0",
       |    "name": "Bar License",
-      |    "detailsUrl": "./BAR-1.0.html",
+      |    "detailsUrl": "https://spdx.org/licenses/BAR-1.0.html",
       |    "seeAlso": [
       |      "http://example.com/bar"
       |    ]
@@ -74,7 +74,7 @@ class SpdxLicensesTest {
       |  {
       |    "licenseId": "FOO-1.0",
       |    "name": "Foo License",
-      |    "detailsUrl": "./FOO-1.0.html",
+      |    "detailsUrl": "https://spdx.org/licenses/FOO-1.0.html",
       |    "seeAlso": [
       |      "http://example.com/foo"
       |    ]
@@ -82,7 +82,7 @@ class SpdxLicensesTest {
       |  {
       |    "licenseId": "BAR-1.0",
       |    "name": "Bar License",
-      |    "detailsUrl": "./BAR-1.0.html",
+      |    "detailsUrl": "https://spdx.org/licenses/BAR-1.0.html",
       |    "seeAlso": [
       |      "https://example.com/bar"
       |    ]
@@ -111,7 +111,7 @@ class SpdxLicensesTest {
       |  {
       |    "licenseId": "FOO-1.0",
       |    "name": "Foo License",
-      |    "detailsUrl": "./FOO-1.0.html",
+      |    "detailsUrl": "https://spdx.org/licenses/FOO-1.0.html",
       |    "seeAlso": [
       |      "http://example.com/foo"
       |    ]
@@ -126,6 +126,36 @@ class SpdxLicensesTest {
     assertEquals(
       SpdxLicense("FOO-1.0", "Foo License", "https://example.com/foo"),
       spdxLicenses.findByUrl("https://spdx.org/licenses/FOO-1.0.html")
+    )
+  }
+
+  @Test fun spdxUrlFallback() {
+    val json = """
+      |{"licenses":[
+      |  {
+      |    "licenseId": "FOO-1.0",
+      |    "name": "Foo License",
+      |    "detailsUrl": "https://spdx.org/licenses/FOO-1.0.html",
+      |    "seeAlso": []
+      |  },
+      |  {
+      |    "licenseId": "BAR-1.0",
+      |    "name": "Bar License",
+      |    "detailsUrl": "https://spdx.org/licenses/BAR-1.0.html",
+      |    "seeAlso": [
+      |      "https://example.com/bar"
+      |    ]
+      |  }
+      |]}
+      |""".trimMargin()
+    val spdxLicenses = SpdxLicenses.parseJson(json)
+    assertEquals(
+      SpdxLicense("FOO-1.0", "Foo License", "https://spdx.org/licenses/FOO-1.0.html"),
+      spdxLicenses.findByIdentifier("FOO-1.0")
+    )
+    assertEquals(
+      SpdxLicense("BAR-1.0", "Bar License", "https://example.com/bar"),
+      spdxLicenses.findByIdentifier("BAR-1.0")
     )
   }
 }
