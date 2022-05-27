@@ -65,6 +65,7 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       "http://www.apache.org/licenses/LICENSE-2.0.html",
       "https://www.apache.org/licenses/LICENSE-2.0.html",
       "http://www.opensource.org/licenses/apache2.0.php",
+      "http://www.apache.org/licenses/LICENSE-2.0",
       -> "Apache-2.0"
 
       "http://creativecommons.org/publicdomain/zero/1.0/",
