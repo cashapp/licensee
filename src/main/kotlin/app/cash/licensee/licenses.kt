@@ -82,6 +82,9 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       "http://www.opensource.org/licenses/bsd-license",
       -> "BSD-2-Clause"
 
+      "http://opensource.org/licenses/BSD-3-Clause",
+      -> "BSD-3-Clause"
+
       "http://www.gnu.org/software/classpath/license.html",
       -> "GPL-2.0-with-classpath-exception"
 
