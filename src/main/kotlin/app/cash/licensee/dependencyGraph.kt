@@ -28,8 +28,8 @@ import java.io.Serializable
 import javax.xml.parsers.DocumentBuilderFactory
 
 internal data class DependencyConfig(
-  val ignoredGroupIds: Map<String, IgnoredData>,
-  val ignoredCoordinates: Map<String, Map<String, IgnoredData>>,
+  val ignoredGroupIds: Map<Id, IgnoredData>,
+  val ignoredCoordinates: Map<Id, Map<Id, IgnoredData>>,
 ) : Serializable
 
 internal data class IgnoredData(
@@ -45,9 +45,11 @@ internal fun loadDependencyCoordinates(
   val warnings = mutableListOf<String>()
 
   val unusedGroupIds = config.ignoredGroupIds.keys.toMutableSet()
-  val unusedCoordinates = mutableSetOf<Pair<String, String>>()
+  val unusedCoordinates = mutableSetOf<Pair<Id, Id>>()
   for ((groupId, artifacts) in config.ignoredCoordinates) {
-    val redundant = groupId in config.ignoredGroupIds
+    val redundant = config.ignoredGroupIds.any { (ignoredGroupId, _) ->
+      ignoredGroupId.contains(groupId)
+    }
     for (artifactId in artifacts.keys) {
       if (redundant) {
         warnings += "Ignore for $groupId:$artifactId is redundant as $groupId is also ignored"
@@ -79,8 +81,8 @@ private fun loadDependencyCoordinates(
   logger: Logger,
   root: ResolvedComponentResult,
   config: DependencyConfig,
-  unusedGroupIds: MutableSet<String>,
-  unusedCoordinates: MutableSet<Pair<String, String>>,
+  unusedGroupIds: MutableSet<Id>,
+  unusedCoordinates: MutableSet<Pair<Id, Id>>,
   destination: MutableSet<DependencyCoordinates>,
   seen: MutableSet<ComponentIdentifier>,
   depth: Int,
@@ -100,10 +102,11 @@ private fun loadDependencyCoordinates(
         ignoreSuffix = " ignoring because flat-dir repository artifact has no metadata"
       } else {
         val ignoredData = null
-          ?: config.ignoredGroupIds[id.group]
-            ?.also { unusedGroupIds -= id.group }
-          ?: config.ignoredCoordinates[id.group]?.get(id.module)
-            ?.also { unusedCoordinates -= id.group to id.module }
+          ?: config.ignoredGroupIds.firstOrNull { it.matches(id.group) }
+            ?.also { unusedGroupIds.removeAll { it.matches(id.group) } }
+          ?: config.ignoredCoordinates.firstOrNull { it.matches(id.group) }
+            ?.firstOrNull { it.matches(id.module) }
+            ?.also { unusedCoordinates.removeAll { it.matches(id.group, id.module) } }
         if (ignoredData != null) {
           ignoreSuffix = buildString {
             append(" ignoring")

@@ -97,6 +97,14 @@ interface LicenseeExtension {
     allowDependency(groupId, artifactId, version, ClosureBackedAction.of(options))
   }
 
+  /** @suppress */
+  @JvmSynthetic // Actual implementation goes here.
+  fun ignoreDependencies(
+    groupId: Id,
+    artifactId: Id?,
+    options: Action<IgnoreDependencyOptions>,
+  )
+
   /**
    *
    * Ignore a single dependency or group of dependencies during dependency graph resolution.
@@ -140,7 +148,13 @@ interface LicenseeExtension {
     groupId: String,
     artifactId: String? = null,
     options: Action<IgnoreDependencyOptions> = Action { },
-  )
+  ) {
+    ignoreDependencies(
+      groupId.toLiteralId(),
+      artifactId?.toLiteralId(),
+      options,
+    )
+  }
 
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
@@ -168,6 +182,85 @@ interface LicenseeExtension {
     options: Closure<IgnoreDependencyOptions>,
   ) {
     ignoreDependencies(groupId, artifactId, ClosureBackedAction.of(options))
+  }
+
+  /**
+   *
+   * Ignore a single dependency or group of dependencies during dependency graph resolution.
+   * Artifacts targeted with this method will not be analyzed for license information and will not show up in any report files.
+   *
+   * This function can be used to ignore internal, closed-source libraries and commercial libraries for which you've purchased a license.
+   *
+   * There are overloads which accept either a groupId or a groupId:artifactId pair.
+   *
+   * ```groovy
+   * licensee {
+   *   ignoreDependencies('com\\.mycompany(\\..*)?')
+   *   ignoreDependencies('com\\.mycompany\\.utils', 'utils(-.*)?')
+   * }
+   * ```
+   *
+   * A reason string can be supplied to document why the dependencies are being ignored.
+   *
+   * ```groovy
+   * licensee {
+   *   ignoreDependencies('com\\.example\\.sdk', 'sdk(-.*)?') {
+   *     because "commercial SDK"
+   *   }
+   * }
+   * ```
+   *
+   * An ignore can be marked as transitive which will ignore an entire branch of the dependency tree.
+   * This will ignore the target artifact's dependencies regardless of the artifact coordinates or license info.
+   * Since it is especially dangerous, a reason string is required.
+   *
+   * ```groovy
+   * licensee {
+   *   ignoreDependenciesByRegex('com\\.other\\.sdk', 'sdk(-.*)?') {
+   *     transitive = true
+   *     because "commercial SDK"
+   *   }
+   * }
+   * ```
+   */
+  fun ignoreDependenciesByRegex(
+    groupId: String,
+    artifactId: String? = null,
+    options: Action<IgnoreDependencyOptions> = Action { },
+  ) {
+    ignoreDependencies(
+      groupId.toRegexId(),
+      artifactId?.toRegexId(),
+      options,
+    )
+  }
+
+  /** @suppress */
+  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
+  fun ignoreDependenciesByRegex(groupId: String) {
+    ignoreDependenciesByRegex(groupId, options = {})
+  }
+
+  /** @suppress */
+  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
+  fun ignoreDependenciesByRegex(groupId: String, options: Closure<IgnoreDependencyOptions>) {
+    ignoreDependenciesByRegex(groupId, options = ClosureBackedAction.of(options))
+  }
+
+  /** @suppress */
+  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
+  fun ignoreDependenciesByRegex(groupId: String, artifactId: String) {
+    ignoreDependenciesByRegex(groupId, artifactId, {})
+  }
+
+  /** @suppress */
+  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
+  fun ignoreDependenciesByRegex(
+    groupId: String,
+    artifactId: String,
+    options: Closure<IgnoreDependencyOptions>,
+  ) {
+    ignoreDependenciesByRegex(groupId, artifactId, ClosureBackedAction.of(options))
   }
 
   /**
@@ -209,8 +302,8 @@ internal class MutableLicenseeExtension : LicenseeExtension {
   private val allowedIdentifiers = mutableSetOf<String>()
   private val allowedUrls = mutableSetOf<String>()
   private val allowedDependencies = mutableMapOf<DependencyCoordinates, String?>()
-  private val ignoredGroupIds = mutableMapOf<String, IgnoredData>()
-  private val ignoredCoordinates = mutableMapOf<String, MutableMap<String, IgnoredData>>()
+  private val ignoredGroupIds = mutableMapOf<Id, IgnoredData>()
+  private val ignoredCoordinates = mutableMapOf<Id, MutableMap<Id, IgnoredData>>()
 
   var violationAction = ViolationAction.FAIL
     private set
@@ -254,8 +347,8 @@ internal class MutableLicenseeExtension : LicenseeExtension {
   }
 
   override fun ignoreDependencies(
-    groupId: String,
-    artifactId: String?,
+    groupId: Id,
+    artifactId: Id?,
     options: Action<IgnoreDependencyOptions>,
   ) {
     var setReason: String? = null
