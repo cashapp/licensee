@@ -18,6 +18,7 @@ package app.cash.licensee
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 internal class SpdxLicenses(
   private val identifierToLicense: Map<String, SpdxLicense>,
@@ -29,6 +30,13 @@ internal class SpdxLicenses(
   companion object {
     private val format = Json {
       ignoreUnknownKeys = true
+    }
+
+    val embedded by lazy(PUBLICATION) {
+      val json = SpdxLicenses::class.java
+        .getResourceAsStream("/app/cash/licensee/licenses.json")!!
+        .use { it.reader().readText() }
+      parseJson(json)
     }
 
     fun parseJson(json: String): SpdxLicenses {
@@ -87,6 +95,6 @@ private data class SpdxLicensesJson(
 private data class SpdxLicenseJson(
   @SerialName("licenseId") val id: String,
   val name: String,
-  @SerialName("detailsUrl") val spdxUrl: String,
+  @SerialName("reference") val spdxUrl: String,
   @SerialName("seeAlso") val otherUrls: List<String>,
 )
