@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.4.1] - 2022-06-03
+
+**Fixed**
+
+- Track SPDX database format change which resulted in JSON license URLs being used instead of HTML license URLs.
+
+
 ## [1.4.0] - 2022-05-26
 
 **Changed**
@@ -75,7 +82,8 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.4.0...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.4.1...HEAD
+[1.4.1]: https://github.com/cashapp/licensee/releases/tag/1.4.1
 [1.4.0]: https://github.com/cashapp/licensee/releases/tag/1.4.0
 [1.3.1]: https://github.com/cashapp/licensee/releases/tag/1.3.1
 [1.3.0]: https://github.com/cashapp/licensee/releases/tag/1.3.0
