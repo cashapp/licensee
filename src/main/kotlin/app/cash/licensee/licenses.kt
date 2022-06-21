@@ -76,6 +76,7 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       -> "MIT"
 
       "http://www.opensource.org/licenses/bsd-license",
+      "http://www.opensource.org/licenses/bsd-license.php",
       -> "BSD-2-Clause"
 
       "http://opensource.org/licenses/BSD-3-Clause",
