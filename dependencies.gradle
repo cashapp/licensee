@@ -1,11 +1,11 @@
 buildscript {
   ext.versions = [
-    'kotlin': '1.5.0',
-    'compileSdk': 30,
+    'kotlin': '1.7.0',
+    'compileSdk': 32,
     'minSdk': 21,
   ]
   ext.deps = [
-    'androidGradlePlugin': 'com.android.tools.build:gradle:4.2.0',
+    'androidGradlePlugin': 'com.android.tools.build:gradle:7.2.1',
     'kotlinGradlePlugin': "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}",
   ]
 }
