@@ -21,6 +21,8 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.artifacts.result.ResolvedVariantResult
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.logging.Logger
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -156,6 +158,7 @@ internal fun loadPomInfo(
   project: Project,
   logger: Logger,
   id: DependencyCoordinates,
+  variants: List<ResolvedVariantResult>,
   depth: Int = 0,
 ): PomInfo {
   val pomCoordinates = with(id) { "$group:$artifact:$version@pom" }
@@ -163,6 +166,15 @@ internal fun loadPomInfo(
   val pomConfiguration = project.configurations
     .detachedConfiguration(pomDependency)
     .apply {
+      for (variant in variants) {
+        attributes {
+          val variantAttrs = variant.attributes
+          for (attrs in variantAttrs.keySet()) {
+            @Suppress("UNCHECKED_CAST")
+            it.attribute(attrs as Attribute<Any?>, variantAttrs.getAttribute(attrs)!!)
+          }
+        }
+      }
       // See https://docs.gradle.org/current/userguide/dependency_verification.html#sub:disabling-specific-verification.
       resolutionStrategy.disableDependencyVerification()
     }
@@ -252,6 +264,7 @@ internal fun loadPomInfo(
         project = project,
         logger = logger,
         id = DependencyCoordinates(group, artifact, version),
+        variants = variants,
         depth = depth + 1
       )
       if (licenses.isEmpty()) {

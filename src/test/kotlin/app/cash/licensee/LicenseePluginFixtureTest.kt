@@ -21,7 +21,6 @@ import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.Assert.assertEquals
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
@@ -104,9 +103,6 @@ class LicenseePluginFixtureTest {
       "url-missing-name-fallback-is-spdx",
     ) fixtureName: String,
   ) {
-    // TODO https://github.com/cashapp/licensee/issues/30
-    assumeFalse(fixtureName == "artifact-with-gradle-metadata-android")
-
     val fixtureDir = File(fixturesDir, fixtureName)
     createRunner(fixtureDir).build()
     assertExpectedFiles(fixtureDir)
