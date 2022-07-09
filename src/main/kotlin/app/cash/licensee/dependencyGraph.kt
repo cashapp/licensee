@@ -15,6 +15,7 @@
  */
 package app.cash.licensee
 
+import java.io.*
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
@@ -26,8 +27,8 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.logging.Logger
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
-import java.io.Serializable
 import javax.xml.parsers.DocumentBuilderFactory
+import org.gradle.api.artifacts.*
 
 internal data class DependencyConfig(
   val ignoredGroupIds: Map<String, IgnoredData>,
@@ -154,6 +155,55 @@ private fun loadDependencyCoordinates(
   }
 }
 
+private fun Project.pomConfiguration(
+  pomDependency: Dependency,
+  variants: List<ResolvedVariantResult>
+) = configurations
+  .detachedConfiguration(pomDependency)
+  .apply {
+    for (variant in variants) {
+      attributes {
+        val variantAttrs = variant.attributes
+        for (attrs in variantAttrs.keySet()) {
+          @Suppress("UNCHECKED_CAST")
+          it.attribute(attrs as Attribute<Any?>, variantAttrs.getAttribute(attrs)!!)
+        }
+      }
+    }
+    // See https://docs.gradle.org/current/userguide/dependency_verification.html#sub:disabling-specific-verification.
+    resolutionStrategy.disableDependencyVerification()
+  }
+  .resolvedConfiguration
+  .lenientConfiguration
+
+private val LenientConfiguration.resolvedFiles get() = allModuleDependencies
+  .flatMap { it.allModuleArtifacts }
+  .map { it.file }
+
+private fun getPomFile(
+  project: Project,
+  pomCoordinates: String,
+  variants: List<ResolvedVariantResult>
+): Pair<LenientConfiguration, List<File>> {
+  val pomDependency = project.dependencies.create(pomCoordinates)
+
+  val pomConfigurationWithoutVariants = project.pomConfiguration(
+    pomDependency = pomDependency,
+    variants = emptyList()
+  )
+  val resolvedFilesWithoutVariants = pomConfigurationWithoutVariants.resolvedFiles
+
+  return if (resolvedFilesWithoutVariants.isNotEmpty()) {
+    pomConfigurationWithoutVariants to resolvedFilesWithoutVariants }
+  else {
+    val pomConfigurationWithVariants = project.pomConfiguration(
+      pomDependency = pomDependency,
+      variants = variants
+    )
+    pomConfigurationWithVariants to pomConfigurationWithVariants.resolvedFiles
+  }
+}
+
 internal fun loadPomInfo(
   project: Project,
   logger: Logger,
@@ -162,29 +212,11 @@ internal fun loadPomInfo(
   depth: Int = 0,
 ): PomInfo {
   val pomCoordinates = with(id) { "$group:$artifact:$version@pom" }
-  val pomDependency = project.dependencies.create(pomCoordinates)
-  val pomConfiguration = project.configurations
-    .detachedConfiguration(pomDependency)
-    .apply {
-      for (variant in variants) {
-        attributes {
-          val variantAttrs = variant.attributes
-          for (attrs in variantAttrs.keySet()) {
-            @Suppress("UNCHECKED_CAST")
-            it.attribute(attrs as Attribute<Any?>, variantAttrs.getAttribute(attrs)!!)
-          }
-        }
-      }
-      // See https://docs.gradle.org/current/userguide/dependency_verification.html#sub:disabling-specific-verification.
-      resolutionStrategy.disableDependencyVerification()
-    }
-    .resolvedConfiguration
-    .lenientConfiguration
-
-  val resolvedFiles = pomConfiguration
-    .allModuleDependencies
-    .flatMap { it.allModuleArtifacts }
-    .map { it.file }
+  val (pomConfiguration, resolvedFiles) = getPomFile(
+    project = project,
+    pomCoordinates = pomCoordinates,
+    variants = variants
+  )
 
   if (logger.isInfoEnabled) {
     logger.info(
