@@ -15,8 +15,9 @@
  */
 package app.cash.licensee
 
-import java.io.*
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.LenientConfiguration
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
@@ -27,8 +28,9 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.logging.Logger
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import java.io.File
+import java.io.Serializable
 import javax.xml.parsers.DocumentBuilderFactory
-import org.gradle.api.artifacts.*
 
 internal data class DependencyConfig(
   val ignoredGroupIds: Map<String, IgnoredData>,
@@ -194,8 +196,8 @@ private fun getPomFile(
   val resolvedFilesWithoutVariants = pomConfigurationWithoutVariants.resolvedFiles
 
   return if (resolvedFilesWithoutVariants.isNotEmpty()) {
-    pomConfigurationWithoutVariants to resolvedFilesWithoutVariants }
-  else {
+    pomConfigurationWithoutVariants to resolvedFilesWithoutVariants
+  } else {
     val pomConfigurationWithVariants = project.pomConfiguration(
       pomDependency = pomDependency,
       variants = variants
