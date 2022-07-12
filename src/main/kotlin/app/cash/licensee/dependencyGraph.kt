@@ -185,7 +185,7 @@ private val LenientConfiguration.resolvedFiles get() = allModuleDependencies
 private fun getPomFile(
   project: Project,
   pomCoordinates: String,
-  variants: List<ResolvedVariantResult>
+  variants: List<ResolvedVariantResult>,
 ): Pair<LenientConfiguration, List<File>> {
   val pomDependency = project.dependencies.create(pomCoordinates)
 
