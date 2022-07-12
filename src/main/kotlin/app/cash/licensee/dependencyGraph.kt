@@ -159,7 +159,7 @@ private fun loadDependencyCoordinates(
 
 private fun Project.pomConfiguration(
   pomDependency: Dependency,
-  variants: List<ResolvedVariantResult>
+  variants: List<ResolvedVariantResult>,
 ) = configurations
   .detachedConfiguration(pomDependency)
   .apply {
