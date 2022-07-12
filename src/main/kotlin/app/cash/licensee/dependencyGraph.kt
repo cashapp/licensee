@@ -200,7 +200,7 @@ private fun getPomFile(
   } else {
     val pomConfigurationWithVariants = project.pomConfiguration(
       pomDependency = pomDependency,
-      variants = variants
+      variants = variants,
     )
     pomConfigurationWithVariants to pomConfigurationWithVariants.resolvedFiles
   }
