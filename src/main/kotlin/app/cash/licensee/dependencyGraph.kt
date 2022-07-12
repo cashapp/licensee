@@ -217,7 +217,7 @@ internal fun loadPomInfo(
   val (pomConfiguration, resolvedFiles) = getPomFile(
     project = project,
     pomCoordinates = pomCoordinates,
-    variants = variants
+    variants = variants,
   )
 
   if (logger.isInfoEnabled) {
