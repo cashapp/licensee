@@ -191,7 +191,7 @@ private fun getPomFile(
 
   val pomConfigurationWithoutVariants = project.pomConfiguration(
     pomDependency = pomDependency,
-    variants = emptyList()
+    variants = emptyList(),
   )
   val resolvedFilesWithoutVariants = pomConfigurationWithoutVariants.resolvedFiles
 
