@@ -121,7 +121,8 @@ internal open class LicenseeTask : DefaultTask() {
       }
       logger.info("")
     }
-    val rootCoordinate = configuration.incoming.resolutionResult.root
+    val resolutionResult = configuration.incoming.resolutionResult
+    val rootCoordinate = resolutionResult.root
     val dependencyResult = loadDependencyCoordinates(logger, rootCoordinate, dependencyConfig)
     for (configWarning in dependencyResult.configWarnings) {
       logger.warn("WARNING: $configWarning")
@@ -133,7 +134,7 @@ internal open class LicenseeTask : DefaultTask() {
       logger.info("")
     }
     val coordinatesToPomInfo =
-      dependencyResult.coordinates.associateWith { loadPomInfo(project, logger, it) }
+      dependencyResult.coordinates.associateWith { loadPomInfo(project, logger, it, rootCoordinate.variants) }
 
     if (logger.isInfoEnabled) {
       logger.info("")
