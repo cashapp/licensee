@@ -17,6 +17,8 @@ package app.cash.licensee
 
 import app.cash.licensee.ViolationAction.FAIL
 import app.cash.licensee.ViolationAction.IGNORE
+import java.io.File
+import kotlin.properties.Delegates
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
@@ -35,8 +37,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import java.io.File
-import kotlin.properties.Delegates
 
 internal open class LicenseeTask : DefaultTask() {
   @get:Input
@@ -96,7 +96,7 @@ internal open class LicenseeTask : DefaultTask() {
                 append(" because ")
                 append(ignoreData.reason)
               }
-            }
+            },
           )
         }
         for ((groupId, artifactIds) in dependencyConfig.ignoredCoordinates) {
@@ -114,7 +114,7 @@ internal open class LicenseeTask : DefaultTask() {
                   append(" because ")
                   append(ignoreData.reason)
                 }
-              }
+              },
             )
           }
         }
@@ -155,7 +155,7 @@ internal open class LicenseeTask : DefaultTask() {
             append(artifactDetail.spdxLicenses)
             append(' ')
             append(artifactDetail.unknownLicenses)
-          }
+          },
         )
       }
     }
@@ -176,7 +176,7 @@ internal open class LicenseeTask : DefaultTask() {
       logger.info("")
       logger.info("Allowed identifiers:")
       logger.info(
-        validationConfig.allowedIdentifiers.ifEmpty { listOf("None") }.joinToString(prefix = "  ")
+        validationConfig.allowedIdentifiers.ifEmpty { listOf("None") }.joinToString(prefix = "  "),
       )
       logger.info("Allowed URLs:")
       if (validationConfig.allowedUrls.isEmpty()) {
@@ -203,7 +203,7 @@ internal open class LicenseeTask : DefaultTask() {
                 append(" because ")
                 append(reason)
               }
-            }
+            },
           )
         }
       }

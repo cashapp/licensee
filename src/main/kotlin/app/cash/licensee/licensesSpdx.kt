@@ -15,10 +15,10 @@
  */
 package app.cash.licensee
 
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 internal class SpdxLicenses(
   private val identifierToLicense: Map<String, SpdxLicense>,

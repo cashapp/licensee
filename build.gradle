@@ -4,7 +4,7 @@ buildscript {
   dependencies {
     classpath deps.kotlinGradlePlugin
     classpath "org.jetbrains.kotlin:kotlin-serialization:${versions.kotlin}"
-    classpath 'com.diffplug.spotless:spotless-plugin-gradle:5.1.0'
+    classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.8.0'
     classpath 'com.vanniktech:gradle-maven-publish-plugin:0.14.2'
     classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.7.0'
     classpath 'de.undercouch:gradle-download-task:5.1.0'
@@ -132,10 +132,13 @@ spotless {
     target('**/*.kt')
     licenseHeaderFile(rootProject.file('gradle/license-header.txt'))
     // Spotless doesn't read .editorconfig yet: https://github.com/diffplug/spotless/issues/142
-    ktlint('0.41.0').userData([
-      'insert_final_newline': 'true',
+    ktlint('0.46.1').editorConfigOverride([
+      'disabled_rules': 'filename',
       'end_of_line': 'lf',
       'indent_size': '2',
+      'ij_kotlin_allow_trailing_comma': 'true',
+      'ij_kotlin_allow_trailing_comma_on_call_site': 'true',
+      'ij_kotlin_imports_layout': '*',
     ])
   }
 }

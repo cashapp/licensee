@@ -23,7 +23,7 @@ class SpdxLicensesTest {
   @Test fun embeddedDatabaseLitmusTest() {
     assertEquals(
       SpdxLicense("MIT-0", "MIT No Attribution", "https://github.com/aws/mit-0"),
-      SpdxLicenses.embedded.findByIdentifier("MIT-0")
+      SpdxLicenses.embedded.findByIdentifier("MIT-0"),
     )
   }
 
@@ -63,15 +63,16 @@ class SpdxLicensesTest {
       |    ]
       |  }
       |]}
-      |""".trimMargin()
+      |
+    """.trimMargin()
     val spdxLicenses = SpdxLicenses.parseJson(json)
     assertEquals(
       SpdxLicense("FOO-1.0", "Foo License", "https://example.com/foo"),
-      spdxLicenses.findByUrl("http://example.com/foo")
+      spdxLicenses.findByUrl("http://example.com/foo"),
     )
     assertEquals(
       SpdxLicense("BAR-1.0", "Bar License", "https://example.com/bar"),
-      spdxLicenses.findByUrl("http://example.com/bar")
+      spdxLicenses.findByUrl("http://example.com/bar"),
     )
   }
 
@@ -95,20 +96,21 @@ class SpdxLicensesTest {
       |    ]
       |  }
       |]}
-      |""".trimMargin()
+      |
+    """.trimMargin()
     val spdxLicenses = SpdxLicenses.parseJson(json)
     assertEquals(
       SpdxLicense("FOO-1.0", "Foo License", "https://example.com/foo"),
-      spdxLicenses.findByUrl("http://example.com/foo")
+      spdxLicenses.findByUrl("http://example.com/foo"),
     )
     assertEquals(
       SpdxLicense("FOO-1.0", "Foo License", "https://example.com/foo"),
-      spdxLicenses.findByUrl("https://example.com/foo")
+      spdxLicenses.findByUrl("https://example.com/foo"),
     )
     assertNull(spdxLicenses.findByUrl("http://example.com/bar"))
     assertEquals(
       SpdxLicense("BAR-1.0", "Bar License", "https://example.com/bar"),
-      spdxLicenses.findByUrl("https://example.com/bar")
+      spdxLicenses.findByUrl("https://example.com/bar"),
     )
   }
 
@@ -124,15 +126,16 @@ class SpdxLicensesTest {
       |    ]
       |  }
       |]}
-      |""".trimMargin()
+      |
+    """.trimMargin()
     val spdxLicenses = SpdxLicenses.parseJson(json)
     assertEquals(
       SpdxLicense("FOO-1.0", "Foo License", "https://example.com/foo"),
-      spdxLicenses.findByUrl("http://example.com/foo")
+      spdxLicenses.findByUrl("http://example.com/foo"),
     )
     assertEquals(
       SpdxLicense("FOO-1.0", "Foo License", "https://example.com/foo"),
-      spdxLicenses.findByUrl("https://spdx.org/licenses/FOO-1.0.html")
+      spdxLicenses.findByUrl("https://spdx.org/licenses/FOO-1.0.html"),
     )
   }
 
@@ -154,15 +157,16 @@ class SpdxLicensesTest {
       |    ]
       |  }
       |]}
-      |""".trimMargin()
+      |
+    """.trimMargin()
     val spdxLicenses = SpdxLicenses.parseJson(json)
     assertEquals(
       SpdxLicense("FOO-1.0", "Foo License", "https://spdx.org/licenses/FOO-1.0.html"),
-      spdxLicenses.findByIdentifier("FOO-1.0")
+      spdxLicenses.findByIdentifier("FOO-1.0"),
     )
     assertEquals(
       SpdxLicense("BAR-1.0", "Bar License", "https://example.com/bar"),
-      spdxLicenses.findByIdentifier("BAR-1.0")
+      spdxLicenses.findByIdentifier("BAR-1.0"),
     )
   }
 }

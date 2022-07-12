@@ -245,11 +245,13 @@ internal class MutableLicenseeExtension : LicenseeExtension {
     options: Action<AllowDependencyOptions>,
   ) {
     var setReason: String? = null
-    options.execute(object : AllowDependencyOptions {
-      override fun because(reason: String) {
-        setReason = reason
-      }
-    })
+    options.execute(
+      object : AllowDependencyOptions {
+        override fun because(reason: String) {
+          setReason = reason
+        }
+      },
+    )
     allowedDependencies[DependencyCoordinates(groupId, artifactId, version)] = setReason
   }
 
@@ -260,17 +262,19 @@ internal class MutableLicenseeExtension : LicenseeExtension {
   ) {
     var setReason: String? = null
     var setTransitive = false
-    options.execute(object : IgnoreDependencyOptions {
-      override fun because(reason: String) {
-        setReason = reason
-      }
-
-      override var transitive: Boolean
-        get() = setTransitive
-        set(value) {
-          setTransitive = value
+    options.execute(
+      object : IgnoreDependencyOptions {
+        override fun because(reason: String) {
+          setReason = reason
         }
-    })
+
+        override var transitive: Boolean
+          get() = setTransitive
+          set(value) {
+            setTransitive = value
+          }
+      },
+    )
 
     if (setTransitive && setReason == null) {
       throw RuntimeException(
@@ -282,7 +286,7 @@ internal class MutableLicenseeExtension : LicenseeExtension {
             append(artifactId)
           }
           append("' is dangerous and requires a reason string")
-        }
+        },
       )
     }
 
