@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [1.5.0] - 2022-07-12
+
+**Changed**
+
+- Upgrade AGP dependency to 7.2 which requires JDK 11 to run.
+
+**Fixed**
+
+- Include Gradle variant attributes when resolving POMs. This should fix issues with Kotlin JS and Kotlin multiplatform artifacts.
+
+
 ## [1.4.1] - 2022-06-03
 
 **Fixed**
