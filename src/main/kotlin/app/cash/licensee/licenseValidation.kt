@@ -54,7 +54,7 @@ internal fun validateArtifacts(
       if (spdxLicense.identifier in validationConfig.allowedIdentifiers) {
         unusedAllowedIdentifiers -= spdxLicense.identifier
         artifactResults += ValidationResult.Info(
-          "SPDX identifier '${spdxLicense.identifier}' allowed"
+          "SPDX identifier '${spdxLicense.identifier}' allowed",
         )
         validated = true
         break
@@ -62,7 +62,7 @@ internal fun validateArtifacts(
       if (spdxLicense.url in validationConfig.allowedUrls) {
         unusedAllowedUrls -= spdxLicense.url
         artifactResults += ValidationResult.Warning(
-          "License URL '${spdxLicense.url}' was allowed but could use SPDX identifier '${spdxLicense.identifier}'"
+          "License URL '${spdxLicense.url}' was allowed but could use SPDX identifier '${spdxLicense.identifier}'",
         )
         validated = true
         break
@@ -83,7 +83,7 @@ internal fun validateArtifacts(
     if (!validated) {
       for (spdxLicense in artifact.spdxLicenses) {
         artifactResults += ValidationResult.Error(
-          "SPDX identifier '${spdxLicense.identifier}' is NOT allowed"
+          "SPDX identifier '${spdxLicense.identifier}' is NOT allowed",
         )
       }
       for (unknownLicense in artifact.unknownLicenses) {
@@ -92,7 +92,7 @@ internal fun validateArtifacts(
             "Unknown license name '${unknownLicense.name}' with no URL is NOT allowed"
           } else {
             "Unknown license URL '${unknownLicense.url}' is NOT allowed"
-          }
+          },
         )
       }
       if (artifact.spdxLicenses.isEmpty() && artifact.unknownLicenses.isEmpty()) {
@@ -113,7 +113,7 @@ internal fun validateArtifacts(
               append(" because ")
               append(reason)
             }
-          }
+          },
         )
 
         // Downgrade errors to info.
@@ -127,7 +127,7 @@ internal fun validateArtifacts(
           .firstOrNull { it.group == artifact.groupId && it.artifact == artifact.artifactId }
         if (candidate != null) {
           artifactResults += ValidationResult.Warning(
-            "Coordinates match an allowed dependency but version does not match (${candidate.version} != ${artifact.version})"
+            "Coordinates match an allowed dependency but version does not match (${candidate.version} != ${artifact.version})",
           )
         }
       }

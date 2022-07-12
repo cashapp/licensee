@@ -18,12 +18,12 @@ package app.cash.licensee
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import java.io.File
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
 
 @RunWith(TestParameterInjector::class)
 class LicenseePluginFixtureTest {
@@ -145,7 +145,7 @@ class LicenseePluginFixtureTest {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).containsMatch(
-      "Transitive dependency ignore on 'com\\.example(:example)?' is dangerous and requires a reason string"
+      "Transitive dependency ignore on 'com\\.example(:example)?' is dangerous and requires a reason string",
     )
   }
 
@@ -155,7 +155,7 @@ class LicenseePluginFixtureTest {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).contains(
-      "'app.cash.licensee' requires compatible language/platform plugin to be applied (root project)"
+      "'app.cash.licensee' requires compatible language/platform plugin to be applied (root project)",
     )
   }
 
@@ -165,7 +165,7 @@ class LicenseePluginFixtureTest {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).contains(
-      "'app.cash.licensee' requires compatible language/platform plugin to be applied (project :some:thing)"
+      "'app.cash.licensee' requires compatible language/platform plugin to be applied (project :some:thing)",
     )
   }
 
@@ -182,7 +182,8 @@ class LicenseePluginFixtureTest {
       """
       |com.example:example:1.0.0
       | - ERROR: SPDX identifier 'Apache-2.0' is NOT allowed
-      |""".trimMargin()
+      |
+      """.trimMargin(),
     )
   }
 
@@ -199,7 +200,8 @@ class LicenseePluginFixtureTest {
       """
       |com.example:example:1.0.0
       | - ERROR: SPDX identifier 'Apache-2.0' is NOT allowed
-      |""".trimMargin()
+      |
+      """.trimMargin(),
     )
   }
 

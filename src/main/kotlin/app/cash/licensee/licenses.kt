@@ -38,7 +38,7 @@ internal fun normalizeLicenseInfo(
       pomInfo.name,
       spdxLicenses,
       unknownLicenses,
-      pomInfo.scm?.url?.let(::ArtifactScm)
+      pomInfo.scm?.url?.let(::ArtifactScm),
     )
   }
 

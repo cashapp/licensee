@@ -18,6 +18,8 @@ package app.cash.licensee
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.publishing.AndroidArtifacts.ArtifactType.CLASSES
+import java.io.File
+import java.util.Locale.ROOT
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -28,8 +30,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.common
-import java.io.File
-import java.util.Locale.ROOT
 
 private const val baseTaskName = "licensee"
 private const val reportFolder = "licensee"
@@ -75,7 +75,7 @@ class LicenseePlugin : Plugin<Project> {
           "project ${project.path}"
         }
         throw IllegalStateException(
-          "'app.cash.licensee' requires compatible language/platform plugin to be applied ($name)"
+          "'app.cash.licensee' requires compatible language/platform plugin to be applied ($name)",
         )
       }
 

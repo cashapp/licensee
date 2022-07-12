@@ -15,6 +15,9 @@
  */
 package app.cash.licensee
 
+import java.io.File
+import java.io.Serializable
+import javax.xml.parsers.DocumentBuilderFactory
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.LenientConfiguration
@@ -28,9 +31,6 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.logging.Logger
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
-import java.io.File
-import java.io.Serializable
-import javax.xml.parsers.DocumentBuilderFactory
 
 internal data class DependencyConfig(
   val ignoredGroupIds: Map<String, IgnoredData>,
@@ -139,7 +139,7 @@ private fun loadDependencyCoordinates(
         if (ignoreSuffix != null) {
           append(ignoreSuffix)
         }
-      }
+      },
     )
   }
 
@@ -149,7 +149,14 @@ private fun loadDependencyCoordinates(
         val selected = dependency.selected
         if (seen.add(selected.id)) {
           loadDependencyCoordinates(
-            logger, selected, config, unusedGroupIds, unusedCoordinates, destination, seen, depth + 1
+            logger,
+            selected,
+            config,
+            unusedGroupIds,
+            unusedCoordinates,
+            destination,
+            seen,
+            depth + 1,
           )
         }
       }
@@ -299,7 +306,7 @@ internal fun loadPomInfo(
         logger = logger,
         id = DependencyCoordinates(group, artifact, version),
         variants = variants,
-        depth = depth + 1
+        depth = depth + 1,
       )
       if (licenses.isEmpty()) {
         licenses += parentPomInfo.licenses
