@@ -27,6 +27,8 @@ import org.gradle.api.attributes.Usage.JAVA_RUNTIME
 import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
 import org.gradle.api.reporting.ReportingExtension
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.language.base.plugins.LifecycleBasePlugin.CHECK_TASK_NAME
+import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.common
@@ -54,7 +56,10 @@ class LicenseePlugin : Plugin<Project> {
         // The JS plugin uses the same runtime configuration name as the Java plugin.
         configureJavaPlugin(project, extension)
       } else if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-        rootTask = project.tasks.register(baseTaskName)
+        rootTask = project.tasks.register(baseTaskName) {
+          it.group = VERIFICATION_GROUP
+          it.description = taskDescription("all Kotlin targets")
+        }
         if (androidPlugin != null) {
           configureKotlinMultiplatformTargets(project, extension, rootTask, skipAndroid = true)
           configureAndroidVariants(project, extension, rootTask, androidPlugin, prefix = true)
@@ -66,7 +71,10 @@ class LicenseePlugin : Plugin<Project> {
         // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
         configureJavaPlugin(project, extension)
       } else if (androidPlugin != null) {
-        rootTask = project.tasks.register(baseTaskName)
+        rootTask = project.tasks.register(baseTaskName) {
+          it.group = VERIFICATION_GROUP
+          it.description = taskDescription("all Android variants")
+        }
         configureAndroidVariants(project, extension, rootTask, androidPlugin)
       } else {
         val name = if (project === project.rootProject) {
@@ -80,7 +88,7 @@ class LicenseePlugin : Plugin<Project> {
       }
 
       if (rootTask != null) {
-        project.tasks.named("check").configure {
+        project.tasks.named(CHECK_TASK_NAME).configure {
           it.dependsOn(rootTask)
         }
       }
@@ -115,6 +123,9 @@ private fun configureAndroidVariants(
       append(suffix)
     }
     val task = project.tasks.register(taskName, LicenseeTask::class.java) {
+      it.group = VERIFICATION_GROUP
+      it.description = taskDescription("Android ${variant.name} variant")
+
       it.dependencyConfig = extension.toDependencyTreeConfig()
       it.validationConfig = extension.toLicenseValidationConfig()
       it.violationAction = extension.violationAction
@@ -149,6 +160,9 @@ private fun configureKotlinMultiplatformTargets(
 
     val suffix = target.name.capitalize(ROOT)
     val task = project.tasks.register("$baseTaskName$suffix", LicenseeTask::class.java) {
+      it.group = VERIFICATION_GROUP
+      it.description = taskDescription("Kotlin ${target.name} target")
+
       it.dependencyConfig = extension.toDependencyTreeConfig()
       it.validationConfig = extension.toLicenseValidationConfig()
       it.violationAction = extension.violationAction
@@ -173,6 +187,9 @@ private fun configureJavaPlugin(
   extension: MutableLicenseeExtension,
 ) {
   val task = project.tasks.register(baseTaskName, LicenseeTask::class.java) {
+    it.group = VERIFICATION_GROUP
+    it.description = taskDescription()
+
     it.dependencyConfig = extension.toDependencyTreeConfig()
     it.validationConfig = extension.toLicenseValidationConfig()
     it.violationAction = extension.violationAction
@@ -182,7 +199,15 @@ private fun configureJavaPlugin(
 
     it.outputDir = project.extensions.getByType(ReportingExtension::class.java).file(reportFolder)
   }
-  project.tasks.named("check").configure {
+  project.tasks.named(CHECK_TASK_NAME).configure {
     it.dependsOn(task)
+  }
+}
+
+private fun taskDescription(target: String? = null) = buildString {
+  append("Run Licensee dependency license validation")
+  if (target != null) {
+    append(" on ")
+    append(target)
   }
 }
