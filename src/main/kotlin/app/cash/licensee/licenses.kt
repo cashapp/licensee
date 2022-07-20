@@ -88,6 +88,9 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       "http://www.eclipse.org/org/documents/epl-v10.php",
       -> "EPL-1.0"
 
+      "https://www.eclipse.org/legal/epl-2.0/",
+      -> "EPL-2.0"
+
       else -> null
     }
     fallbackId?.let(SpdxLicenses.embedded::findByIdentifier)?.let { license ->
