@@ -6,10 +6,18 @@
     <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
     <script>var pathToRoot = "../../../";</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-const savedDarkMode = storage ? JSON.parse(storage) : false
-if(savedDarkMode === true){
-    document.getElementsByTagName("html")[0].classList.add("theme-dark")
-}</script>
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
@@ -21,6 +29,7 @@ if(savedDarkMode === true){
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
 <script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
 <script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
 </head>
 <body>
 <div class="navigation-wrapper" id="navigation-wrapper">
@@ -43,10 +52,10 @@ if(savedDarkMode === true){
     </div>
     <div id="main">
 <div class="main-content" id="content" pageIds="licensee::app.cash.licensee/LicenseeExtension///PointingToDeclaration//769193423">
-  <div class="breadcrumbs"><a href="../../../index.html">licensee</a><span class="delimiter">/</span><a href="../index.html">app.cash.licensee</a><span class="delimiter">/</span><a href="index.html">LicenseeExtension</a></div>
+  <div class="breadcrumbs"><a href="../../../index.html">licensee</a><span class="delimiter">/</span><a href="../index.html">app.cash.licensee</a><span class="delimiter">/</span><span class="current">LicenseeExtension</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Licensee</span><wbr></wbr><span><span>Extension</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">LicenseeExtension</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">LicenseeExtension</a></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button><button class="section-tab" data-togglable="Functions">Functions</button></div>
@@ -62,7 +71,7 @@ if(savedDarkMode === true){
                 </span></span></div>
             <div>
               <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-allow-dependency-options/index.html">AllowDependencyOptions</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-allow-dependency-options/index.html">AllowDependencyOptions</a></div></div></div>
               </div>
             </div>
           </div>
@@ -77,7 +86,7 @@ if(savedDarkMode === true){
                 </span></span></div>
             <div>
               <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-ignore-dependency-options/index.html">IgnoreDependencyOptions</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-ignore-dependency-options/index.html">IgnoreDependencyOptions</a></div></div></div>
               </div>
             </div>
           </div>
@@ -94,7 +103,7 @@ if(savedDarkMode === true){
                 </span></span></div>
             <div>
               <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="allow.html"><span class="token function">allow</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">spdxId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Allow artifacts with a license that matches a SPDX identifier.</p></div></div></div>
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="allow.html"><span class="token function">allow</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">spdxId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Allow artifacts with a license that matches a SPDX identifier.</p></div></div></div>
               </div>
             </div>
           </div>
@@ -109,7 +118,7 @@ if(savedDarkMode === true){
                 </span></span></div>
             <div>
               <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="allow-dependency.html"><span class="token function">allowDependency</span></a><span class="token punctuation">(</span><span class="parameters wrapped"><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;groupId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;artifactId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;version<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;options<span class="token operator">: </span><span data-unresolved-link="org.gradle.api/Action///PointingToDeclaration/">Action</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-allow-dependency-options/index.html">LicenseeExtension.AllowDependencyOptions</a><span class="token operator">&gt;</span><span class="token operator"> = </span>Action { }</span></span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Allow an artifact with a specific groupId, artifactId, and version. This is useful for artifacts which contain no license data or have invalid/incorrect license data.</p></div></div></div>
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="allow-dependency.html"><span class="token function">allowDependency</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">groupId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">artifactId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">version<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">options<span class="token operator">: </span><span data-unresolved-link="org.gradle.api/Action///PointingToDeclaration/">Action</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-allow-dependency-options/index.html">LicenseeExtension.AllowDependencyOptions</a><span class="token operator">&gt;</span><span class="token operator"> = </span>Action { }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Allow an artifact with a specific groupId, artifactId, and version. This is useful for artifacts which contain no license data or have invalid/incorrect license data.</p></div></div></div>
               </div>
             </div>
           </div>
@@ -124,7 +133,7 @@ if(savedDarkMode === true){
                 </span></span></div>
             <div>
               <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="allow-url.html"><span class="token function">allowUrl</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">url<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Allow artifacts with an unknown (non-SPDX) license which matches a URL.</p></div></div></div>
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="allow-url.html"><span class="token function">allowUrl</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">url<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Allow artifacts with an unknown (non-SPDX) license which matches a URL.</p></div></div></div>
               </div>
             </div>
           </div>
@@ -139,7 +148,7 @@ if(savedDarkMode === true){
                 </span></span></div>
             <div>
               <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="ignore-dependencies.html"><span class="token function">ignoreDependencies</span></a><span class="token punctuation">(</span><span class="parameters wrapped"><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;groupId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;artifactId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;options<span class="token operator">: </span><span data-unresolved-link="org.gradle.api/Action///PointingToDeclaration/">Action</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-ignore-dependency-options/index.html">LicenseeExtension.IgnoreDependencyOptions</a><span class="token operator">&gt;</span><span class="token operator"> = </span>Action { }</span></span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Ignore a single dependency or group of dependencies during dependency graph resolution. Artifacts targeted with this method will not be analyzed for license information and will not show up in any report files.</p></div></div></div>
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="ignore-dependencies.html"><span class="token function">ignoreDependencies</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">groupId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">artifactId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">options<span class="token operator">: </span><span data-unresolved-link="org.gradle.api/Action///PointingToDeclaration/">Action</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-ignore-dependency-options/index.html">LicenseeExtension.IgnoreDependencyOptions</a><span class="token operator">&gt;</span><span class="token operator"> = </span>Action { }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Ignore a single dependency or group of dependencies during dependency graph resolution. Artifacts targeted with this method will not be analyzed for license information and will not show up in any report files.</p></div></div></div>
               </div>
             </div>
           </div>
@@ -154,7 +163,7 @@ if(savedDarkMode === true){
                 </span></span></div>
             <div>
               <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="violation-action.html"><span class="token function">violationAction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">level<span class="token operator">: </span><a href="../-violation-action/index.html">ViolationAction</a></span></span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Build behavior when a license violation is found.</p></div></div></div>
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="violation-action.html"><span class="token function">violationAction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">level<span class="token operator">: </span><a href="../-violation-action/index.html">ViolationAction</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Build behavior when a license violation is found.</p></div></div></div>
               </div>
             </div>
           </div>
