@@ -35,7 +35,7 @@ dependencies {
   compileOnly gradleApi()
   compileOnly deps.androidGradlePlugin
   compileOnly deps.kotlinGradlePlugin
-  implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0'
+  implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1'
 
   testImplementation 'junit:junit:4.13.2'
   testImplementation 'com.google.truth:truth:1.1.3'
