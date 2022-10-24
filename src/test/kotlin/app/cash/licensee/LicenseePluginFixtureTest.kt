@@ -62,6 +62,8 @@ class LicenseePluginFixtureTest {
       "multiple-with-url-allowed",
       "plugin-android-application",
       "plugin-android-application-product-flavors",
+      "plugin-android-dynamic-feature",
+      "plugin-android-dynamic-feature-product-flavors",
       "plugin-android-library",
       "plugin-android-library-product-flavors",
       "plugin-android-report-dir",

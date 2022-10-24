@@ -47,6 +47,8 @@ class LicenseePlugin : Plugin<Project> {
         AndroidPlugin.Application
       } else if (project.plugins.hasPlugin("com.android.library")) {
         AndroidPlugin.Library
+      } else if (project.plugins.hasPlugin("com.android.dynamic-feature")) {
+        AndroidPlugin.DynamicFeature
       } else {
         null
       }
@@ -99,6 +101,7 @@ class LicenseePlugin : Plugin<Project> {
 private enum class AndroidPlugin {
   Application,
   Library,
+  DynamicFeature,
 }
 
 private fun configureAndroidVariants(
@@ -110,7 +113,7 @@ private fun configureAndroidVariants(
 ) {
   val extensions = project.extensions
   val variants = when (android) {
-    AndroidPlugin.Application -> extensions.getByType(AppExtension::class.java).applicationVariants
+    AndroidPlugin.Application, AndroidPlugin.DynamicFeature -> extensions.getByType(AppExtension::class.java).applicationVariants
     AndroidPlugin.Library -> extensions.getByType(LibraryExtension::class.java).libraryVariants
   }
   variants.configureEach { variant ->
