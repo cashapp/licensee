@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [1.6.0] - 2022-10-26
+
+**Added**
+
+- Support for Android dynamic feature module plugin.
+- New fallback URL for EPL-2.0.
+
+**Changed**
+
+- Update SPDX database to version 3.18 (2022-08-12).
+
+
 ## [1.5.0] - 2022-07-12
 
 **Changed**
@@ -93,7 +105,9 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.4.1...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.6.0...HEAD
+[1.6.0]: https://github.com/cashapp/licensee/releases/tag/1.6.0
+[1.5.0]: https://github.com/cashapp/licensee/releases/tag/1.5.0
 [1.4.1]: https://github.com/cashapp/licensee/releases/tag/1.4.1
 [1.4.0]: https://github.com/cashapp/licensee/releases/tag/1.4.0
 [1.3.1]: https://github.com/cashapp/licensee/releases/tag/1.3.1
