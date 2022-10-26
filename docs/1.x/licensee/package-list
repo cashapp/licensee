@@ -40,5 +40,7 @@ $dokka.location:app.cash.licensee/ViolationAction.FAIL///PointingToDeclaration/{
 $dokka.location:app.cash.licensee/ViolationAction.IGNORE///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}licensee/app.cash.licensee/-violation-action/-i-g-n-o-r-e/index.html
 $dokka.location:app.cash.licensee/ViolationAction.LOG///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}licensee/app.cash.licensee/-violation-action/-l-o-g/index.html
 $dokka.location:app.cash.licensee/ViolationAction///PointingToDeclaration/licensee/app.cash.licensee/-violation-action/index.html
+$dokka.location:app.cash.licensee/ViolationAction/valueOf/#kotlin.String/PointingToDeclaration/licensee/app.cash.licensee/-violation-action/value-of.html
+$dokka.location:app.cash.licensee/ViolationAction/values/#/PointingToDeclaration/licensee/app.cash.licensee/-violation-action/values.html
 app.cash.licensee
 
