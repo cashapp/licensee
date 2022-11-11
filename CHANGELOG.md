@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+**Added**
+
+- Make unused allowed SPDX-identifier, license-url and allowed dependency warnings configurable
+
 ## [1.6.0] - 2022-10-26
 
 **Added**

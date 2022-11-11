@@ -196,11 +196,56 @@ interface LicenseeExtension {
     fun because(reason: String)
     var transitive: Boolean
   }
+
+  /**
+   * Configure behavior when an unused allowDependency configuration is detected.
+   *
+   * ```
+   * licensee {
+   *   unusedAllowAction(LOG)
+   * }
+   * ```
+   *
+   * The default behavior is to [log][UnusedLicenseConfigurationAction.LOG].
+   */
+  fun unusedAllowAction(level: UnusedLicenseConfigurationAction)
+
+  /**
+   * Configure behavior when an unused allowUrl configuration is detected.
+   *
+   * ```
+   * licensee {
+   *   unusedAllowUrlAction(LOG)
+   * }
+   * ```
+   *
+   * The default behavior is to [log][UnusedLicenseConfigurationAction.LOG].
+   */
+  fun unusedAllowUrlAction(level: UnusedLicenseConfigurationAction)
+
+  /**
+   * Configure behavior when an unused allowDependency configuration is detected.
+   *
+   * ```
+   * licensee {
+   *   unusedAllowDependenciesAction(LOG)
+   * }
+   * ```
+   *
+   * The default behavior is to [log][UnusedLicenseConfigurationAction.LOG].
+   */
+  fun unusedAllowDependenciesAction(level: UnusedLicenseConfigurationAction)
 }
 
 @Suppress("unused") // Public API.
 enum class ViolationAction {
   FAIL,
+  LOG,
+  IGNORE,
+}
+
+@Suppress("unused") // Public API.
+enum class UnusedLicenseConfigurationAction {
   LOG,
   IGNORE,
 }
@@ -211,6 +256,9 @@ internal class MutableLicenseeExtension : LicenseeExtension {
   private val allowedDependencies = mutableMapOf<DependencyCoordinates, String?>()
   private val ignoredGroupIds = mutableMapOf<String, IgnoredData>()
   private val ignoredCoordinates = mutableMapOf<String, MutableMap<String, IgnoredData>>()
+  private var unusedAllowAction = UnusedLicenseConfigurationAction.LOG
+  private var unusedAllowUrlAction = UnusedLicenseConfigurationAction.LOG
+  private var unusedAllowDependencyAction = UnusedLicenseConfigurationAction.LOG
 
   var violationAction = ViolationAction.FAIL
     private set
@@ -227,6 +275,9 @@ internal class MutableLicenseeExtension : LicenseeExtension {
       allowedIdentifiers.toSet(),
       allowedUrls.toSet(),
       allowedDependencies.toMap(),
+      unusedAllowAction = unusedAllowAction,
+      unusedAllowUrlAction = unusedAllowUrlAction,
+      unusedAllowDependencyAction = unusedAllowDependencyAction,
     )
   }
 
@@ -300,5 +351,17 @@ internal class MutableLicenseeExtension : LicenseeExtension {
 
   override fun violationAction(level: ViolationAction) {
     violationAction = level
+  }
+
+  override fun unusedAllowAction(level: UnusedLicenseConfigurationAction) {
+    unusedAllowAction = level
+  }
+
+  override fun unusedAllowUrlAction(level: UnusedLicenseConfigurationAction) {
+    unusedAllowUrlAction = level
+  }
+
+  override fun unusedAllowDependenciesAction(level: UnusedLicenseConfigurationAction) {
+    unusedAllowDependencyAction = level
   }
 }

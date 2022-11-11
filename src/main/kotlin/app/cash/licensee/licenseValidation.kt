@@ -21,6 +21,9 @@ internal data class ValidationConfig(
   val allowedIdentifiers: Set<String>,
   val allowedUrls: Set<String>,
   val allowedCoordinates: Map<DependencyCoordinates, String?>,
+  val unusedAllowAction: UnusedLicenseConfigurationAction,
+  val unusedAllowUrlAction: UnusedLicenseConfigurationAction,
+  val unusedAllowDependencyAction: UnusedLicenseConfigurationAction,
 ) : Serializable
 
 internal data class DependencyCoordinates(
@@ -137,13 +140,22 @@ internal fun validateArtifacts(
   }
 
   for (unusedAllowedIdentifier in unusedAllowedIdentifiers) {
-    configResults += ValidationResult.Warning("Allowed SPDX identifier '$unusedAllowedIdentifier' is unused")
+    when (validationConfig.unusedAllowAction) {
+      UnusedLicenseConfigurationAction.LOG -> configResults += ValidationResult.Warning("Allowed SPDX identifier '$unusedAllowedIdentifier' is unused")
+      UnusedLicenseConfigurationAction.IGNORE -> Unit
+    }
   }
   for (unusedAllowedUrl in unusedAllowedUrls) {
-    configResults += ValidationResult.Warning("Allowed license URL '$unusedAllowedUrl' is unused")
+    when (validationConfig.unusedAllowUrlAction) {
+      UnusedLicenseConfigurationAction.LOG -> configResults += ValidationResult.Warning("Allowed license URL '$unusedAllowedUrl' is unused")
+      UnusedLicenseConfigurationAction.IGNORE -> Unit
+    }
   }
   for (unusedAllowedCoordinate in unusedAllowedCoordinates) {
-    configResults += ValidationResult.Warning("Allowed dependency '${unusedAllowedCoordinate.group}:${unusedAllowedCoordinate.artifact}:${unusedAllowedCoordinate.version}' is unused")
+    when (validationConfig.unusedAllowDependencyAction) {
+      UnusedLicenseConfigurationAction.LOG -> configResults += ValidationResult.Warning("Allowed dependency '${unusedAllowedCoordinate.group}:${unusedAllowedCoordinate.artifact}:${unusedAllowedCoordinate.version}' is unused")
+      UnusedLicenseConfigurationAction.IGNORE -> Unit
+    }
   }
 
   return ValidationResults(configResults, artifactResultMap)
