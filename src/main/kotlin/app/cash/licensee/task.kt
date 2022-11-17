@@ -40,18 +40,18 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
-internal open class LicenseeTask : DefaultTask() {
+internal abstract class LicenseeTask : DefaultTask() {
   @get:Input
-  val dependencyConfig: Property<DependencyConfig> = project.objects.property(DependencyConfig::class.java)
+  abstract val dependencyConfig: Property<DependencyConfig>
 
   @get:Input
-  val validationConfig: Property<ValidationConfig> = project.objects.property(ValidationConfig::class.java)
+  abstract val validationConfig: Property<ValidationConfig>
 
   @get:Input
-  val violationAction: Property<ViolationAction> = project.objects.property(ViolationAction::class.java)
+  abstract val violationAction: Property<ViolationAction>
 
   @get:Input
-  val pomFiles: MapProperty<DependencyCoordinates, File> = project.objects.mapProperty(DependencyCoordinates::class.java, File::class.java)
+  abstract val pomFiles: MapProperty<DependencyCoordinates, File>
 
   fun addPomFileDependencies(configuration: Configuration) {
     val root = configuration.incoming.resolutionResult.rootComponent
@@ -103,7 +103,7 @@ internal open class LicenseeTask : DefaultTask() {
   private fun Configuration.artifacts() = resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap { it.allModuleArtifacts }
 
   @get:OutputDirectory
-  val outputDir: DirectoryProperty = project.objects.directoryProperty()
+  abstract val outputDir: DirectoryProperty
 
   private val _logger: Logger = Logging.getLogger(LicenseeTask::class.java)
 
