@@ -113,7 +113,7 @@ class LicenseePluginFixtureTest {
     val secondRun = GradleRunner.create()
       .withProjectDir(fixtureDir)
       .withDebug(true) // Run in-process
-      .withArguments("licensee", "--stacktrace", versionProperty)
+      .withArguments("licensee", "--stacktrace", "--configuration-cache", versionProperty)
       .forwardOutput()
       .build()
     secondRun.tasks.filter { it.path.contains(":licensee") }.forEach {
@@ -222,7 +222,7 @@ class LicenseePluginFixtureTest {
     return GradleRunner.create()
       .withProjectDir(fixtureDir)
       .withDebug(true) // Run in-process
-      .withArguments("clean", "assemble", "licensee", "--stacktrace", "--continue", versionProperty)
+      .withArguments("clean", "assemble", "licensee", "--stacktrace", "--continue", "--configuration-cache", versionProperty)
       .forwardOutput()
   }
 
