@@ -27,6 +27,7 @@ import org.gradle.api.reporting.ReportingExtension
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin.CHECK_TASK_NAME
 import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.common
@@ -37,6 +38,9 @@ private const val reportFolder = "licensee"
 @Suppress("unused") // Instantiated reflectively by Gradle.
 class LicenseePlugin : Plugin<Project> {
   override fun apply(project: Project) {
+    require(GradleVersion.current() >= GradleVersion.version("7.4")) {
+      "Licensee plugin requires Gradle 7.4 or later"
+    }
     val extension = MutableLicenseeExtension()
     project.extensions.add(LicenseeExtension::class.java, "licensee", extension)
 
