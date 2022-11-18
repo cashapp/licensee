@@ -18,12 +18,15 @@ package app.cash.licensee
 import app.cash.licensee.ViolationAction.FAIL
 import app.cash.licensee.ViolationAction.IGNORE
 import java.io.File
+import java.io.Serializable
+import javax.xml.parsers.DocumentBuilderFactory
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.LogLevel.ERROR
@@ -51,53 +54,59 @@ internal abstract class LicenseeTask : DefaultTask() {
   abstract val violationAction: Property<ViolationAction>
 
   @get:Input
-  abstract val pomFiles: MapProperty<DependencyCoordinates, File>
+  abstract val coordinatesToPomInfo: MapProperty<DependencyCoordinates, PomInfo>
 
   fun addPomFileDependencies(configuration: Configuration) {
     val root = configuration.incoming.resolutionResult.rootComponent
-    val variants = root.map { it.variants }
 
-    val poms: Provider<DependencyResolutionResult> = root.zip(dependencyConfig) { root, depConfig ->
-      root to depConfig
-    }.map { (root, dependencyConfig) ->
-      loadDependencyCoordinates(
+    val pomInfos: Provider<Map<DependencyCoordinates, PomInfo>> = root.zip(dependencyConfig) { root, depConfig ->
+      val directDependencies = loadDependencyCoordinates(
         logger,
         root,
-        dependencyConfig,
+        depConfig,
       )
+      val directPomFiles = directDependencies.coordinates.fetchPomFiles(root.variants)
+      directPomFiles.getPomInfo(root.variants)
     }
 
-    val pomFiles: Provider<List<ResolvedArtifact>> = poms.map {
-      val pomDependencies = it.coordinates.map {
-        project.dependencies.create(it.pomCoordinate())
-      }.toTypedArray()
-      val withVariants = project.configurations.detachedConfiguration(*pomDependencies).apply {
-        for (variant in variants.get()) {
-          attributes {
-            val variantAttrs = variant.attributes
-            for (attrs in variantAttrs.keySet()) {
-              @Suppress("UNCHECKED_CAST")
-              it.attribute(attrs as Attribute<Any?>, variantAttrs.getAttribute(attrs)!!)
-            }
-          }
-        }
-      }.artifacts()
+    this.coordinatesToPomInfo.set(pomInfos)
+  }
 
-      withVariants.ifEmpty {
-        project.configurations.detachedConfiguration(*pomDependencies).artifacts()
+  private fun Iterable<ResolvedArtifact>.getPomInfo(variants: List<ResolvedVariantResult>): Map<DependencyCoordinates, PomInfo> {
+    val factory = DocumentBuilderFactory.newInstance()
+    val documentBuilder = factory.newDocumentBuilder()
+
+    return associate { pom ->
+      // cast is safe because all resolved artifacts are pom files
+      val coordinates = (pom.id.componentIdentifier as ModuleComponentIdentifier).toDependencyCoordinates()
+      val pomDocument = documentBuilder.parse(pom.file)
+
+      coordinates to loadPomInfo(pomDocument) { parentPom ->
+        documentBuilder.parse(setOf(parentPom).fetchPomFiles(variants).single().file)
       }
     }
+  }
 
-    this.pomFiles.set(
-      pomFiles.map {
-        it.associate {
-          // safe to cast because only pom files are resolved
-          val moduleComponentIdentifier = it.id.componentIdentifier as ModuleComponentIdentifier
-          val id = moduleComponentIdentifier.toDependencyCoordinates()
-          id to it.file
+  private fun Set<DependencyCoordinates>.fetchPomFiles(variants: List<ResolvedVariantResult>): List<ResolvedArtifact> {
+    val pomDependencies = map {
+      project.dependencies.create(it.pomCoordinate())
+    }.toTypedArray()
+
+    val withVariants = project.configurations.detachedConfiguration(*pomDependencies).apply {
+      for (variant in variants) {
+        attributes {
+          val variantAttrs = variant.attributes
+          for (attrs in variantAttrs.keySet()) {
+            @Suppress("UNCHECKED_CAST")
+            it.attribute(attrs as Attribute<Any?>, variantAttrs.getAttribute(attrs)!!)
+          }
         }
-      },
-    )
+      }
+    }.artifacts()
+
+    return withVariants.ifEmpty {
+      project.configurations.detachedConfiguration(*pomDependencies).artifacts()
+    }
   }
 
   private fun Configuration.artifacts() = resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap { it.allModuleArtifacts }
@@ -114,16 +123,10 @@ internal abstract class LicenseeTask : DefaultTask() {
   fun execute() {
     if (logger.isInfoEnabled) {
       logger.info("")
-      logger.info("STEP 1: Read fetched POM files")
+      logger.info("STEP 1: Normalize license information")
       logger.info("")
     }
-    val coordinatesToPomInfo = loadPomInfo(pomFiles.get())
-
-    if (logger.isInfoEnabled) {
-      logger.info("")
-      logger.info("STEP 2: Normalize license information")
-      logger.info("")
-    }
+    val coordinatesToPomInfo = coordinatesToPomInfo.get()
     val artifactDetails = normalizeLicenseInfo(coordinatesToPomInfo)
     if (logger.isInfoEnabled) {
       for (artifactDetail in artifactDetails) {
@@ -157,7 +160,7 @@ internal abstract class LicenseeTask : DefaultTask() {
     val validationConfig = validationConfig.get()
     if (logger.isInfoEnabled) {
       logger.info("")
-      logger.info("STEP 3: Validate license information")
+      logger.info("STEP 2: Validate license information")
       logger.info("")
       logger.info("Allowed identifiers:")
       logger.info(
@@ -268,16 +271,16 @@ internal data class PomInfo(
   val name: String?,
   val licenses: Set<PomLicense>,
   val scm: PomScm?,
-)
+) : Serializable
 
 internal data class PomLicense(
   val name: String?,
   val url: String?,
-)
+) : Serializable
 
 internal data class PomScm(
   val url: String?,
-)
+) : Serializable
 
 private val outputFormat = Json { prettyPrint = true }
 private val listOfArtifactDetail = ListSerializer(ArtifactDetail.serializer())

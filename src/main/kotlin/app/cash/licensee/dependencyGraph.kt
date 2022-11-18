@@ -15,9 +15,7 @@
  */
 package app.cash.licensee
 
-import java.io.File
 import java.io.Serializable
-import javax.xml.parsers.DocumentBuilderFactory
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
@@ -165,20 +163,6 @@ private fun loadDependencyCoordinates(
 }
 
 internal fun loadPomInfo(
-  pomFiles: Map<DependencyCoordinates, File>,
-): Map<DependencyCoordinates, PomInfo> {
-  val factory = DocumentBuilderFactory.newInstance()
-  val documentBuilder = factory.newDocumentBuilder()
-
-  return pomFiles.mapValues { (coordinates, pomFile) ->
-    val pomDocument = documentBuilder.parse(pomFile)
-    loadPomInfo(pomDocument) {
-      documentBuilder.parse(pomFiles[it])
-    }
-  }
-}
-
-private fun loadPomInfo(
   pomDocument: Document,
   getParentPomDocument: (DependencyCoordinates) -> Document,
 ): PomInfo {
