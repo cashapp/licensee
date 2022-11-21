@@ -56,9 +56,9 @@ java {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
   kotlinOptions {
-    // Ensure compatibility with old Gradle versions running Kotlin 1.3.
+    // Ensure compatibility with old Gradle versions running Kotlin 1.4.
     // When changing this value see kotlinCompatibility.kt and delete unnecessary backports.
-    apiVersion = '1.3'
+    apiVersion = '1.4'
   }
 }
 
