@@ -77,7 +77,7 @@ internal abstract class LicenseeTask : DefaultTask() {
     val documentBuilder = factory.newDocumentBuilder()
 
     return associate { pom ->
-      // cast is safe because all resolved artifacts are pom files
+      // Cast is safe because all resolved artifacts are pom files.
       val coordinates = (pom.id.componentIdentifier as ModuleComponentIdentifier).toDependencyCoordinates()
       val pomDocument = documentBuilder.parse(pom.file)
 
