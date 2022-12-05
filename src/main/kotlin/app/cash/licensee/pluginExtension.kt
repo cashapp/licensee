@@ -18,8 +18,9 @@ package app.cash.licensee
 import app.cash.licensee.LicenseeExtension.AllowDependencyOptions
 import app.cash.licensee.LicenseeExtension.IgnoreDependencyOptions
 import groovy.lang.Closure
+import javax.inject.Inject
 import org.gradle.api.Action
-import org.gradle.util.ClosureBackedAction
+import org.gradle.api.Project
 
 @Suppress("unused") // Public API for Gradle build scripts.
 interface LicenseeExtension {
@@ -93,9 +94,7 @@ interface LicenseeExtension {
     artifactId: String,
     version: String,
     options: Closure<AllowDependencyOptions>,
-  ) {
-    allowDependency(groupId, artifactId, version, ClosureBackedAction.of(options))
-  }
+  )
 
   /**
    *
@@ -150,9 +149,7 @@ interface LicenseeExtension {
 
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun ignoreDependencies(groupId: String, options: Closure<IgnoreDependencyOptions>) {
-    ignoreDependencies(groupId, options = ClosureBackedAction.of(options))
-  }
+  fun ignoreDependencies(groupId: String, options: Closure<IgnoreDependencyOptions>)
 
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
@@ -166,9 +163,7 @@ interface LicenseeExtension {
     groupId: String,
     artifactId: String,
     options: Closure<IgnoreDependencyOptions>,
-  ) {
-    ignoreDependencies(groupId, artifactId, ClosureBackedAction.of(options))
-  }
+  )
 
   /**
    * Build behavior when a license violation is found.
@@ -205,7 +200,7 @@ enum class ViolationAction {
   IGNORE,
 }
 
-internal class MutableLicenseeExtension : LicenseeExtension {
+internal abstract class MutableLicenseeExtension @Inject constructor(private val project: Project) : LicenseeExtension {
   private val allowedIdentifiers = mutableSetOf<String>()
   private val allowedUrls = mutableSetOf<String>()
   private val allowedDependencies = mutableMapOf<DependencyCoordinates, String?>()
@@ -244,37 +239,55 @@ internal class MutableLicenseeExtension : LicenseeExtension {
     version: String,
     options: Action<AllowDependencyOptions>,
   ) {
+    allowDependency(groupId = groupId, artifactId = artifactId, version = version) {
+      options.execute(this)
+    }
+  }
+
+  private fun allowDependency(
+    groupId: String,
+    artifactId: String,
+    version: String,
+    options: AllowDependencyOptions.() -> Unit,
+  ) {
     var setReason: String? = null
-    options.execute(
-      object : AllowDependencyOptions {
-        override fun because(reason: String) {
-          setReason = reason
-        }
-      },
-    )
+    object : AllowDependencyOptions {
+      override fun because(reason: String) {
+        setReason = reason
+      }
+    }.options()
     allowedDependencies[DependencyCoordinates(groupId, artifactId, version)] = setReason
   }
 
-  override fun ignoreDependencies(
+  override fun allowDependency(
+    groupId: String,
+    artifactId: String,
+    version: String,
+    options: Closure<AllowDependencyOptions>,
+  ) {
+    allowDependency(groupId = groupId, artifactId = artifactId, version = version) {
+      project.configure(this, options)
+    }
+  }
+
+  private fun ignoreDependencies(
     groupId: String,
     artifactId: String?,
-    options: Action<IgnoreDependencyOptions>,
+    options: IgnoreDependencyOptions.() -> Unit,
   ) {
     var setReason: String? = null
     var setTransitive = false
-    options.execute(
-      object : IgnoreDependencyOptions {
-        override fun because(reason: String) {
-          setReason = reason
-        }
+    object : IgnoreDependencyOptions {
+      override fun because(reason: String) {
+        setReason = reason
+      }
 
-        override var transitive: Boolean
-          get() = setTransitive
-          set(value) {
-            setTransitive = value
-          }
-      },
-    )
+      override var transitive: Boolean
+        get() = setTransitive
+        set(value) {
+          setTransitive = value
+        }
+    }.options()
 
     if (setTransitive && setReason == null) {
       throw RuntimeException(
@@ -295,6 +308,24 @@ internal class MutableLicenseeExtension : LicenseeExtension {
       ignoredGroupIds[groupId] = ignoredData
     } else {
       ignoredCoordinates.getOrPut(groupId, ::LinkedHashMap)[artifactId] = ignoredData
+    }
+  }
+
+  override fun ignoreDependencies(groupId: String, artifactId: String?, options: Action<IgnoreDependencyOptions>) {
+    ignoreDependencies(groupId = groupId, artifactId = artifactId) {
+      options.execute(this)
+    }
+  }
+
+  override fun ignoreDependencies(groupId: String, options: Closure<IgnoreDependencyOptions>) {
+    ignoreDependencies(groupId = groupId, artifactId = null) {
+      project.configure(this, options)
+    }
+  }
+
+  override fun ignoreDependencies(groupId: String, artifactId: String, options: Closure<IgnoreDependencyOptions>) {
+    ignoreDependencies(groupId = groupId, artifactId = artifactId) {
+      project.configure(this, options)
     }
   }
 
