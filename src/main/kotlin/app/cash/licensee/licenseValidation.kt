@@ -27,7 +27,9 @@ internal data class DependencyCoordinates(
   val group: String,
   val artifact: String,
   val version: String,
-) : Serializable
+) : Serializable {
+  fun pomCoordinate() = "$group:$artifact:$version@pom"
+}
 
 internal fun validateArtifacts(
   validationConfig: ValidationConfig,

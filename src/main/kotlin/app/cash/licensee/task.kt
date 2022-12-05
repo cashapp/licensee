@@ -18,56 +18,101 @@ package app.cash.licensee
 import app.cash.licensee.ViolationAction.FAIL
 import app.cash.licensee.ViolationAction.IGNORE
 import java.io.File
-import kotlin.properties.Delegates
+import java.io.Serializable
+import javax.xml.parsers.DocumentBuilderFactory
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.Usage
-import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
-import org.gradle.api.file.FileCollection
+import org.gradle.api.artifacts.ResolvedArtifact
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedVariantResult
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.LogLevel.ERROR
 import org.gradle.api.logging.LogLevel.INFO
 import org.gradle.api.logging.LogLevel.LIFECYCLE
 import org.gradle.api.logging.LogLevel.WARN
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.tasks.Classpath
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
-internal open class LicenseeTask : DefaultTask() {
+internal abstract class LicenseeTask : DefaultTask() {
   @get:Input
-  lateinit var dependencyConfig: DependencyConfig
-
-  @get:Input
-  lateinit var validationConfig: ValidationConfig
+  abstract val dependencyConfig: Property<DependencyConfig>
 
   @get:Input
-  lateinit var violationAction: ViolationAction
+  abstract val validationConfig: Property<ValidationConfig>
 
-  @get:Classpath
-  var classpath: FileCollection by Delegates.notNull()
-    private set
+  @get:Input
+  abstract val violationAction: Property<ViolationAction>
 
-  @get:Internal
-  var configuration: Configuration by Delegates.notNull()
-    private set
+  @get:Input
+  abstract val coordinatesToPomInfo: MapProperty<DependencyCoordinates, PomInfo>
 
-  fun setClasspath(configuration: Configuration, usage: String) {
-    this.configuration = configuration
+  fun addPomFileDependencies(configuration: Configuration) {
+    val root = configuration.incoming.resolutionResult.rootComponent
 
-    classpath = configuration.incoming.artifactView {
-      it.attributes {
-        it.attribute(USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, usage))
-      }
-    }.artifacts.artifactFiles
+    val pomInfos: Provider<Map<DependencyCoordinates, PomInfo>> = root.zip(dependencyConfig) { root, depConfig ->
+      val directDependencies = loadDependencyCoordinates(
+        logger,
+        root,
+        depConfig,
+      )
+      val directPomFiles = directDependencies.coordinates.fetchPomFiles(root.variants)
+      directPomFiles.getPomInfo(root.variants)
+    }
+
+    this.coordinatesToPomInfo.set(pomInfos)
   }
 
+  private fun Iterable<ResolvedArtifact>.getPomInfo(variants: List<ResolvedVariantResult>): Map<DependencyCoordinates, PomInfo> {
+    val factory = DocumentBuilderFactory.newInstance()
+    val documentBuilder = factory.newDocumentBuilder()
+
+    return associate { pom ->
+      // Cast is safe because all resolved artifacts are pom files.
+      val coordinates = (pom.id.componentIdentifier as ModuleComponentIdentifier).toDependencyCoordinates()
+      val pomDocument = documentBuilder.parse(pom.file)
+
+      coordinates to loadPomInfo(pomDocument) { parentPom ->
+        documentBuilder.parse(setOf(parentPom).fetchPomFiles(variants).single().file)
+      }
+    }
+  }
+
+  private fun Set<DependencyCoordinates>.fetchPomFiles(variants: List<ResolvedVariantResult>): List<ResolvedArtifact> {
+    val pomDependencies = map {
+      project.dependencies.create(it.pomCoordinate())
+    }.toTypedArray()
+
+    val withVariants = project.configurations.detachedConfiguration(*pomDependencies).apply {
+      for (variant in variants) {
+        attributes {
+          val variantAttrs = variant.attributes
+          for (attrs in variantAttrs.keySet()) {
+            @Suppress("UNCHECKED_CAST")
+            it.attribute(attrs as Attribute<Any?>, variantAttrs.getAttribute(attrs)!!)
+          }
+        }
+      }
+    }.artifacts()
+
+    return withVariants.ifEmpty {
+      project.configurations.detachedConfiguration(*pomDependencies).artifacts()
+    }
+  }
+
+  private fun Configuration.artifacts() = resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap { it.allModuleArtifacts }
+
   @get:OutputDirectory
-  lateinit var outputDir: File
+  abstract val outputDir: DirectoryProperty
 
   private val _logger: Logger = Logging.getLogger(LicenseeTask::class.java)
 
@@ -78,69 +123,10 @@ internal open class LicenseeTask : DefaultTask() {
   fun execute() {
     if (logger.isInfoEnabled) {
       logger.info("")
-      logger.info("STEP 1: Load dependency coordinates")
-      logger.info("")
-      logger.info("Ignored:")
-      if (dependencyConfig.ignoredGroupIds.isEmpty() && dependencyConfig.ignoredCoordinates.isEmpty()) {
-        logger.info("  None")
-      } else {
-        for ((groupId, ignoreData) in dependencyConfig.ignoredGroupIds) {
-          logger.info(
-            buildString {
-              append("    ")
-              append(groupId)
-              if (ignoreData.transitive) {
-                append(" [transitive=true]")
-              }
-              if (ignoreData.reason != null) {
-                append(" because ")
-                append(ignoreData.reason)
-              }
-            },
-          )
-        }
-        for ((groupId, artifactIds) in dependencyConfig.ignoredCoordinates) {
-          for ((artifactId, ignoreData) in artifactIds) {
-            logger.info(
-              buildString {
-                append("    ")
-                append(groupId)
-                append(':')
-                append(artifactId)
-                if (ignoreData.transitive) {
-                  append(" [transitive=true]")
-                }
-                if (ignoreData.reason != null) {
-                  append(" because ")
-                  append(ignoreData.reason)
-                }
-              },
-            )
-          }
-        }
-      }
+      logger.info("STEP 1: Normalize license information")
       logger.info("")
     }
-    val resolutionResult = configuration.incoming.resolutionResult
-    val rootCoordinate = resolutionResult.root
-    val dependencyResult = loadDependencyCoordinates(logger, rootCoordinate, dependencyConfig)
-    for (configWarning in dependencyResult.configWarnings) {
-      logger.warn("WARNING: $configWarning")
-    }
-
-    if (logger.isInfoEnabled) {
-      logger.info("")
-      logger.info("STEP 2: Load dependency pom info")
-      logger.info("")
-    }
-    val coordinatesToPomInfo =
-      dependencyResult.coordinates.associateWith { loadPomInfo(project, logger, it, rootCoordinate.variants) }
-
-    if (logger.isInfoEnabled) {
-      logger.info("")
-      logger.info("STEP 3: Normalize license information")
-      logger.info("")
-    }
+    val coordinatesToPomInfo = coordinatesToPomInfo.get()
     val artifactDetails = normalizeLicenseInfo(coordinatesToPomInfo)
     if (logger.isInfoEnabled) {
       for (artifactDetail in artifactDetails) {
@@ -162,6 +148,7 @@ internal open class LicenseeTask : DefaultTask() {
 
     val artifactsJson = outputFormat.encodeToString(listOfArtifactDetail, artifactDetails)
 
+    val outputDir = outputDir.asFile.get()
     val artifactsJsonFile = File(outputDir, "artifacts.json")
     artifactsJsonFile.parentFile.mkdirs()
     artifactsJsonFile.writeText(artifactsJson)
@@ -170,9 +157,10 @@ internal open class LicenseeTask : DefaultTask() {
       artifactsJsonFile.appendText("\n")
     }
 
+    val validationConfig = validationConfig.get()
     if (logger.isInfoEnabled) {
       logger.info("")
-      logger.info("STEP 4: Validate license information")
+      logger.info("STEP 2: Validate license information")
       logger.info("")
       logger.info("Allowed identifiers:")
       logger.info(
@@ -209,10 +197,12 @@ internal open class LicenseeTask : DefaultTask() {
       }
       logger.info("")
     }
+
     val validationResult = validateArtifacts(validationConfig, artifactDetails)
 
     val validationReport = StringBuilder()
 
+    val violationAction = violationAction.get()
     val errorLevel = if (violationAction == IGNORE) INFO else ERROR
     val warningLevel = if (violationAction == IGNORE) INFO else WARN
     val lifecycleLevel = if (violationAction == IGNORE) INFO else LIFECYCLE
@@ -224,11 +214,13 @@ internal open class LicenseeTask : DefaultTask() {
           validationReport.appendLine(message)
           logger.log(errorLevel, message)
         }
+
         is ValidationResult.Warning -> {
           val message = prefix + "WARNING: " + configResult.message
           validationReport.appendLine(message)
           logger.log(warningLevel, message)
         }
+
         is ValidationResult.Info -> {
           val message = prefix + configResult.message
           validationReport.appendLine(message)
@@ -279,16 +271,16 @@ internal data class PomInfo(
   val name: String?,
   val licenses: Set<PomLicense>,
   val scm: PomScm?,
-)
+) : Serializable
 
 internal data class PomLicense(
   val name: String?,
   val url: String?,
-)
+) : Serializable
 
 internal data class PomScm(
   val url: String?,
-)
+) : Serializable
 
 private val outputFormat = Json { prettyPrint = true }
 private val listOfArtifactDetail = ListSerializer(ArtifactDetail.serializer())

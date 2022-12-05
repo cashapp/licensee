@@ -17,18 +17,17 @@ package app.cash.licensee
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.internal.publishing.AndroidArtifacts.ArtifactType.CLASSES
 import java.io.File
 import java.util.Locale.ROOT
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.attributes.Usage.JAVA_RUNTIME
 import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
 import org.gradle.api.reporting.ReportingExtension
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin.CHECK_TASK_NAME
 import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.common
@@ -39,6 +38,10 @@ private const val reportFolder = "licensee"
 @Suppress("unused") // Instantiated reflectively by Gradle.
 class LicenseePlugin : Plugin<Project> {
   override fun apply(project: Project) {
+    require(GradleVersion.current() >= GradleVersion.version("7.4")) {
+      "Licensee plugin requires Gradle 7.4 or later. Found ${GradleVersion.current()}"
+    }
+
     val extension = project.objects.newInstance(MutableLicenseeExtension::class.java)
     project.extensions.add(LicenseeExtension::class.java, "licensee", extension)
 
@@ -129,13 +132,13 @@ private fun configureAndroidVariants(
       it.group = VERIFICATION_GROUP
       it.description = taskDescription("Android ${variant.name} variant")
 
-      it.dependencyConfig = extension.toDependencyTreeConfig()
-      it.validationConfig = extension.toLicenseValidationConfig()
-      it.violationAction = extension.violationAction
-      it.setClasspath(variant.runtimeConfiguration, CLASSES.type)
+      it.dependencyConfig.set(extension.toDependencyTreeConfig())
+      it.validationConfig.set(extension.toLicenseValidationConfig())
+      it.violationAction.set(extension.violationAction)
+      it.addPomFileDependencies(variant.runtimeConfiguration)
 
       val reportBase = project.extensions.getByType(ReportingExtension::class.java).file(reportFolder)
-      it.outputDir = File(reportBase, if (prefix) "android$suffix" else variant.name)
+      it.outputDir.set(File(reportBase, if (prefix) "android$suffix" else variant.name))
     }
 
     rootTask.configure {
@@ -166,17 +169,17 @@ private fun configureKotlinMultiplatformTargets(
       it.group = VERIFICATION_GROUP
       it.description = taskDescription("Kotlin ${target.name} target")
 
-      it.dependencyConfig = extension.toDependencyTreeConfig()
-      it.validationConfig = extension.toLicenseValidationConfig()
-      it.violationAction = extension.violationAction
+      it.dependencyConfig.set(extension.toDependencyTreeConfig())
+      it.validationConfig.set(extension.toLicenseValidationConfig())
+      it.violationAction.set(extension.violationAction)
 
       val runtimeConfigurationName =
         target.compilations.getByName("main").compileDependencyConfigurationName
       val runtimeConfiguration = project.configurations.getByName(runtimeConfigurationName)
-      it.setClasspath(runtimeConfiguration, JAVA_RUNTIME)
+      it.addPomFileDependencies(runtimeConfiguration)
 
       val reportBase = project.extensions.getByType(ReportingExtension::class.java).file(reportFolder)
-      it.outputDir = File(reportBase, target.name)
+      it.outputDir.set(File(reportBase, target.name))
     }
 
     rootTask.configure {
@@ -193,14 +196,14 @@ private fun configureJavaPlugin(
     it.group = VERIFICATION_GROUP
     it.description = taskDescription()
 
-    it.dependencyConfig = extension.toDependencyTreeConfig()
-    it.validationConfig = extension.toLicenseValidationConfig()
-    it.violationAction = extension.violationAction
+    it.dependencyConfig.set(extension.toDependencyTreeConfig())
+    it.validationConfig.set(extension.toLicenseValidationConfig())
+    it.violationAction.set(extension.violationAction)
 
     val configuration = project.configurations.getByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME)
-    it.setClasspath(configuration, JAVA_RUNTIME)
+    it.addPomFileDependencies(configuration)
 
-    it.outputDir = project.extensions.getByType(ReportingExtension::class.java).file(reportFolder)
+    it.outputDir.set(project.extensions.getByType(ReportingExtension::class.java).file(reportFolder))
   }
   project.tasks.named(CHECK_TASK_NAME).configure {
     it.dependsOn(task)
