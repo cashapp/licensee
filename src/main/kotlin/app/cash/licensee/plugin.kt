@@ -39,7 +39,7 @@ private const val reportFolder = "licensee"
 class LicenseePlugin : Plugin<Project> {
   override fun apply(project: Project) {
     require(GradleVersion.current() >= GradleVersion.version("7.4")) {
-      "Licensee plugin requires Gradle 7.4 or later"
+      "Licensee plugin requires Gradle 7.4 or later. Found ${GradleVersion.current()}"
     }
 
     val extension = project.objects.newInstance(MutableLicenseeExtension::class.java)
