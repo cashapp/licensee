@@ -41,7 +41,8 @@ class LicenseePlugin : Plugin<Project> {
     require(GradleVersion.current() >= GradleVersion.version("7.4")) {
       "Licensee plugin requires Gradle 7.4 or later"
     }
-    val extension = MutableLicenseeExtension()
+
+    val extension = project.objects.newInstance(MutableLicenseeExtension::class.java)
     project.extensions.add(LicenseeExtension::class.java, "licensee", extension)
 
     project.afterEvaluate {

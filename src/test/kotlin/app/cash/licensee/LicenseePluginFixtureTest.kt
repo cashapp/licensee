@@ -76,6 +76,7 @@ class LicenseePluginFixtureTest {
       "plugin-kotlin-mpp-jvm-with-java",
       "plugin-kotlin-mpp-report-dir",
       "plugin-kotlin-mpp-with-android-application",
+      "plugin-kotlin-mpp-with-android-application-after-licensee",
       "plugin-kotlin-mpp-with-android-application-product-flavors",
       "plugin-kotlin-mpp-with-android-library",
       "plugin-kotlin-mpp-with-android-library-product-flavors",
