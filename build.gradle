@@ -31,6 +31,12 @@ gradlePlugin {
   }
 }
 
+tasks {
+  validatePlugins {
+    enableStricterValidation = true
+  }
+}
+
 dependencies {
   compileOnly gradleApi()
   compileOnly deps.androidGradlePlugin

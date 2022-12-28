@@ -38,11 +38,13 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
+@CacheableTask
 internal abstract class LicenseeTask : DefaultTask() {
   @get:Input
   abstract val dependencyConfig: Property<DependencyConfig>
