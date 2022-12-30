@@ -5,7 +5,7 @@ buildscript {
     classpath deps.kotlinGradlePlugin
     classpath "org.jetbrains.kotlin:kotlin-serialization:${versions.kotlin}"
     classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.12.0'
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.14.2'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.23.0'
     classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.7.20'
     classpath 'de.undercouch:gradle-download-task:5.3.0'
   }
