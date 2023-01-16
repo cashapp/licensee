@@ -136,15 +136,9 @@ apply plugin: 'com.diffplug.spotless'
 spotless {
   kotlin {
     target('**/*.kt')
-    licenseHeaderFile(rootProject.file('gradle/license-header.txt'))
-    // Spotless doesn't read .editorconfig yet: https://github.com/diffplug/spotless/issues/142
-    ktlint('0.46.1').editorConfigOverride([
-      'disabled_rules': 'filename',
-      'end_of_line': 'lf',
-      'indent_size': '2',
-      'ij_kotlin_allow_trailing_comma': 'true',
-      'ij_kotlin_allow_trailing_comma_on_call_site': 'true',
-      'ij_kotlin_imports_layout': '*',
+    ktlint('0.48.1').editorConfigOverride([
+      'ktlint_standard_filename': 'disabled',
     ])
+    licenseHeaderFile(rootProject.file('gradle/license-header.txt'))
   }
 }
