@@ -5,7 +5,7 @@ buildscript {
     'minSdk': 21,
   ]
   ext.deps = [
-    'androidGradlePlugin': 'com.android.tools.build:gradle:7.4.0',
+    'androidGradlePlugin': 'com.android.tools.build:gradle:7.4.1',
     'kotlinGradlePlugin': "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}",
   ]
 }
