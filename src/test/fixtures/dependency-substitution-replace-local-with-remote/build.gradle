@@ -16,7 +16,7 @@ allprojects {
   configurations.all {
     resolutionStrategy {
       dependencySubstitution {
-        substitute project(':other') with module('com.example:example:1.0.0')
+        substitute project(':other') using module('com.example:example:1.0.0')
       }
     }
   }
