@@ -17,7 +17,7 @@ apply plugin: 'org.jetbrains.kotlin.js'
 apply plugin: 'app.cash.licensee'
 
 kotlin {
-  js {
+  js(IR) {
     nodejs()
   }
 }
