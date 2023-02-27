@@ -100,6 +100,7 @@ class LicenseePluginFixtureTest {
       "transitive-java-to-java-implementation",
       "url-allow-unused",
       "url-allowed",
+      "url-allowed-reason",
       "url-allowed-but-is-spdx",
       "url-allowed-but-no-match",
       "url-allowed-kts",
