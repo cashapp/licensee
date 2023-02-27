@@ -17,7 +17,6 @@ package app.cash.licensee
 
 import app.cash.licensee.LicenseeExtension.AllowDependencyOptions
 import app.cash.licensee.LicenseeExtension.IgnoreDependencyOptions
-import groovy.lang.Closure
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -42,11 +41,17 @@ interface LicenseeExtension {
    *
    * ```
    * licensee {
-   *   allowUrl("https://example.com/license.html")
+   *   allowUrl("https://example.com/license.html") {
+   *     because 'is Apache-2.0'
+   *   }
    * }
    * ```
    */
-  fun allowUrl(url: String)
+  fun allowUrl(url: String, options: Action<AllowUrlOptions> = Action { })
+
+  /** @suppress */
+  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
+  fun allowUrl(url: String) = allowUrl(url, {})
 
   /**
    * Allow an artifact with a specific groupId, artifactId, and version.
@@ -86,15 +91,6 @@ interface LicenseeExtension {
   ) {
     allowDependency(groupId, artifactId, version, {})
   }
-
-  /** @suppress */
-  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun allowDependency(
-    groupId: String,
-    artifactId: String,
-    version: String,
-    options: Closure<AllowDependencyOptions>,
-  )
 
   /**
    *
@@ -149,21 +145,15 @@ interface LicenseeExtension {
 
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun ignoreDependencies(groupId: String, options: Closure<IgnoreDependencyOptions>)
+  fun ignoreDependencies(groupId: String, options: Action<IgnoreDependencyOptions>) {
+    ignoreDependencies(groupId = groupId, artifactId = null, options = options)
+  }
 
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun ignoreDependencies(groupId: String, artifactId: String) {
     ignoreDependencies(groupId, artifactId, {})
   }
-
-  /** @suppress */
-  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun ignoreDependencies(
-    groupId: String,
-    artifactId: String,
-    options: Closure<IgnoreDependencyOptions>,
-  )
 
   /**
    * Build behavior when a license violation is found.
@@ -182,6 +172,10 @@ interface LicenseeExtension {
    * @see ViolationAction
    */
   fun violationAction(level: ViolationAction)
+
+  interface AllowUrlOptions {
+    fun because(reason: String)
+  }
 
   interface AllowDependencyOptions {
     fun because(reason: String)
@@ -202,7 +196,7 @@ enum class ViolationAction {
 
 internal abstract class MutableLicenseeExtension @Inject constructor(private val project: Project) : LicenseeExtension {
   private val allowedIdentifiers = mutableSetOf<String>()
-  private val allowedUrls = mutableSetOf<String>()
+  private val allowedUrls = mutableMapOf<String, String?>()
   private val allowedDependencies = mutableMapOf<DependencyCoordinates, String?>()
   private val ignoredGroupIds = mutableMapOf<String, IgnoredData>()
   private val ignoredCoordinates = mutableMapOf<String, MutableMap<String, IgnoredData>>()
@@ -220,7 +214,7 @@ internal abstract class MutableLicenseeExtension @Inject constructor(private val
   fun toLicenseValidationConfig(): ValidationConfig {
     return ValidationConfig(
       allowedIdentifiers.toSet(),
-      allowedUrls.toSet(),
+      allowedUrls.toMap(),
       allowedDependencies.toMap(),
     )
   }
@@ -229,8 +223,15 @@ internal abstract class MutableLicenseeExtension @Inject constructor(private val
     allowedIdentifiers += spdxId
   }
 
-  override fun allowUrl(url: String) {
-    allowedUrls += url
+  override fun allowUrl(url: String, options: Action<LicenseeExtension.AllowUrlOptions>) {
+    val option = object : LicenseeExtension.AllowUrlOptions {
+      var setReason: String? = null
+      override fun because(reason: String) {
+        setReason = reason
+      }
+    }
+    options.execute(option)
+    allowedUrls[url] = option.setReason
   }
 
   override fun allowDependency(
@@ -239,57 +240,28 @@ internal abstract class MutableLicenseeExtension @Inject constructor(private val
     version: String,
     options: Action<AllowDependencyOptions>,
   ) {
-    allowDependency(groupId = groupId, artifactId = artifactId, version = version) {
-      options.execute(this)
-    }
-  }
-
-  private fun allowDependency(
-    groupId: String,
-    artifactId: String,
-    version: String,
-    options: AllowDependencyOptions.() -> Unit,
-  ) {
-    var setReason: String? = null
-    object : AllowDependencyOptions {
+    val option = object : AllowDependencyOptions {
+      var setReason: String? = null
       override fun because(reason: String) {
         setReason = reason
       }
-    }.options()
-    allowedDependencies[DependencyCoordinates(groupId, artifactId, version)] = setReason
-  }
-
-  override fun allowDependency(
-    groupId: String,
-    artifactId: String,
-    version: String,
-    options: Closure<AllowDependencyOptions>,
-  ) {
-    allowDependency(groupId = groupId, artifactId = artifactId, version = version) {
-      project.configure(this, options)
     }
+    options.execute(option)
+    allowedDependencies[DependencyCoordinates(group = groupId, artifact = artifactId, version = version)] = option.setReason
   }
 
-  private fun ignoreDependencies(
-    groupId: String,
-    artifactId: String?,
-    options: IgnoreDependencyOptions.() -> Unit,
-  ) {
-    var setReason: String? = null
-    var setTransitive = false
-    object : IgnoreDependencyOptions {
+  override fun ignoreDependencies(groupId: String, artifactId: String?, options: Action<IgnoreDependencyOptions>) {
+    val option = object : IgnoreDependencyOptions {
+      var setReason: String? = null
       override fun because(reason: String) {
         setReason = reason
       }
 
-      override var transitive: Boolean
-        get() = setTransitive
-        set(value) {
-          setTransitive = value
-        }
-    }.options()
+      override var transitive: Boolean = false
+    }
 
-    if (setTransitive && setReason == null) {
+    options.execute(option)
+    if (option.transitive && option.setReason == null) {
       throw RuntimeException(
         buildString {
           append("Transitive dependency ignore on '")
@@ -302,30 +274,11 @@ internal abstract class MutableLicenseeExtension @Inject constructor(private val
         },
       )
     }
-
-    val ignoredData = IgnoredData(setReason, setTransitive)
+    val ignoredData = IgnoredData(option.setReason, option.transitive)
     if (artifactId == null) {
       ignoredGroupIds[groupId] = ignoredData
     } else {
-      ignoredCoordinates.getOrPut(groupId, ::LinkedHashMap)[artifactId] = ignoredData
-    }
-  }
-
-  override fun ignoreDependencies(groupId: String, artifactId: String?, options: Action<IgnoreDependencyOptions>) {
-    ignoreDependencies(groupId = groupId, artifactId = artifactId) {
-      options.execute(this)
-    }
-  }
-
-  override fun ignoreDependencies(groupId: String, options: Closure<IgnoreDependencyOptions>) {
-    ignoreDependencies(groupId = groupId, artifactId = null) {
-      project.configure(this, options)
-    }
-  }
-
-  override fun ignoreDependencies(groupId: String, artifactId: String, options: Closure<IgnoreDependencyOptions>) {
-    ignoreDependencies(groupId = groupId, artifactId = artifactId) {
-      project.configure(this, options)
+      ignoredCoordinates.getOrPut(key = groupId, defaultValue = ::LinkedHashMap)[artifactId] = ignoredData
     }
   }
 

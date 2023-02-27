@@ -19,7 +19,7 @@ import java.io.Serializable
 
 internal data class ValidationConfig(
   val allowedIdentifiers: Set<String>,
-  val allowedUrls: Set<String>,
+  val allowedUrls: Map<String, String?>,
   val allowedCoordinates: Map<DependencyCoordinates, String?>,
 ) : Serializable
 
@@ -39,7 +39,7 @@ internal fun validateArtifacts(
   val artifactResultMap = mutableMapOf<ArtifactDetail, List<ValidationResult>>()
 
   val unusedAllowedIdentifiers = validationConfig.allowedIdentifiers.toMutableSet()
-  val unusedAllowedUrls = validationConfig.allowedUrls.toMutableSet()
+  val unusedAllowedUrls = validationConfig.allowedUrls.toMutableMap()
   val unusedAllowedCoordinates = validationConfig.allowedCoordinates.keys.toMutableSet()
 
   for (artifact in artifacts) {
@@ -75,7 +75,10 @@ internal fun validateArtifacts(
       for (unknownLicense in artifact.unknownLicenses) {
         if (unknownLicense.url != null && unknownLicense.url in validationConfig.allowedUrls) {
           unusedAllowedUrls -= unknownLicense.url
-          artifactResults += ValidationResult.Info("Unknown license URL '${unknownLicense.url}' allowed")
+          val reason = validationConfig.allowedUrls[unknownLicense.url]
+          artifactResults += ValidationResult.Info(
+            "Unknown license URL '${unknownLicense.url}' allowed${if (reason != null) " because $reason" else ""}",
+          )
           validated = true
           break
         }
@@ -141,7 +144,7 @@ internal fun validateArtifacts(
   for (unusedAllowedIdentifier in unusedAllowedIdentifiers) {
     configResults += ValidationResult.Warning("Allowed SPDX identifier '$unusedAllowedIdentifier' is unused")
   }
-  for (unusedAllowedUrl in unusedAllowedUrls) {
+  for (unusedAllowedUrl in unusedAllowedUrls.keys) {
     configResults += ValidationResult.Warning("Allowed license URL '$unusedAllowedUrl' is unused")
   }
   for (unusedAllowedCoordinate in unusedAllowedCoordinates) {

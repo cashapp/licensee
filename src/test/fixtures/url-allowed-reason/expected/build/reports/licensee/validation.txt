@@ -1,0 +1,2 @@
+com.example:example:1.0.0
+ - Unknown license URL 'https://example.com/license' allowed because I am Groot
