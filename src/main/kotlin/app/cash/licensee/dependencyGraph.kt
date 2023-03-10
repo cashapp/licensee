@@ -16,15 +16,14 @@
 package app.cash.licensee
 
 import java.io.Serializable
+import org.apache.maven.model.Model
+import org.apache.maven.model.Scm
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.logging.Logger
-import org.w3c.dom.Document
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
 
 internal data class DependencyConfig(
   val ignoredGroupIds: Map<String, IgnoredData>,
@@ -163,82 +162,37 @@ private fun loadDependencyCoordinates(
 }
 
 internal fun loadPomInfo(
-  pomDocument: Document,
-  getParentPomDocument: (DependencyCoordinates) -> Document,
+  pom: Model,
+  getRawModel: (String) -> Model?,
 ): PomInfo {
-  var licensesNode: Node? = null
-  var scmNode: Node? = null
-  var parentNode: Node? = null
-  var artifactName: String? = null
-  for (childNode in pomDocument.documentElement.childNodes) {
-    when (childNode.nodeName) {
-      "licenses" -> licensesNode = childNode
-      "scm" -> scmNode = childNode
-      "parent" -> parentNode = childNode
-      "name" -> artifactName = childNode.textContent
+  val parentRawModel = pom.parent?.let {
+    getRawModel("${it.groupId}:${it.artifactId}:${it.version}")
+  }
+  val pomScm: Scm? = pom.scm
+  val url = if (parentRawModel != null) {
+    // https://maven.apache.org/ref/3.6.1/maven-model-builder/
+    // When depending on a parent, Maven adds a /artifactId to the url of the child,
+    // if the pom file does not opt out of this behavior:
+    // <scm child.scm.url.inherit.append.path="false">
+    // We don't want to handle the /artifactId, so we use the parent clean url instead.
+    val parentScm: Scm? = parentRawModel.scm
+    when (parentScm?.childScmUrlInheritAppendPath?.toBoolean()) {
+      // No opt-out, use pom first, then parent pom because we don't want to use the /artifactId.
+      null -> pomScm?.url?.removeSuffix("/${pom.artifactId}") ?: parentScm?.url
+      // Explicit opt-out, so use the parent url.
+      false -> parentScm.url
+      // Explicit opt-in, the model already appends the path.
+      true -> pomScm?.url
     }
+  } else {
+    pomScm?.url
   }
 
-  val licenses = mutableSetOf<PomLicense>()
-  if (licensesNode != null) {
-    for (licenseNode in licensesNode.childNodes) {
-      if (licenseNode.nodeName == "license") {
-        var name: String? = null
-        var url: String? = null
-        for (propertyNode in licenseNode.childNodes) {
-          when (propertyNode.nodeName) {
-            "name" -> name = propertyNode.textContent
-            "url" -> url = propertyNode.textContent
-          }
-        }
-        if (name != null || url != null) {
-          licenses += PomLicense(name, url)
-        }
-      }
-    }
-  }
-
-  var scm: PomScm? = null
-  if (scmNode != null) {
-    for (propertyNode in scmNode.childNodes) {
-      if (propertyNode.nodeName == "url") {
-        scm = PomScm(propertyNode.textContent)
-      }
-    }
-  }
-
-  if (parentNode != null) {
-    var group: String? = null
-    var artifact: String? = null
-    var version: String? = null
-    for (propertyNode in parentNode.childNodes) {
-      when (propertyNode.nodeName) {
-        "groupId" -> group = propertyNode.textContent
-        "artifactId" -> artifact = propertyNode.textContent
-        "version" -> version = propertyNode.textContent
-      }
-    }
-    if (group != null && artifact != null && version != null) {
-      val parentCoordinates = DependencyCoordinates(group, artifact, version)
-      val parentDocument = getParentPomDocument(parentCoordinates)
-      val parentPomInfo = loadPomInfo(parentDocument, getParentPomDocument)
-      if (licenses.isEmpty()) {
-        licenses += parentPomInfo.licenses
-      }
-      if (scm == null) {
-        scm = parentPomInfo.scm
-      }
-      if (artifactName == null) {
-        artifactName = parentPomInfo.name
-      }
-    }
-  }
-
-  return PomInfo(artifactName, licenses, scm)
-}
-
-private operator fun NodeList.iterator(): Iterator<Node> = iterator {
-  for (i in 0 until length) {
-    yield(item(i))
-  }
+  return PomInfo(
+    name = pom.name ?: parentRawModel?.name,
+    licenses = (pom.licenses.takeUnless { it.isEmpty() } ?: parentRawModel?.licenses)?.mapTo(mutableSetOf()) {
+      PomLicense(it.name, it.url)
+    } ?: emptySet(),
+    scm = PomScm(url),
+  )
 }
