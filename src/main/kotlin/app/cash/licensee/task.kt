@@ -19,9 +19,17 @@ import app.cash.licensee.ViolationAction.FAIL
 import app.cash.licensee.ViolationAction.IGNORE
 import java.io.File
 import java.io.Serializable
-import javax.xml.parsers.DocumentBuilderFactory
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
+import org.apache.maven.model.Dependency
+import org.apache.maven.model.Parent
+import org.apache.maven.model.Repository
+import org.apache.maven.model.building.DefaultModelBuilderFactory
+import org.apache.maven.model.building.DefaultModelBuildingRequest
+import org.apache.maven.model.building.FileModelSource
+import org.apache.maven.model.building.ModelBuildingRequest
+import org.apache.maven.model.building.ModelSource2
+import org.apache.maven.model.resolution.ModelResolver
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedArtifact
@@ -75,21 +83,54 @@ internal abstract class LicenseeTask : DefaultTask() {
   }
 
   private fun Iterable<ResolvedArtifact>.getPomInfo(variants: List<ResolvedVariantResult>): Map<DependencyCoordinates, PomInfo> {
-    val factory = DocumentBuilderFactory.newInstance()
-    val documentBuilder = factory.newDocumentBuilder()
+    val builder = DefaultModelBuilderFactory().newInstance()
+    val resolver = object : ModelResolver {
+      fun resolve(dependencyCoordinates: DependencyCoordinates): FileModelSource {
+        val pomFile =
+          setOf(dependencyCoordinates).fetchPomFiles(variants)
+            .single().file
+        return FileModelSource(pomFile)
+      }
+
+      override fun resolveModel(groupId: String, artifactId: String, version: String): ModelSource2 {
+        return resolve(DependencyCoordinates(groupId, artifactId, version))
+      }
+
+      override fun resolveModel(parent: Parent): ModelSource2 {
+        return resolve(DependencyCoordinates(parent.groupId, parent.artifactId, parent.version))
+      }
+
+      override fun resolveModel(dependency: Dependency): ModelSource2 {
+        return resolve(DependencyCoordinates(dependency.groupId, dependency.artifactId, dependency.version))
+      }
+
+      override fun addRepository(repository: Repository) {
+      }
+
+      override fun addRepository(repository: Repository, replace: Boolean) {
+      }
+
+      override fun newCopy(): ModelResolver = this
+    }
 
     return associate { pom ->
       // Cast is safe because all resolved artifacts are pom files.
       val coordinates = (pom.id.componentIdentifier as ModuleComponentIdentifier).toDependencyCoordinates()
-      val pomDocument = documentBuilder.parse(pom.file)
 
-      coordinates to loadPomInfo(pomDocument) { parentPom ->
-        documentBuilder.parse(setOf(parentPom).fetchPomFiles(variants).single().file)
+      val req = DefaultModelBuildingRequest().apply {
+        isProcessPlugins = false
+        pomFile = pom.file
+        modelResolver = resolver
+        validationLevel = ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL
+      }
+      val result = builder.build(req)
+      coordinates to loadPomInfo(result.effectiveModel) { modelId ->
+        result.getRawModel(modelId)
       }
     }
   }
 
-  private fun Set<DependencyCoordinates>.fetchPomFiles(variants: List<ResolvedVariantResult>): List<ResolvedArtifact> {
+  internal fun Set<DependencyCoordinates>.fetchPomFiles(variants: List<ResolvedVariantResult>): List<ResolvedArtifact> {
     val pomDependencies = map {
       project.dependencies.create(it.pomCoordinate())
     }.toTypedArray()

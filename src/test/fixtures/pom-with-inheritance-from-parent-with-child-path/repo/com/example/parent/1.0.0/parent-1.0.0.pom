@@ -1,0 +1,15 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>parent</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  <name>Parent</name>
+  <properties>
+    <license.url>https://www.apache.org/licenses/LICENSE-2.0</license.url>
+    <license.name>Apache-2.0</license.name>
+  </properties>
+  <scm child.scm.url.inherit.append.path="true">
+    <url>https://github.com/cashapp/licensee</url>
+  </scm>
+</project>
