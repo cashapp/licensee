@@ -2,6 +2,6 @@ include ':'
 
 includeBuild('other') {
   dependencySubstitution {
-    substitute module('com.example:example') with project(':')
+    substitute module('com.example:example') using project(':')
   }
 }
