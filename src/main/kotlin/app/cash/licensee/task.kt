@@ -120,6 +120,7 @@ internal abstract class LicenseeTask : DefaultTask() {
       val req = DefaultModelBuildingRequest().apply {
         isProcessPlugins = false
         pomFile = pom.file
+        isTwoPhaseBuilding = true
         modelResolver = resolver
         validationLevel = ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL
       }
