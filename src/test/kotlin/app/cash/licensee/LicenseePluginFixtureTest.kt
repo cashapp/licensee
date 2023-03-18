@@ -48,6 +48,7 @@ class LicenseePluginFixtureTest {
       "dependency-verification-disabled",
       "exclude-ignored",
       "flat-dir-repository-ignored",
+      "gson-broken-plugin",
       "ignore-group",
       "ignore-group-artifact",
       "ignore-group-artifact-kts",

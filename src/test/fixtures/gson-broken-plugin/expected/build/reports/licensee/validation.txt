@@ -1,0 +1,3 @@
+com.google.code.gson:gson:2.8.9
+ - SPDX identifier 'Apache-2.0' is NOT allowed
+ - Coordinate version is allowed
