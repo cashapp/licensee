@@ -62,8 +62,8 @@ Add the dependency and apply the plugin to the module whose dependency graph you
 
 ```groovy
 buildscript {
-  repository {
-    mavenCental()
+  repositories {
+    mavenCentral()
   }
   dependencies {
     classpath 'app.cash.licensee:licensee-gradle-plugin:1.6.0'
