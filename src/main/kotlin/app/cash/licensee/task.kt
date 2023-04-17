@@ -32,8 +32,10 @@ import org.apache.maven.model.building.ModelSource2
 import org.apache.maven.model.resolution.ModelResolver
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.DirectoryProperty
@@ -69,47 +71,57 @@ internal abstract class LicenseeTask : DefaultTask() {
   fun addPomFileDependencies(configuration: Configuration) {
     val root = configuration.incoming.resolutionResult.rootComponent
 
+    val dependencies = project.dependencies
+    val configurations = project.configurations
     val pomInfos: Provider<Map<DependencyCoordinates, PomInfo>> = root.zip(dependencyConfig) { root, depConfig ->
       val directDependencies = loadDependencyCoordinates(
         logger,
         root,
         depConfig,
       )
-      val directPomFiles = directDependencies.coordinates.fetchPomFiles(root.variants)
-      directPomFiles.getPomInfo(root.variants)
+      val directPomFiles = directDependencies.coordinates.fetchPomFiles(
+        root.variants,
+        dependencies,
+        configurations,
+      )
+      directPomFiles.getPomInfo(
+        root.variants,
+        dependencies,
+        configurations,
+      )
     }
 
     this.coordinatesToPomInfo.set(pomInfos)
   }
 
-  private fun Iterable<ResolvedArtifact>.getPomInfo(variants: List<ResolvedVariantResult>): Map<DependencyCoordinates, PomInfo> {
+  private fun Iterable<ResolvedArtifact>.getPomInfo(
+    variants: List<ResolvedVariantResult>,
+    dependencies: DependencyHandler,
+    configurations: ConfigurationContainer,
+  ): Map<DependencyCoordinates, PomInfo> {
     val builder = DefaultModelBuilderFactory().newInstance()
     val resolver = object : ModelResolver {
       fun resolve(dependencyCoordinates: DependencyCoordinates): FileModelSource {
         val pomFile =
-          setOf(dependencyCoordinates).fetchPomFiles(variants)
-            .single().file
+          setOf(dependencyCoordinates).fetchPomFiles(
+            variants,
+            dependencies,
+            configurations,
+          ).single().file
         return FileModelSource(pomFile)
       }
 
-      override fun resolveModel(groupId: String, artifactId: String, version: String): ModelSource2 {
-        return resolve(DependencyCoordinates(groupId, artifactId, version))
-      }
+      override fun resolveModel(groupId: String, artifactId: String, version: String): ModelSource2 =
+        resolve(DependencyCoordinates(groupId, artifactId, version))
 
-      override fun resolveModel(parent: Parent): ModelSource2 {
-        return resolve(DependencyCoordinates(parent.groupId, parent.artifactId, parent.version))
-      }
+      override fun resolveModel(parent: Parent): ModelSource2 =
+        resolve(DependencyCoordinates(parent.groupId, parent.artifactId, parent.version))
 
-      override fun resolveModel(dependency: Dependency): ModelSource2 {
-        return resolve(DependencyCoordinates(dependency.groupId, dependency.artifactId, dependency.version))
-      }
+      override fun resolveModel(dependency: Dependency): ModelSource2 =
+        resolve(DependencyCoordinates(dependency.groupId, dependency.artifactId, dependency.version))
 
-      override fun addRepository(repository: Repository) {
-      }
-
-      override fun addRepository(repository: Repository, replace: Boolean) {
-      }
-
+      override fun addRepository(repository: Repository) { }
+      override fun addRepository(repository: Repository, replace: Boolean) { }
       override fun newCopy(): ModelResolver = this
     }
 
@@ -131,12 +143,16 @@ internal abstract class LicenseeTask : DefaultTask() {
     }
   }
 
-  internal fun Set<DependencyCoordinates>.fetchPomFiles(variants: List<ResolvedVariantResult>): List<ResolvedArtifact> {
+  internal fun Set<DependencyCoordinates>.fetchPomFiles(
+    variants: List<ResolvedVariantResult>,
+    dependencies: DependencyHandler,
+    configurations: ConfigurationContainer,
+  ): List<ResolvedArtifact> {
     val pomDependencies = map {
-      project.dependencies.create(it.pomCoordinate())
+      dependencies.create(it.pomCoordinate())
     }.toTypedArray()
 
-    val withVariants = project.configurations.detachedConfiguration(*pomDependencies).apply {
+    val withVariants = configurations.detachedConfiguration(*pomDependencies).apply {
       for (variant in variants) {
         attributes {
           val variantAttrs = variant.attributes
@@ -149,7 +165,7 @@ internal abstract class LicenseeTask : DefaultTask() {
     }.artifacts()
 
     return withVariants.ifEmpty {
-      project.configurations.detachedConfiguration(*pomDependencies).artifacts()
+      configurations.detachedConfiguration(*pomDependencies).artifacts()
     }
   }
 
