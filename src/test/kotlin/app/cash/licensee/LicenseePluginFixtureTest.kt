@@ -213,6 +213,7 @@ class LicenseePluginFixtureTest {
     )
   }
 
+  // TODO: Remove when KGP support Gradle 8.1 and licensee uses 8.1 by default.
   @Test fun supportsGradle81WithJava(
     @TestParameter(
       "plugin-java",
@@ -225,6 +226,7 @@ class LicenseePluginFixtureTest {
     assertExpectedFiles(fixtureDir)
   }
 
+  // TODO: Remove when KGP support Gradle 8.1 and licensee uses 8.1 by default.
   @Test fun supportsGradle81WithKGPMPP(
     @TestParameter(
       "plugin-kotlin-mpp",
