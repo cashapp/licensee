@@ -213,11 +213,41 @@ class LicenseePluginFixtureTest {
     )
   }
 
+  // TODO: Remove when KGP support Gradle 8.1 and licensee uses 8.1 by default.
+  @Test fun supportsGradle81WithJava(
+    @TestParameter(
+      "plugin-java",
+    ) fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    createRunner(fixtureDir)
+      .withGradleVersion("8.1")
+      .build()
+    assertExpectedFiles(fixtureDir)
+  }
+
+  // TODO: Remove when KGP support Gradle 8.1 and licensee uses 8.1 by default.
+  @Test fun supportsGradle81WithKGPMPP(
+    @TestParameter(
+      "plugin-kotlin-mpp",
+    ) fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir)
+      .withGradleVersion("8.1")
+      .buildAndFail()
+    assertExpectedFiles(fixtureDir)
+    assertThat(result.output).doesNotContain(
+      "Task `:licenseeJs` of type `app.cash.licensee.LicenseeTask`: invocation of 'Task.project' at execution time is unsupported.",
+    )
+  }
+
   @Test fun allFixturesCovered() {
     val expectedDirs = javaClass.declaredMethods
       .filter { it.isAnnotationPresent(Test::class.java) }
       .filter { it.parameterCount == 1 } // Assume single parameter means test parameter.
       .flatMap { it.parameters[0].getAnnotation(TestParameter::class.java).value.toList() }
+      .toSet()
     val actualDirs = fixturesDir.listFiles().filter { it.isDirectory }.map { it.name }
     assertThat(expectedDirs).containsExactlyElementsIn(actualDirs)
   }
