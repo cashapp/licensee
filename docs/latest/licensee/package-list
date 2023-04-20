@@ -32,6 +32,7 @@ $dokka.location:app.cash.licensee/LicenseePlugin/apply/#org.gradle.api.Project/P
 $dokka.location:app.cash.licensee/LicenseeTask///PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/index.html
 $dokka.location:app.cash.licensee/LicenseeTask/LicenseeTask/#/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/-licensee-task.html
 $dokka.location:app.cash.licensee/LicenseeTask/configurationToCheck/#org.gradle.api.artifacts.Configuration/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/configuration-to-check.html
+$dokka.location:app.cash.licensee/LicenseeTask/configurationToCheck/#org.gradle.api.provider.Provider[org.gradle.api.artifacts.Configuration]/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/configuration-to-check.html
 $dokka.location:app.cash.licensee/LicenseeTask/execute/#/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/execute.html
 $dokka.location:app.cash.licensee/LicenseeTask/getLogger/#/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/get-logger.html
 $dokka.location:app.cash.licensee/LicenseeTask/outputDir/#/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/output-dir.html
