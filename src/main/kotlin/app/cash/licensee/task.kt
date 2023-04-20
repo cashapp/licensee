@@ -55,20 +55,20 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 @CacheableTask
-internal abstract class LicenseeTask : DefaultTask() {
+abstract class LicenseeTask : DefaultTask() {
   @get:Input
-  abstract val dependencyConfig: Property<DependencyConfig>
+  internal abstract val dependencyConfig: Property<DependencyConfig>
 
   @get:Input
-  abstract val validationConfig: Property<ValidationConfig>
+  internal abstract val validationConfig: Property<ValidationConfig>
 
   @get:Input
-  abstract val violationAction: Property<ViolationAction>
+  internal abstract val violationAction: Property<ViolationAction>
 
   @get:Input
-  abstract val coordinatesToPomInfo: MapProperty<DependencyCoordinates, PomInfo>
+  internal abstract val coordinatesToPomInfo: MapProperty<DependencyCoordinates, PomInfo>
 
-  fun addPomFileDependencies(configuration: Configuration) {
+  fun configurationToCheck(configuration: Configuration) {
     val root = configuration.incoming.resolutionResult.rootComponent
 
     val dependencies = project.dependencies
