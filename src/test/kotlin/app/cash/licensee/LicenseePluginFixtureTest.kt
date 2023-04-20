@@ -131,6 +131,7 @@ class LicenseePluginFixtureTest {
   fun customConfig(
     @TestParameter(
       "plugin-java-custom-config",
+      "plugin-java-custom-config-kts",
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
