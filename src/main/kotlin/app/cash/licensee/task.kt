@@ -36,6 +36,7 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.DirectoryProperty
@@ -69,8 +70,14 @@ abstract class LicenseeTask : DefaultTask() {
   internal abstract val coordinatesToPomInfo: MapProperty<DependencyCoordinates, PomInfo>
 
   fun configurationToCheck(configuration: Configuration) {
-    val root = configuration.incoming.resolutionResult.rootComponent
+    loadDependenciesFromConfiguration(configuration.incoming.resolutionResult.rootComponent)
+  }
 
+  fun configurationToCheck(configuration: Provider<Configuration>) {
+    loadDependenciesFromConfiguration(configuration.flatMap { it.incoming.resolutionResult.rootComponent })
+  }
+
+  private fun loadDependenciesFromConfiguration(root: Provider<ResolvedComponentResult>) {
     val dependencies = project.dependencies
     val configurations = project.configurations
     val pomInfos: Provider<Map<DependencyCoordinates, PomInfo>> = root.zip(dependencyConfig) { root, depConfig ->
