@@ -127,6 +127,23 @@ class LicenseePluginFixtureTest {
     }
   }
 
+  @Test
+  fun customConfig(
+    @TestParameter(
+      "plugin-java-custom-config",
+    ) fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+
+    GradleRunner.create()
+      .withProjectDir(fixtureDir)
+      .withDebug(true) // Run in-process
+      .withArguments("clean", "licenseeFoo", "--configuration-cache", versionProperty)
+      .forwardOutput()
+      .build()
+    assertExpectedFiles(fixtureDir)
+  }
+
   @Test fun failure(
     @TestParameter(
       "coordinate-version-mismatch",

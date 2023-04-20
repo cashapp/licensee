@@ -17,7 +17,6 @@ package app.cash.licensee
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
-import java.io.File
 import java.util.Locale.ROOT
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -45,6 +44,14 @@ class LicenseePlugin : Plugin<Project> {
     val extension = project.objects.newInstance(MutableLicenseeExtension::class.java)
     project.extensions.add(LicenseeExtension::class.java, "licensee", extension)
 
+    project.tasks.withType(LicenseeTask::class.java).configureEach {
+      it.dependencyConfig.convention(extension.toDependencyTreeConfig())
+      it.validationConfig.convention(extension.toLicenseValidationConfig())
+      it.violationAction.convention(extension.violationAction)
+
+      it.outputDir.convention(project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(reportFolder))
+    }
+
     project.afterEvaluate {
       val androidPlugin = if (project.plugins.hasPlugin("com.android.application")) {
         AndroidPlugin.Application
@@ -59,28 +66,28 @@ class LicenseePlugin : Plugin<Project> {
       var rootTask: TaskProvider<Task>? = null
       if (project.plugins.hasPlugin("org.jetbrains.kotlin.js")) {
         // The JS plugin uses the same runtime configuration name as the Java plugin.
-        configureJavaPlugin(project, extension)
+        configureJavaPlugin(project)
       } else if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
         rootTask = project.tasks.register(baseTaskName) {
           it.group = VERIFICATION_GROUP
           it.description = taskDescription("all Kotlin targets")
         }
         if (androidPlugin != null) {
-          configureKotlinMultiplatformTargets(project, extension, rootTask, skipAndroid = true)
-          configureAndroidVariants(project, extension, rootTask, androidPlugin, prefix = true)
+          configureKotlinMultiplatformTargets(project, rootTask, skipAndroid = true)
+          configureAndroidVariants(project, rootTask, androidPlugin, prefix = true)
         } else {
-          configureKotlinMultiplatformTargets(project, extension, rootTask)
+          configureKotlinMultiplatformTargets(project, rootTask)
         }
       } else if (project.plugins.hasPlugin("java")) {
         // Note: java-library applies java so we only need to look for the latter.
         // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
-        configureJavaPlugin(project, extension)
+        configureJavaPlugin(project)
       } else if (androidPlugin != null) {
         rootTask = project.tasks.register(baseTaskName) {
           it.group = VERIFICATION_GROUP
           it.description = taskDescription("all Android variants")
         }
-        configureAndroidVariants(project, extension, rootTask, androidPlugin)
+        configureAndroidVariants(project, rootTask, androidPlugin)
       } else {
         val name = if (project === project.rootProject) {
           "root project"
@@ -109,7 +116,6 @@ private enum class AndroidPlugin {
 
 private fun configureAndroidVariants(
   project: Project,
-  extension: MutableLicenseeExtension,
   rootTask: TaskProvider<Task>,
   android: AndroidPlugin,
   prefix: Boolean = false,
@@ -132,13 +138,10 @@ private fun configureAndroidVariants(
       it.group = VERIFICATION_GROUP
       it.description = taskDescription("Android ${variant.name} variant")
 
-      it.dependencyConfig.set(extension.toDependencyTreeConfig())
-      it.validationConfig.set(extension.toLicenseValidationConfig())
-      it.violationAction.set(extension.violationAction)
-      it.addPomFileDependencies(variant.runtimeConfiguration)
+      it.configurationToCheck(variant.runtimeConfiguration)
 
-      val reportBase = project.extensions.getByType(ReportingExtension::class.java).file(reportFolder)
-      it.outputDir.set(File(reportBase, if (prefix) "android$suffix" else variant.name))
+      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(reportFolder)
+      it.outputDir.set(reportBase.map { it.dir(if (prefix) "android$suffix" else variant.name) })
     }
 
     rootTask.configure {
@@ -149,7 +152,6 @@ private fun configureAndroidVariants(
 
 private fun configureKotlinMultiplatformTargets(
   project: Project,
-  extension: MutableLicenseeExtension,
   rootTask: TaskProvider<Task>,
   skipAndroid: Boolean = false,
 ) {
@@ -169,17 +171,13 @@ private fun configureKotlinMultiplatformTargets(
       it.group = VERIFICATION_GROUP
       it.description = taskDescription("Kotlin ${target.name} target")
 
-      it.dependencyConfig.set(extension.toDependencyTreeConfig())
-      it.validationConfig.set(extension.toLicenseValidationConfig())
-      it.violationAction.set(extension.violationAction)
-
       val runtimeConfigurationName =
         target.compilations.getByName("main").compileDependencyConfigurationName
       val runtimeConfiguration = project.configurations.getByName(runtimeConfigurationName)
-      it.addPomFileDependencies(runtimeConfiguration)
+      it.configurationToCheck(runtimeConfiguration)
 
-      val reportBase = project.extensions.getByType(ReportingExtension::class.java).file(reportFolder)
-      it.outputDir.set(File(reportBase, target.name))
+      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(reportFolder)
+      it.outputDir.set(reportBase.map { it.dir(target.name) })
     }
 
     rootTask.configure {
@@ -190,20 +188,13 @@ private fun configureKotlinMultiplatformTargets(
 
 private fun configureJavaPlugin(
   project: Project,
-  extension: MutableLicenseeExtension,
 ) {
   val task = project.tasks.register(baseTaskName, LicenseeTask::class.java) {
     it.group = VERIFICATION_GROUP
     it.description = taskDescription()
 
-    it.dependencyConfig.set(extension.toDependencyTreeConfig())
-    it.validationConfig.set(extension.toLicenseValidationConfig())
-    it.violationAction.set(extension.violationAction)
-
     val configuration = project.configurations.getByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME)
-    it.addPomFileDependencies(configuration)
-
-    it.outputDir.set(project.extensions.getByType(ReportingExtension::class.java).file(reportFolder))
+    it.configurationToCheck(configuration)
   }
   project.tasks.named(CHECK_TASK_NAME).configure {
     it.dependsOn(task)

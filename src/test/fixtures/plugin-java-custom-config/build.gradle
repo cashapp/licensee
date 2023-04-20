@@ -1,0 +1,37 @@
+buildscript {
+  apply from: '../../../../dependencies.gradle'
+
+  dependencies {
+    classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
+  }
+  repositories {
+    maven {
+      url "file://${projectDir.absolutePath}/../../../../build/localMaven"
+    }
+    mavenCentral()
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'app.cash.licensee'
+
+configurations.create("foo")
+
+dependencies {
+  foo 'com.example:example:1.0.0'
+}
+
+licensee {
+  allow('Apache-2.0')
+}
+
+tasks.register("licenseeFoo", app.cash.licensee.LicenseeTask) {
+  configurationToCheck configurations.foo
+  outputDir.set(layout.buildDirectory.dir("reports/licenseeFoo"))
+}
+
+repositories {
+  maven {
+    url "file://${rootDir.absolutePath}/repo"
+  }
+}
