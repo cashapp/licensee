@@ -1,3 +1,4 @@
 plugins {
+  id("base")
   alias(libs.plugins.licensee)
 }

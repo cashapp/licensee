@@ -184,7 +184,7 @@ class LicenseePluginFixtureTest {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).contains(
-      "'app.cash.licensee' requires compatible language/platform plugin to be applied (root project)",
+      "Task 'licensee' not found in root project 'plugin-missing-on-root-fails'.",
     )
   }
 
@@ -194,7 +194,7 @@ class LicenseePluginFixtureTest {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).contains(
-      "'app.cash.licensee' requires compatible language/platform plugin to be applied (project :some:thing)",
+      "Task 'licensee' not found in root project 'plugin-missing-on-subproject-fails' and its subprojects.",
     )
   }
 
