@@ -5,7 +5,7 @@ buildscript {
     classpath deps.kotlinGradlePlugin
     classpath "org.jetbrains.kotlin:kotlin-serialization:${versions.kotlin}"
     classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.18.0'
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.14.2'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.25.2'
     classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.7.20'
     classpath 'de.undercouch:gradle-download-task:5.4.0'
   }
@@ -25,7 +25,7 @@ gradlePlugin {
     licensee {
       id = "app.cash.licensee"
       displayName = "Licensee"
-      description = "TODO"
+      description = "Gradle plugin which validates the licenses of your dependency graph match what you expect"
       implementationClass = "app.cash.licensee.LicenseePlugin"
     }
   }
@@ -70,7 +70,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 }
 
 test {
-  dependsOn(':installArchives')
+  dependsOn(':publishAllPublicationsToTestingRepository')
   systemProperty('licenseeVersion', VERSION_NAME)
 
   testLogging {
@@ -116,21 +116,14 @@ tasks.register('updateLicenses', de.undercouch.gradle.tasks.download.Download) {
 }
 
 apply plugin: 'com.vanniktech.maven.publish'
-
-mavenPublish {
-  targets {
-    installArchives {
-      def url = file("${rootProject.buildDir}/localMaven").toURI().toString()
-      releaseRepositoryUrl = url
-      snapshotRepositoryUrl = url
+apply plugin: 'org.jetbrains.dokka'
+publishing {
+  repositories {
+    maven {
+      name = "testing"
+      url = "${rootProject.buildDir}/localMaven"
     }
   }
-}
-
-signing {
-  def signingKey = findProperty('signingKey')
-  def signingPassword = ''
-  useInMemoryPgpKeys(signingKey, signingPassword)
 }
 
 apply plugin: 'com.diffplug.spotless'
