@@ -1,12 +1,8 @@
 import app.cash.licensee.ViolationAction.LOG
 
-buildscript {
-  apply(from = "../../../../dependencies.gradle")
-}
-
 plugins {
   `java-library`
-  id("app.cash.licensee") version property("licenseeVersion").toString()
+  id("app.cash.licensee")
 }
 
 dependencies {
