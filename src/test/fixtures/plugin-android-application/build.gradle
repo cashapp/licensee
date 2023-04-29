@@ -1,8 +1,6 @@
 buildscript {
-  apply from: '../../../../dependencies.gradle'
-
   dependencies {
-    classpath deps.androidGradlePlugin
+    classpath libs.androidGradlePlugin
     classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
   }
   repositories {
@@ -34,10 +32,10 @@ repositories {
 }
 
 android {
-  compileSdkVersion versions.compileSdk
+  compileSdkVersion 33
 
   defaultConfig {
-    minSdkVersion versions.minSdk
+    minSdkVersion 21
   }
 
   lintOptions {

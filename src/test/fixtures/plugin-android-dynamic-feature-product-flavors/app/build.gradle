@@ -18,14 +18,14 @@ repositories {
 }
 
 android {
-  compileSdkVersion versions.compileSdk
+  compileSdkVersion 33
   namespace 'com.example'
 
   dynamicFeatures = [":feature"]
 
   defaultConfig {
     applicationId 'com.example'
-    minSdkVersion versions.minSdk
+    minSdkVersion 21
   }
 
   flavorDimensions 'price', 'store'

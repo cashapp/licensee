@@ -1,8 +1,6 @@
 buildscript {
-  apply from: '../../../../dependencies.gradle'
-
   dependencies {
-    classpath deps.androidGradlePlugin
+    classpath libs.androidGradlePlugin
     classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
   }
   repositories {

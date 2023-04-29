@@ -1,6 +1,4 @@
 buildscript {
-  apply from: '../../../../dependencies.gradle'
-
   dependencies {
     classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
   }
