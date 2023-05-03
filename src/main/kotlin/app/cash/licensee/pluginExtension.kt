@@ -17,9 +17,15 @@ package app.cash.licensee
 
 import app.cash.licensee.LicenseeExtension.AllowDependencyOptions
 import app.cash.licensee.LicenseeExtension.IgnoreDependencyOptions
-import javax.inject.Inject
+import java.util.Optional
 import org.gradle.api.Action
-import org.gradle.api.Project
+import org.gradle.api.Named
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.artifacts.MinimalExternalModuleDependency
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 
 @Suppress("unused") // Public API for Gradle build scripts.
 interface LicenseeExtension {
@@ -82,6 +88,11 @@ interface LicenseeExtension {
     options: Action<AllowDependencyOptions> = Action { },
   )
 
+  fun allowDependency(
+    dependencyProvider: Provider<MinimalExternalModuleDependency>,
+    options: Action<AllowDependencyOptions> = Action { },
+  )
+
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun allowDependency(
@@ -90,6 +101,14 @@ interface LicenseeExtension {
     version: String,
   ) {
     allowDependency(groupId, artifactId, version, {})
+  }
+
+  /** @suppress */
+  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
+  fun allowDependency(
+    dependencyProvider: Provider<MinimalExternalModuleDependency>,
+  ) {
+    allowDependency(dependencyProvider, {})
   }
 
   /**
@@ -194,33 +213,51 @@ enum class ViolationAction {
   IGNORE,
 }
 
-internal abstract class MutableLicenseeExtension @Inject constructor(private val project: Project) : LicenseeExtension {
-  private val allowedIdentifiers = mutableSetOf<String>()
-  private val allowedUrls = mutableMapOf<String, String?>()
-  private val allowedDependencies = mutableMapOf<DependencyCoordinates, String?>()
-  private val ignoredGroupIds = mutableMapOf<String, IgnoredData>()
-  private val ignoredCoordinates = mutableMapOf<String, MutableMap<String, IgnoredData>>()
+internal abstract class IgnoredCoordinate : Named {
+  abstract val ignoredDatas: MapProperty<String, IgnoredData>
+}
 
-  var violationAction = ViolationAction.FAIL
-    private set
+internal abstract class MutableLicenseeExtension : LicenseeExtension {
+  internal abstract val allowedIdentifiers: SetProperty<String>
+  internal abstract val allowedUrls: MapProperty<String, Optional<String>>
+  internal abstract val allowedDependencies: MapProperty<DependencyCoordinates, Optional<String>>
+  internal abstract val ignoredGroupIds: MapProperty<String, IgnoredData>
+  internal abstract val ignoredCoordinates: NamedDomainObjectContainer<IgnoredCoordinate>
 
-  fun toDependencyTreeConfig(): DependencyConfig {
-    return DependencyConfig(
-      ignoredGroupIds.toMap(),
-      ignoredCoordinates.mapValues { it.value.toMap() },
-    )
+  internal abstract val violationAction: Property<ViolationAction>
+  init {
+    violationAction.convention(ViolationAction.FAIL)
   }
 
-  fun toLicenseValidationConfig(): ValidationConfig {
-    return ValidationConfig(
-      allowedIdentifiers.toSet(),
-      allowedUrls.toMap(),
-      allowedDependencies.toMap(),
-    )
+  fun toDependencyTreeConfig(): Provider<DependencyConfig> {
+    return ignoredGroupIds.map { ignoredGroupIds ->
+      DependencyConfig(
+        ignoredGroupIds.toMap(),
+        ignoredCoordinates.groupBy({ it.name }) {
+          it.ignoredDatas.get()
+        }.mapValues {
+          it.value.single()
+        },
+      )
+    }
+  }
+
+  fun toLicenseValidationConfig(): Provider<ValidationConfig> {
+    return allowedIdentifiers.zip(allowedUrls, allowedDependencies) { allowedIdentifiers, allowedUrls, allowedDependencies ->
+      ValidationConfig(
+        allowedIdentifiers.toSet(),
+        allowedUrls.mapValues {
+          it.value.orElse(null)
+        },
+        allowedDependencies.mapValues {
+          it.value.orElse(null)
+        },
+      )
+    }
   }
 
   override fun allow(spdxId: String) {
-    allowedIdentifiers += spdxId
+    allowedIdentifiers.add(spdxId)
   }
 
   override fun allowUrl(url: String, options: Action<LicenseeExtension.AllowUrlOptions>) {
@@ -231,7 +268,7 @@ internal abstract class MutableLicenseeExtension @Inject constructor(private val
       }
     }
     options.execute(option)
-    allowedUrls[url] = option.setReason
+    allowedUrls.put(url, Optional.ofNullable(option.setReason))
   }
 
   override fun allowDependency(
@@ -240,14 +277,36 @@ internal abstract class MutableLicenseeExtension @Inject constructor(private val
     version: String,
     options: Action<AllowDependencyOptions>,
   ) {
-    val option = object : AllowDependencyOptions {
-      var setReason: String? = null
-      override fun because(reason: String) {
-        setReason = reason
-      }
+    val optionsImpl = AllowDependencyOptionsImpl()
+    options.execute(optionsImpl)
+    allowedDependencies.put(DependencyCoordinates(group = groupId, artifact = artifactId, version = version), Optional.ofNullable(optionsImpl.setReason))
+  }
+
+  private class AllowDependencyOptionsImpl : AllowDependencyOptions {
+    var setReason: String? = null
+    override fun because(reason: String) {
+      setReason = reason
     }
-    options.execute(option)
-    allowedDependencies[DependencyCoordinates(group = groupId, artifact = artifactId, version = version)] = option.setReason
+  }
+
+  override fun allowDependency(
+    dependencyProvider: Provider<MinimalExternalModuleDependency>,
+    options: Action<AllowDependencyOptions>,
+  ) {
+    val optionsImpl = AllowDependencyOptionsImpl()
+    options.execute(optionsImpl)
+
+    allowedDependencies.set(
+      dependencyProvider.map {
+        mapOf(
+          DependencyCoordinates(
+            group = requireNotNull(it.group) { "group was null in allowDependency for ${it.name}" },
+            artifact = it.name,
+            version = requireNotNull(it.version) { "version was null in allowDependency for ${it.name}" },
+          ) to Optional.ofNullable(optionsImpl.setReason),
+        )
+      },
+    )
   }
 
   override fun ignoreDependencies(groupId: String, artifactId: String?, options: Action<IgnoreDependencyOptions>) {
@@ -276,13 +335,31 @@ internal abstract class MutableLicenseeExtension @Inject constructor(private val
     }
     val ignoredData = IgnoredData(option.setReason, option.transitive)
     if (artifactId == null) {
-      ignoredGroupIds[groupId] = ignoredData
+      ignoredGroupIds.put(groupId, ignoredData)
     } else {
-      ignoredCoordinates.getOrPut(key = groupId, defaultValue = ::LinkedHashMap)[artifactId] = ignoredData
+      ignoredCoordinates.configure(groupId) {
+        it.ignoredDatas.put(artifactId, ignoredData)
+      }
     }
   }
 
   override fun violationAction(level: ViolationAction) {
-    violationAction = level
+    violationAction.set(level)
+  }
+}
+
+private fun<T, R, S, V> Provider<T>.zip(left: Provider<R>, right: Provider<S>, merge: (T, R, S) -> V): Provider<V> {
+  return zip(left) { t, r ->
+    t to r
+  }.zip(right) { (t, r), s ->
+    merge(t, r, s)
+  }
+}
+
+private fun<T> NamedDomainObjectContainer<T>.configure(name: String, config: Action<T>) {
+  if (name in names) {
+    named(name, config)
+  } else {
+    register(name, config)
   }
 }
