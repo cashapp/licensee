@@ -296,7 +296,7 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
     val optionsImpl = AllowDependencyOptionsImpl()
     options.execute(optionsImpl)
 
-    allowedDependencies.set(
+    allowedDependencies.putAll(
       dependencyProvider.map {
         mapOf(
           DependencyCoordinates(
