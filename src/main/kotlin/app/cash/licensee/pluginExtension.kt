@@ -348,7 +348,7 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   }
 }
 
-private fun<T, L, R, V> Provider<T>.zip(left: Provider<L>, right: Provider<R>, merge: (T, L, R) -> V): Provider<V> {
+private fun <T, L, R, V> Provider<T>.zip(left: Provider<L>, right: Provider<R>, merge: (T, L, R) -> V): Provider<V> {
   return zip(left) { t, l ->
     t to l
   }.zip(right) { (t, l), r ->
