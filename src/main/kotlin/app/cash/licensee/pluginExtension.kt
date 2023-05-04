@@ -356,7 +356,7 @@ private fun<T, L, R, V> Provider<T>.zip(left: Provider<L>, right: Provider<R>, m
   }
 }
 
-private fun<T> NamedDomainObjectContainer<T>.configure(name: String, config: Action<T>) {
+private fun <T> NamedDomainObjectContainer<T>.configure(name: String, config: Action<T>) {
   if (name in names) {
     named(name, config)
   } else {
