@@ -21,7 +21,7 @@ import java.util.Optional
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.artifacts.MinimalExternalModuleDependency
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -89,7 +89,7 @@ interface LicenseeExtension {
   )
 
   fun allowDependency(
-    dependencyProvider: Provider<MinimalExternalModuleDependency>,
+    dependencyProvider: Provider<out Dependency>,
     options: Action<AllowDependencyOptions> = Action { },
   )
 
@@ -106,7 +106,7 @@ interface LicenseeExtension {
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun allowDependency(
-    dependencyProvider: Provider<MinimalExternalModuleDependency>,
+    dependencyProvider: Provider<out Dependency>,
   ) {
     allowDependency(dependencyProvider, {})
   }
@@ -290,7 +290,7 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   }
 
   override fun allowDependency(
-    dependencyProvider: Provider<MinimalExternalModuleDependency>,
+    dependencyProvider: Provider<out Dependency>,
     options: Action<AllowDependencyOptions>,
   ) {
     val optionsImpl = AllowDependencyOptionsImpl()
