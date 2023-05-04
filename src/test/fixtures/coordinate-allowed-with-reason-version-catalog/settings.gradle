@@ -1,0 +1,9 @@
+dependencyResolutionManagement {
+  versionCatalogs {
+    "libs" {
+      library("exam", "com.example", "example").version("1.0.0")
+    }
+  }
+}
+
+include ':'

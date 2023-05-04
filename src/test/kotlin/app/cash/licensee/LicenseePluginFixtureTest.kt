@@ -41,6 +41,8 @@ class LicenseePluginFixtureTest {
       "coordinate-allowed-override-url",
       "coordinate-allowed-with-reason",
       "coordinate-allowed-with-reason-kts",
+      "coordinate-allowed-with-reason-version-catalog",
+      "coordinate-allowed-with-reason-version-catalog-kts",
       "dependency-substitution-replace-local-with-remote",
       "dependency-substitution-replace-remote-with-local-ignored",
       "dependency-substitution-replace-remote-with-include-build-ignored",
@@ -192,6 +194,18 @@ class LicenseePluginFixtureTest {
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).contains(
       "'app.cash.licensee' requires compatible language/platform plugin to be applied (project :some:thing)",
+    )
+  }
+
+  @Test fun allowDependencyWithoutVersionFails(
+    @TestParameter(
+      "coordinate-allowed-with-reason-version-catalog-null-version",
+    ) fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir).buildAndFail()
+    assertThat(result.output).contains(
+      "version was null in allowDependency for exam",
     )
   }
 
