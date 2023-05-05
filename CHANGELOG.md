@@ -2,6 +2,49 @@
 
 ## [Unreleased]
 
+## [1.7.0] - 2023-05-05
+
+**Added**
+
+- When allowing a URL, a reason can now be provided using the `because` method.
+
+    ```kotlin
+    allowUrl("https://example.com/license.html") {
+      because("is Apache-2.0")
+    }
+    ```
+
+- Custom tasks can be created to check custom configurations or language plugins which do not have first-party support.
+
+    ```groovy
+    tasks.register('licenseeFoo', app.cash.licensee.LicenseeTask) {
+      configurationToCheck configurations.foo
+      outputDir.set(layout.buildDirectory.dir('reports/licenseeFoo'))
+    }
+    ```
+
+- Version catalog references are now supported by `allowDependency`.
+
+    ```kotlin
+    allowDependency(libs.exam) {
+      because("there are reasons!")
+    }
+    ```
+
+**Changed**
+
+ -  License URLs which map to multiple SPDX identifiers will now match against any of those identifiers.
+
+    For example, if a license URL matches both `EXAMPLE` and `EXAMPLE-with-exemption` you can mark either of those
+    IDs as allowed and the dependency will be allowed.
+
+**Fixed**
+
+- Support reading Maven pom files which use property substitution (`${something}`) in their XML.
+- Support for Gradle configuration cache.
+- `LicenseeTask` is now cachable.
+
+
 ## [1.6.0] - 2022-10-26
 
 **Added**

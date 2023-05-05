@@ -66,7 +66,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'app.cash.licensee:licensee-gradle-plugin:1.6.0'
+    classpath 'app.cash.licensee:licensee-gradle-plugin:1.7.0'
   }
 }
 
@@ -86,7 +86,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'app.cash.licensee:licensee-gradle-plugin:1.7.0-SNAPSHOT'
+    classpath 'app.cash.licensee:licensee-gradle-plugin:1.8.0-SNAPSHOT'
   }
 }
 
@@ -162,6 +162,15 @@ Allow artifacts with an unknown (non-SPDX) license which matches a URL.
 ```groovy
 licensee {
   allowUrl('https://example.com/license.html')
+}
+```
+
+A reason string can be supplied to document why the URL is allowed.
+
+```groovy
+licensee {
+  allowUrl('https://example.com/license.html') {
+    because 'Apache-2.0, but self-hosted copy of the license'
 }
 ```
 
