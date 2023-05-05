@@ -1,0 +1,35 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>example</artifactId>
+  <version>1.0.0</version>
+  <name>Android Emoji Compat</name>
+  <description>Core library to enable emoji compatibility in Kitkat and newer devices to avoid the empty emoji characters.</description>
+  <url>https://developer.android.com/jetpack/androidx</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+    <license>
+      <name>SIL Open Font License, Version 1.1</name>
+      <url>http://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web</url>
+      <distribution>repo</distribution>
+    </license>
+    <license>
+      <name>Unicode, Inc. License</name>
+      <url>http://www.unicode.org/copyright.html#License</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>The Android Open Source Project</name>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://android.googlesource.com/platform/frameworks/support</connection>
+    <url>http://source.android.com</url>
+  </scm>
+</project>
