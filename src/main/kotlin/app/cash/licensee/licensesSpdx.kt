@@ -22,10 +22,10 @@ import kotlinx.serialization.json.Json
 
 internal class SpdxLicenses(
   private val identifierToLicense: Map<String, SpdxLicense>,
-  private val urlToLicense: Map<String, SpdxLicense>,
+  private val urlToLicense: Map<String, List<SpdxLicense>>,
 ) {
-  fun findByIdentifier(id: String) = identifierToLicense[id]
-  fun findByUrl(url: String) = urlToLicense[url]
+  fun findByIdentifier(id: String): SpdxLicense? = identifierToLicense[id]
+  fun findByUrl(url: String): List<SpdxLicense>? = urlToLicense[url]
 
   companion object {
     private val format = Json {
@@ -55,7 +55,7 @@ internal class SpdxLicenses(
         }
         .associateBy { it.identifier }
 
-      val urlToLicense = licenses.licenses
+      val urlToLicense: Map<String, List<SpdxLicense>> = licenses.licenses
         .flatMap { license ->
           val urls = mutableListOf(license.spdxUrl)
 
@@ -69,14 +69,9 @@ internal class SpdxLicenses(
           }
 
           urls.map { it to identifierToLicense.getValue(license.id) }
+        }.groupBy({ it.first }) {
+          it.second
         }
-        // TODO https://github.com/cashapp/licensee/issues/28
-        // Sort+distinct creates the behavior where we prefer the shortest identifier which maps to
-        // each URL. Take, for example, MPL-2.0 and MPL-2.0-no-copyleft-exception which use the same
-        // URL. For now, we'll blanket prefer the first.
-        .sortedBy { it.second.identifier.length }
-        .distinctBy { it.first }
-        .toMap()
 
       return SpdxLicenses(
         identifierToLicense,

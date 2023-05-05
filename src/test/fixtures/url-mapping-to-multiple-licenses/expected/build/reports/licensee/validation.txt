@@ -1,0 +1,2 @@
+com.example:example:1.0.0
+ - SPDX identifier 'OFL-1.1-RFN' allowed

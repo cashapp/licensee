@@ -23,8 +23,8 @@ internal fun normalizeLicenseInfo(
     val spdxLicenses = mutableSetOf<SpdxLicense>()
     val unknownLicenses = mutableSetOf<UnknownLicense>()
     for (license in pomInfo.licenses) {
-      val spdxLicense = license.toSpdxOrNull()
-      if (spdxLicense != null) {
+      val spdxLicense = license.toSpdx()
+      if (spdxLicense.isNotEmpty()) {
         spdxLicenses += spdxLicense
       } else {
         unknownLicenses += UnknownLicense(license.name, license.url)
@@ -49,7 +49,7 @@ internal fun normalizeLicenseInfo(
 private val detailsComparator =
   compareBy(ArtifactDetail::groupId, ArtifactDetail::artifactId, ArtifactDetail::version)
 
-private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
+private fun PomLicense.toSpdx(): List<SpdxLicense> {
   if (url != null) {
     SpdxLicenses.embedded.findByUrl(url)?.let { license ->
       return license
@@ -94,14 +94,14 @@ private fun PomLicense.toSpdxOrNull(): SpdxLicense? {
       else -> null
     }
     fallbackId?.let(SpdxLicenses.embedded::findByIdentifier)?.let { license ->
-      return license
+      return listOf(license)
     }
   } else if (name != null) {
     // Only fallback to name-based matching if the URL is null.
     SpdxLicenses.embedded.findByIdentifier(name)?.let { license ->
-      return license
+      return listOf(license)
     }
   }
 
-  return null
+  return emptyList()
 }
