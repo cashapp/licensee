@@ -1,0 +1,23 @@
+name: update
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: ./gradlew updateLicenses
+
+      - uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GH_PR_TOKEN }}
+          commit-message: Update SPDX license list to latest
+          title: Update SPDX license list
+          body: ''
+          branch: update-licenses
+          delete-branch: true
