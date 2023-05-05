@@ -69,8 +69,10 @@ internal class SpdxLicenses(
           }
 
           urls.map { it to identifierToLicense.getValue(license.id) }
-        }.groupBy({ it.first }) {
-          it.second
+        }.groupBy({ (url) ->
+          url
+        }) { (_, license) ->
+          license
         }
 
       return SpdxLicenses(
