@@ -14,6 +14,6 @@ junit = "junit:junit:4.13.2"
 truth = "com.google.truth:truth:1.1.3"
 testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:1.11"
 
-kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
+kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 
 maven-modelBuilder = "org.apache.maven:maven-model-builder:3.9.2"
