@@ -70,6 +70,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 test {
   dependsOn(':publishAllPublicationsToTestingRepository')
   systemProperty('licenseeVersion', VERSION_NAME)
+  systemProperty('line.separator', '\n')
 
   testLogging {
     if (System.getenv("CI") == "true") {
