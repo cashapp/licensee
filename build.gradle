@@ -119,7 +119,7 @@ publishing {
   repositories {
     maven {
       name = "testing"
-      url = "${rootProject.buildDir}/localMaven"
+      url = "${rootProject.projectDir}/build/localMaven"
     }
   }
 }
