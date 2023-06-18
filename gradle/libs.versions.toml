@@ -11,7 +11,7 @@ dokkaPlugin = "org.jetbrains.dokka:dokka-gradle-plugin:1.8.20"
 downloadPlugin = "de.undercouch:gradle-download-task:5.4.0"
 
 junit = "junit:junit:4.13.2"
-truth = "com.google.truth:truth:1.1.4"
+truth = "com.google.truth:truth:1.1.5"
 testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:1.12"
 
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
