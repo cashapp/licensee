@@ -53,21 +53,21 @@ class LicenseePlugin : Plugin<Project> {
     }
 
     project.afterEvaluate {
-      val androidPlugin = if (project.plugins.hasPlugin("com.android.application")) {
+      val androidPlugin = if (project.pluginManager.hasPlugin("com.android.application")) {
         AndroidPlugin.Application
-      } else if (project.plugins.hasPlugin("com.android.library")) {
+      } else if (project.pluginManager.hasPlugin("com.android.library")) {
         AndroidPlugin.Library
-      } else if (project.plugins.hasPlugin("com.android.dynamic-feature")) {
+      } else if (project.pluginManager.hasPlugin("com.android.dynamic-feature")) {
         AndroidPlugin.DynamicFeature
       } else {
         null
       }
 
       var rootTask: TaskProvider<Task>? = null
-      if (project.plugins.hasPlugin("org.jetbrains.kotlin.js")) {
+      if (project.pluginManager.hasPlugin("org.jetbrains.kotlin.js")) {
         // The JS plugin uses the same runtime configuration name as the Java plugin.
         configureJavaPlugin(project)
-      } else if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+      } else if (project.pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
         rootTask = project.tasks.register(baseTaskName) {
           it.group = VERIFICATION_GROUP
           it.description = taskDescription("all Kotlin targets")
@@ -78,7 +78,7 @@ class LicenseePlugin : Plugin<Project> {
         } else {
           configureKotlinMultiplatformTargets(project, rootTask)
         }
-      } else if (project.plugins.hasPlugin("java")) {
+      } else if (project.pluginManager.hasPlugin("java")) {
         // Note: java-library applies java so we only need to look for the latter.
         // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
         configureJavaPlugin(project)
