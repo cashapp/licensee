@@ -64,16 +64,22 @@ private fun PomLicense.toSpdx(): List<SpdxLicense> {
       "https://www.opensource.org/licenses/apache2.0.php",
       "http://www.apache.org/licenses/LICENSE-2.0",
       "https://www.apache.org/licenses/LICENSE-2.0",
+      "http://api.github.com/licenses/apache-2.0",
+      "https://api.github.com/licenses/apache-2.0",
       -> "Apache-2.0"
 
       "http://creativecommons.org/publicdomain/zero/1.0/",
       "https://creativecommons.org/publicdomain/zero/1.0/",
+      "http://api.github.com/licenses/cc0-1.0",
+      "https://api.github.com/licenses/cc0-1.0",
       -> "CC0-1.0"
 
       "http://www.opensource.org/licenses/LGPL-2.1",
       "https://www.opensource.org/licenses/LGPL-2.1",
       "http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html",
       "https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html",
+      "http://api.github.com/licenses/lgpl-2.1",
+      "https://api.github.com/licenses/lgpl-2.1",
       -> "LGPL-2.1-only"
 
       "http://opensource.org/licenses/mit-license",
@@ -82,16 +88,22 @@ private fun PomLicense.toSpdx(): List<SpdxLicense> {
       "https://www.opensource.org/licenses/mit-license.php",
       "http://opensource.org/licenses/MIT",
       "https://opensource.org/licenses/MIT",
+      "http://api.github.com/licenses/mit",
+      "https://api.github.com/licenses/mit",
       -> "MIT"
 
       "http://www.opensource.org/licenses/bsd-license",
       "https://www.opensource.org/licenses/bsd-license",
       "http://www.opensource.org/licenses/bsd-license.php",
       "https://www.opensource.org/licenses/bsd-license.php",
+      "http://api.github.com/licenses/bsd-2-clause",
+      "https://api.github.com/licenses/bsd-2-clause",
       -> "BSD-2-Clause"
 
       "http://opensource.org/licenses/BSD-3-Clause",
       "https://opensource.org/licenses/BSD-3-Clause",
+      "http://api.github.com/licenses/bsd-3-clause",
+      "https://api.github.com/licenses/bsd-3-clause",
       -> "BSD-3-Clause"
 
       "http://www.gnu.org/software/classpath/license.html",
@@ -100,10 +112,14 @@ private fun PomLicense.toSpdx(): List<SpdxLicense> {
 
       "http://www.eclipse.org/org/documents/epl-v10.php",
       "https://www.eclipse.org/org/documents/epl-v10.php",
+      "http://api.github.com/licenses/epl-1.0",
+      "https://api.github.com/licenses/epl-1.0",
       -> "EPL-1.0"
 
       "http://www.eclipse.org/legal/epl-2.0/",
       "https://www.eclipse.org/legal/epl-2.0/",
+      "http://api.github.com/licenses/epl-2.0",
+      "https://api.github.com/licenses/epl-2.0",
       -> "EPL-2.0"
 
       else -> null
