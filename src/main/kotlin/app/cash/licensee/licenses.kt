@@ -54,40 +54,55 @@ private fun PomLicense.toSpdx(): List<SpdxLicense> {
     SpdxLicenses.embedded.findByUrl(url)?.let { license ->
       return license
     }
+    @Suppress("HttpUrlsUsage")
     val fallbackId = when (url) {
       "http://www.apache.org/licenses/LICENSE-2.0.txt",
       "https://www.apache.org/licenses/LICENSE-2.0.txt",
       "http://www.apache.org/licenses/LICENSE-2.0.html",
       "https://www.apache.org/licenses/LICENSE-2.0.html",
       "http://www.opensource.org/licenses/apache2.0.php",
+      "https://www.opensource.org/licenses/apache2.0.php",
       "http://www.apache.org/licenses/LICENSE-2.0",
+      "https://www.apache.org/licenses/LICENSE-2.0",
       -> "Apache-2.0"
 
       "http://creativecommons.org/publicdomain/zero/1.0/",
+      "https://creativecommons.org/publicdomain/zero/1.0/",
       -> "CC0-1.0"
 
       "http://www.opensource.org/licenses/LGPL-2.1",
+      "https://www.opensource.org/licenses/LGPL-2.1",
       "http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html",
+      "https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html",
       -> "LGPL-2.1-only"
 
+      "http://opensource.org/licenses/mit-license",
       "https://opensource.org/licenses/mit-license",
       "http://www.opensource.org/licenses/mit-license.php",
+      "https://www.opensource.org/licenses/mit-license.php",
       "http://opensource.org/licenses/MIT",
+      "https://opensource.org/licenses/MIT",
       -> "MIT"
 
       "http://www.opensource.org/licenses/bsd-license",
+      "https://www.opensource.org/licenses/bsd-license",
       "http://www.opensource.org/licenses/bsd-license.php",
+      "https://www.opensource.org/licenses/bsd-license.php",
       -> "BSD-2-Clause"
 
       "http://opensource.org/licenses/BSD-3-Clause",
+      "https://opensource.org/licenses/BSD-3-Clause",
       -> "BSD-3-Clause"
 
       "http://www.gnu.org/software/classpath/license.html",
+      "https://www.gnu.org/software/classpath/license.html",
       -> "GPL-2.0-with-classpath-exception"
 
       "http://www.eclipse.org/org/documents/epl-v10.php",
+      "https://www.eclipse.org/org/documents/epl-v10.php",
       -> "EPL-1.0"
 
+      "http://www.eclipse.org/legal/epl-2.0/",
       "https://www.eclipse.org/legal/epl-2.0/",
       -> "EPL-2.0"
 
