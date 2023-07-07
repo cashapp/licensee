@@ -110,6 +110,16 @@ private fun PomLicense.toSpdx(): List<SpdxLicense> {
       "https://www.gnu.org/software/classpath/license.html",
       -> "GPL-2.0-with-classpath-exception"
 
+      "http://choosealicense.com/licenses/gpl-2.0",
+      "https://choosealicense.com/licenses/gpl-2.0",
+      "http://opensource.org/license/gpl-2-0",
+      "https://opensource.org/license/gpl-2-0",
+      "http://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+      "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+      "http://api.github.com/licenses/gpl-2.0",
+      "https://api.github.com/licenses/gpl-2.0",
+      -> "GPL-2.0-or-later"
+
       "http://www.eclipse.org/org/documents/epl-v10.php",
       "https://www.eclipse.org/org/documents/epl-v10.php",
       "http://api.github.com/licenses/epl-1.0",
