@@ -15,11 +15,11 @@ licensee {
 
 
 android {
-  compileSdkVersion 33
+  compileSdk 33
   namespace 'com.example.feature'
 
   defaultConfig {
-    minSdkVersion 21
+    minSdk 21
   }
 
   lintOptions {
