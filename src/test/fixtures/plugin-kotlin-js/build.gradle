@@ -1,18 +1,7 @@
-buildscript {
-  dependencies {
-    classpath libs.kotlinGradlePlugin
-    classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
-  }
-  repositories {
-    maven {
-      url "file://${projectDir.absolutePath}/../../../../build/localMaven"
-    }
-    mavenCentral()
-  }
+plugins {
+  alias(libs.plugins.kotlin.js)
+  alias(libs.plugins.licensee)
 }
-
-apply plugin: 'org.jetbrains.kotlin.js'
-apply plugin: 'app.cash.licensee'
 
 kotlin {
   js(IR) {
@@ -26,11 +15,4 @@ dependencies {
 
 licensee {
   allow('Apache-2.0')
-}
-
-repositories {
-  maven {
-    url "file://${rootDir.absolutePath}/repo"
-  }
-  mavenCentral()
 }

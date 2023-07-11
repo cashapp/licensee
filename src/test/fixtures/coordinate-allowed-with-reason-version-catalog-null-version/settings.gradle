@@ -1,3 +1,11 @@
+pluginManagement {
+  includeBuild("../../test-build-logic")
+}
+
+plugins {
+  id("licenseeTests")
+}
+
 dependencyResolutionManagement {
   versionCatalogs {
     "libs" {
@@ -6,5 +14,3 @@ dependencyResolutionManagement {
     }
   }
 }
-
-include ':'

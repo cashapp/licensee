@@ -1,9 +1,7 @@
-include ':'
+pluginManagement {
+  includeBuild("../../test-build-logic")
+}
 
-dependencyResolutionManagement {
-  versionCatalogs {
-    libs {
-      from(files('../../../../gradle/libs.versions.toml'))
-    }
-  }
+plugins {
+  id("licenseeTests")
 }

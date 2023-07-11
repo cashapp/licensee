@@ -1,6 +1,6 @@
 plugins {
-  `java-library`
-  id("app.cash.licensee")
+  id("java-library")
+  alias(libs.plugins.licensee)
 }
 
 dependencies {
@@ -11,11 +11,5 @@ licensee {
   allow("Apache-2.0")
   ignoreDependencies("com.example", "example") {
     transitive = true
-  }
-}
-
-repositories {
-  maven {
-    setUrl("file://${rootDir.absolutePath}/repo")
   }
 }

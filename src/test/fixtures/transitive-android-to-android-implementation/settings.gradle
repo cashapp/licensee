@@ -1,10 +1,10 @@
+pluginManagement {
+  includeBuild("../../test-build-logic")
+}
+
+plugins {
+  id("licenseeTests")
+}
+
 include ':app'
 include ':other'
-
-dependencyResolutionManagement {
-  versionCatalogs {
-    libs {
-      from(files('../../../../gradle/libs.versions.toml'))
-    }
-  }
-}

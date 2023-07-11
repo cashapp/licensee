@@ -1,24 +1,13 @@
 pluginManagement {
-  resolutionStrategy {
-    eachPlugin {
-      if (requested.id.id == "app.cash.licensee") {
-        useVersion(settings.extra["licenseeVersion"].toString())
-      }
-    }
-  }
+  includeBuild("../../test-build-logic")
+}
 
-  repositories {
-    maven {
-      setUrl("file://${rootDir.absolutePath}/../../../../build/localMaven")
-    }
-    mavenCentral()
-  }
+plugins {
+  id("licenseeTests")
 }
 
 dependencyResolutionManagement {
-  versionCatalogs.register("libs") {
+  versionCatalogs.named("libs") {
     library("exam", "com.example", "example").version("1.0.0")
   }
 }
-
-include(":")

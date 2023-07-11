@@ -1,5 +1,7 @@
-apply plugin: 'java'
-apply plugin: 'app.cash.licensee'
+plugins {
+  id("java")
+  alias(libs.plugins.licensee)
+}
 
 dependencies {
   implementation 'com.example:example:1.0.0'

@@ -1,6 +1,6 @@
 plugins {
-  java
-  id("app.cash.licensee")
+  id("java")
+  alias(libs.plugins.licensee)
 }
 
 val foo by configurations.registering
@@ -17,8 +17,4 @@ licensee {
 tasks.register<app.cash.licensee.LicenseeTask>("licenseeFoo") {
   configurationToCheck(foo)
   outputDir.set(layout.buildDirectory.dir("reports/licenseeFoo"))
-}
-
-repositories {
-  maven(url = "file://${rootDir.absolutePath}/repo")
 }

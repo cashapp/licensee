@@ -1,5 +1,7 @@
-apply plugin: 'com.android.application'
-apply plugin: 'app.cash.licensee'
+plugins {
+  alias(libs.plugins.android.application)
+  alias(libs.plugins.licensee)
+}
 
 dependencies {
   implementation project(':other')

@@ -1,21 +1,8 @@
-buildscript {
-  dependencies {
-    classpath libs.androidGradlePlugin
-    classpath libs.kotlinGradlePlugin
-    classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
-  }
-  repositories {
-    maven {
-      url "file://${projectDir.absolutePath}/../../../../build/localMaven"
-    }
-    mavenCentral()
-    google()
-  }
+plugins {
+  alias(libs.plugins.licensee)
+  alias(libs.plugins.kotlin.multiplatform)
+  alias(libs.plugins.android.application)
 }
-
-apply plugin: 'app.cash.licensee'
-apply plugin: 'org.jetbrains.kotlin.multiplatform'
-apply plugin: 'com.android.application'
 
 kotlin {
   android()
@@ -44,13 +31,7 @@ licensee {
   allow('Apache-2.0')
 }
 
-repositories {
-  maven {
-    url "file://${rootDir.absolutePath}/repo"
-  }
-  mavenCentral()
-  google()
-}
+
 
 android {
   compileSdkVersion 33

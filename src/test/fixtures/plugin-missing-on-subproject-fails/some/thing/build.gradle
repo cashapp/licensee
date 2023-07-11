@@ -1,1 +1,3 @@
-apply plugin: 'app.cash.licensee'
+plugins {
+  alias(libs.plugins.licensee)
+}
