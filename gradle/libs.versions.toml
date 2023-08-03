@@ -16,4 +16,4 @@ testParameterInjector = "com.google.testparameterinjector:test-parameter-injecto
 
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 
-maven-modelBuilder = "org.apache.maven:maven-model-builder:3.9.3"
+maven-modelBuilder = "org.apache.maven:maven-model-builder:3.9.4"
