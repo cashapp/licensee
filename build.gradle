@@ -109,6 +109,7 @@ publishing {
 spotless {
   kotlin {
     target('**/*.kt')
+    targetExclude("**/src/test/test-build-logic/build/**")
     ktlint('0.48.1').editorConfigOverride([
       'ktlint_standard_filename': 'disabled',
     ])
