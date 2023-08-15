@@ -40,13 +40,13 @@ dependencies {
 
 kotlin {
   jvmToolchain(11)
-    target {
-      compilations.configureEach {
-        // Ensure compatibility with old Gradle versions running Kotlin 1.4.
-        // When changing this value see kotlinCompatibility.kt and delete unnecessary backports.
-        compilerOptions.options.apiVersion.set(KotlinVersion.KOTLIN_1_4)
-      }
+  target {
+    compilations.configureEach {
+      // Ensure compatibility with old Gradle versions running Kotlin 1.4.
+      // When changing this value see kotlinCompatibility.kt and delete unnecessary backports.
+      compilerOptions.options.apiVersion.set(KotlinVersion.KOTLIN_1_4)
     }
+  }
 }
 
 tasks.named("test") {
