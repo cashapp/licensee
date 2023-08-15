@@ -33,7 +33,6 @@ import org.apache.maven.model.resolution.ModelResolver
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.result.ResolvedComponentResult
@@ -101,7 +100,7 @@ abstract class LicenseeTask : DefaultTask() {
     this.coordinatesToPomInfo.set(pomInfos)
   }
 
-  private fun Iterable<ResolvedArtifact>.getPomInfo(
+  private fun Iterable<DependencyCoordinatesWithPomFile>.getPomInfo(
     variants: List<ResolvedVariantResult>,
     dependencies: DependencyHandler,
     configurations: ConfigurationContainer,
@@ -114,7 +113,7 @@ abstract class LicenseeTask : DefaultTask() {
             variants,
             dependencies,
             configurations,
-          ).single().file
+          ).single().pomFile
         return FileModelSource(pomFile)
       }
 
@@ -132,13 +131,10 @@ abstract class LicenseeTask : DefaultTask() {
       override fun newCopy(): ModelResolver = this
     }
 
-    return associate { pom ->
-      // Cast is safe because all resolved artifacts are pom files.
-      val coordinates = (pom.id.componentIdentifier as ModuleComponentIdentifier).toDependencyCoordinates()
-
+    return associate { (coordinates, file) ->
       val req = DefaultModelBuildingRequest().apply {
         isProcessPlugins = false
-        pomFile = pom.file
+        pomFile = file
         isTwoPhaseBuilding = true
         modelResolver = resolver
         validationLevel = ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL
@@ -150,11 +146,11 @@ abstract class LicenseeTask : DefaultTask() {
     }
   }
 
-  internal fun Set<DependencyCoordinates>.fetchPomFiles(
+  private fun Set<DependencyCoordinates>.fetchPomFiles(
     variants: List<ResolvedVariantResult>,
     dependencies: DependencyHandler,
     configurations: ConfigurationContainer,
-  ): List<ResolvedArtifact> {
+  ): List<DependencyCoordinatesWithPomFile> {
     val pomDependencies = map {
       dependencies.create(it.pomCoordinate())
     }.toTypedArray()
@@ -171,9 +167,13 @@ abstract class LicenseeTask : DefaultTask() {
       }
     }.artifacts()
 
-    return withVariants.ifEmpty {
-      configurations.detachedConfiguration(*pomDependencies).artifacts()
-    }
+    val withoutVariants = configurations.detachedConfiguration(*pomDependencies).artifacts()
+
+    return (withVariants + withoutVariants).map {
+      // Cast is safe because all resolved artifacts are pom files.
+      val coordinates = (it.id.componentIdentifier as ModuleComponentIdentifier).toDependencyCoordinates()
+      DependencyCoordinatesWithPomFile(coordinates, it.file)
+    }.distinctBy { it.dependencyCoordinates }
   }
 
   private fun Configuration.artifacts() = resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap { it.allModuleArtifacts }
@@ -333,6 +333,8 @@ abstract class LicenseeTask : DefaultTask() {
     }
   }
 }
+
+private data class DependencyCoordinatesWithPomFile(val dependencyCoordinates: DependencyCoordinates, val pomFile: File)
 
 internal data class PomInfo(
   val name: String?,
