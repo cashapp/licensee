@@ -34,6 +34,8 @@ licensee {
 
 
 android {
+  namespace = "com.example"
+
   compileSdkVersion 33
 
   defaultConfig {
