@@ -1,1 +1,3 @@
-apply plugin: 'java-library'
+plugins {
+  id('java-library')
+}

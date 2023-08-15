@@ -1,8 +1,8 @@
 import app.cash.licensee.ViolationAction.IGNORE
 
 plugins {
-  `java-library`
-  id("app.cash.licensee")
+  id("java-library")
+  alias(libs.plugins.licensee)
 }
 
 dependencies {
@@ -11,10 +11,4 @@ dependencies {
 
 licensee {
   violationAction(IGNORE)
-}
-
-repositories {
-  maven {
-    setUrl("file://${rootDir.absolutePath}/repo")
-  }
 }

@@ -1,2 +1,10 @@
+pluginManagement {
+  includeBuild("../../test-build-logic")
+}
+
+plugins {
+  id("licenseeTests")
+}
+
 include ':app'
 include ':other'

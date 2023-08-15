@@ -1,22 +1,14 @@
-buildscript {
-  dependencies {
-    classpath libs.kotlinGradlePlugin
-    classpath libs.kotlinSerializationPlugin
-    classpath libs.spotlessPlugin
-    classpath libs.gradleMavenPublishPlugin
-    classpath libs.dokkaPlugin
-    classpath libs.downloadPlugin
-  }
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
-  }
+plugins {
+  alias(libs.plugins.kotlin.jvm)
+  alias(libs.plugins.kotlin.serialization)
+  id("java-gradle-plugin")
+  alias(libs.plugins.publish)
+  alias(libs.plugins.dokka)
+  alias(libs.plugins.spotless)
+  alias(libs.plugins.download)
 }
-
-apply plugin: 'org.jetbrains.kotlin.jvm'
-apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
-apply plugin: 'java-gradle-plugin'
 
 gradlePlugin {
   plugins {
@@ -29,10 +21,8 @@ gradlePlugin {
   }
 }
 
-tasks {
-  validatePlugins {
-    enableStricterValidation = true
-  }
+tasks.named("validatePlugins") {
+  enableStricterValidation = true
 }
 
 dependencies {
@@ -48,26 +38,18 @@ dependencies {
   testImplementation gradleTestKit()
 }
 
-repositories {
-  mavenCentral()
-  google()
-}
-
-java {
-  toolchain {
-    languageVersion = JavaLanguageVersion.of(11)
+kotlin {
+  jvmToolchain(11)
+  target {
+    compilations.configureEach {
+      // Ensure compatibility with old Gradle versions running Kotlin 1.4.
+      // When changing this value see kotlinCompatibility.kt and delete unnecessary backports.
+      compilerOptions.options.apiVersion.set(KotlinVersion.KOTLIN_1_4)
+    }
   }
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-  kotlinOptions {
-    // Ensure compatibility with old Gradle versions running Kotlin 1.4.
-    // When changing this value see kotlinCompatibility.kt and delete unnecessary backports.
-    apiVersion = '1.4'
-  }
-}
-
-test {
+tasks.named("test") {
   dependsOn(':publishAllPublicationsToTestingRepository')
   systemProperty('licenseeVersion', VERSION_NAME)
   systemProperty('line.separator', '\n')
@@ -105,7 +87,8 @@ def checkFixtureJars = tasks.register('checkFixtureJars') { task ->
     }
   }
 }
-tasks.named('check').configure { check ->
+
+tasks.named('check') { check ->
   check.dependsOn(checkFixtureJars)
 }
 
@@ -114,8 +97,6 @@ tasks.register('updateLicenses', de.undercouch.gradle.tasks.download.Download) {
   task.dest(file('src/main/resources/app/cash/licensee'))
 }
 
-apply plugin: 'com.vanniktech.maven.publish'
-apply plugin: 'org.jetbrains.dokka'
 publishing {
   repositories {
     maven {
@@ -125,7 +106,6 @@ publishing {
   }
 }
 
-apply plugin: 'com.diffplug.spotless'
 spotless {
   kotlin {
     target('**/*.kt')

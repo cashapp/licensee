@@ -1,6 +1,6 @@
 plugins {
-  `java-library`
-  id("app.cash.licensee")
+  id("java-library")
+  alias(libs.plugins.licensee)
 }
 
 dependencies {
@@ -10,11 +10,5 @@ dependencies {
 licensee {
   allowDependency(libs.exam) {
     because("there are reasons!")
-  }
-}
-
-repositories {
-  maven {
-    setUrl("file://${rootDir.absolutePath}/repo")
   }
 }

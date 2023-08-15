@@ -1,17 +1,5 @@
-buildscript {
-  dependencies {
-    classpath "app.cash.licensee:licensee-gradle-plugin:$licenseeVersion"
-  }
-  repositories {
-    maven {
-      url "file://${projectDir.absolutePath}/../../../../build/localMaven"
-    }
-    mavenCentral()
-  }
-}
-
-allprojects {
-  configurations.all {
+subprojects {
+  configurations.configureEach {
     resolutionStrategy {
       dependencySubstitution {
         substitute module('com.example:example:1.0.0') using project(':other')
