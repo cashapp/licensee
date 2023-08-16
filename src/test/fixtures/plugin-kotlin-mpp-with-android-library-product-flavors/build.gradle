@@ -36,10 +36,10 @@ licensee {
 android {
   namespace = "com.example"
 
-  compileSdkVersion 33
+  compileSdk 33
 
   defaultConfig {
-    minSdkVersion 21
+    minSdk 21
   }
 
   flavorDimensions 'price', 'store'

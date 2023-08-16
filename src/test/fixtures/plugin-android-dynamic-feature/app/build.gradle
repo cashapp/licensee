@@ -14,14 +14,14 @@ licensee {
 
 
 android {
-  compileSdkVersion 33
+  compileSdk 33
   namespace 'com.example'
 
   dynamicFeatures = [":feature"]
 
   defaultConfig {
     applicationId 'com.example'
-    minSdkVersion 21
+    minSdk 21
   }
 
   lintOptions {

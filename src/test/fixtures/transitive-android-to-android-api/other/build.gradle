@@ -7,9 +7,10 @@ dependencies {
 }
 
 android {
-  compileSdkVersion 33
+  compileSdk 33
+  namespace 'com.other'
 
   defaultConfig {
-    minSdkVersion 21
+    minSdk 21
   }
 }

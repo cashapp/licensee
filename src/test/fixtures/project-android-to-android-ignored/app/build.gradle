@@ -8,10 +8,11 @@ dependencies {
 }
 
 android {
-  compileSdkVersion 33
+  compileSdk 33
+  namespace 'com.example'
 
   defaultConfig {
-    minSdkVersion 21
+    minSdk 21
   }
 
   lintOptions {

@@ -1,5 +1,6 @@
 */gradle/wrapper/*
 .gradle
+yarn.lock
 
 # Track build/ directories when they're inside expected/
 !*/expected/**/build/
