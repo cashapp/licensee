@@ -334,7 +334,10 @@ abstract class LicenseeTask : DefaultTask() {
   }
 }
 
-private data class DependencyCoordinatesWithPomFile(val dependencyCoordinates: DependencyCoordinates, val pomFile: File)
+private data class DependencyCoordinatesWithPomFile(
+  val dependencyCoordinates: DependencyCoordinates,
+  val pomFile: File,
+)
 
 internal data class PomInfo(
   val name: String?,
