@@ -268,7 +268,7 @@ class LicenseePluginFixtureTest {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir)
       .withGradleVersion("8.1")
-      .buildAndFail()
+      .build()
     assertExpectedFiles(fixtureDir)
     assertThat(result.output).doesNotContain(
       "Task `:licenseeJs` of type `app.cash.licensee.LicenseeTask`: invocation of 'Task.project' at execution time is unsupported.",
