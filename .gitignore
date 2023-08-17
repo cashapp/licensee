@@ -9,4 +9,4 @@ build
 /reports
 
 # Android
-/local.properties
+local.properties
