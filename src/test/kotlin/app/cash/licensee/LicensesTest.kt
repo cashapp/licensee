@@ -21,7 +21,8 @@ import org.junit.Test
 class LicensesTest {
 
   @Suppress("HttpUrlsUsage")
-  @Test fun fallbackId() {
+  @Test
+  fun fallbackId() {
     assertEquals("Apache-2.0", getFallbackId("http://www.apache.org/licenses/LICENSE-2.0.txt"))
     assertEquals("Apache-2.0", getFallbackId("http://www.apache.org/licenses/LICENSE-2.0.html"))
     assertEquals("Apache-2.0", getFallbackId("https://www.opensource.org/licenses/apache2.0.php"))
