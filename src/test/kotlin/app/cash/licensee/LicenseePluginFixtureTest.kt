@@ -259,6 +259,10 @@ class LicenseePluginFixtureTest {
   private fun createRunner(fixtureDir: File): GradleRunner {
     val gradleRoot = File(fixtureDir, "gradle").also { it.mkdir() }
     File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
+    val androidSdkFile = File("local.properties")
+    if (androidSdkFile.exists()) {
+      androidSdkFile.copyTo(File(fixtureDir, "local.properties"), overwrite = true)
+    }
     return GradleRunner.create()
       .withProjectDir(fixtureDir)
       .withDebug(true) // Run in-process
