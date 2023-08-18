@@ -60,8 +60,8 @@ internal fun getFallbackId(url: String): String? {
   return when (fixedUrl) {
     "apache.org/licenses/license-2.0",
     "api.github.com/licenses/apache-2.0",
-    "opensource.org/licenses/apache2.0",
     "opensource.org/license/apache-2-0",
+    "opensource.org/licenses/apache2.0",
     -> "Apache-2.0"
 
     "api.github.com/licenses/cc0-1.0",
@@ -70,19 +70,23 @@ internal fun getFallbackId(url: String): String? {
 
     "api.github.com/licenses/lgpl-2.1",
     "gnu.org/licenses/old-licenses/lgpl-2.1",
+    "opensource.org/license/lgpl-2-1",
     "opensource.org/licenses/lgpl-2.1",
     -> "LGPL-2.1-only"
 
     "api.github.com/licenses/mit",
+    "opensource.org/license/mit",
     "opensource.org/licenses/mit-license",
     -> "MIT"
 
     "api.github.com/licenses/bsd-2-clause",
+    "opensource.org/license/bsd-2-clause",
     "opensource.org/licenses/bsd-license",
     -> "BSD-2-Clause"
 
     "api.github.com/licenses/bsd-3-clause",
-    "opensource.org/licenses/BSD-3-Clause",
+    "opensource.org/license/bsd-3-clause",
+    "opensource.org/licenses/bsd-3-Clause",
     -> "BSD-3-Clause"
 
     "gnu.org/software/classpath/license",
