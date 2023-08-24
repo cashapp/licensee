@@ -57,10 +57,9 @@ class LicenseePlugin : Plugin<Project> {
       )
     }
 
+    // Note: java-library applies java so we only need to look for the latter.
+    // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
     project.pluginManager.withPlugin("org.gradle.java") {
-      configureJavaPlugin(project)
-    }
-    project.pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
       configureJavaPlugin(project)
     }
     project.pluginManager.withPlugin("org.jetbrains.kotlin.js") {
@@ -68,7 +67,7 @@ class LicenseePlugin : Plugin<Project> {
       configureJavaPlugin(project)
     }
 
-    withMultiPlatformPlugin(project, withAndroid = false) // see android logic below
+    withKotlinMultiPlatformPlugin(project, withAndroid = false) // see android logic below
 
     project.pluginManager.withPlugin("com.android.application") {
       configureAndroidPlugin(project)
@@ -87,10 +86,10 @@ private fun configureAndroidPlugin(
 ) {
   val rootTask = registerRootTask(project, "all Android variants")
   configureAndroidVariants(project, rootTask)
-  withMultiPlatformPlugin(project, withAndroid = true)
+  withKotlinMultiPlatformPlugin(project, withAndroid = true)
 }
 
-private fun withMultiPlatformPlugin(
+private fun withKotlinMultiPlatformPlugin(
   project: Project,
   withAndroid: Boolean,
 ) {
