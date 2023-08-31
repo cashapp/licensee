@@ -24,5 +24,5 @@ kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 spotless = { id = "com.diffplug.spotless", version = "6.21.0" }
 publish = { id = "com.vanniktech.maven.publish", version = "0.25.3" }
-dokka = { id = "org.jetbrains.dokka", version = "1.8.20" }
+dokka = { id = "org.jetbrains.dokka", version = "1.9.0" }
 download = { id = "de.undercouch.download", version = "5.5.0" }
