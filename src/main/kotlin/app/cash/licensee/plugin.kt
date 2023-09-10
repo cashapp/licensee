@@ -60,7 +60,11 @@ class LicenseePlugin : Plugin<Project> {
     // Note: java-library applies java so we only need to look for the latter.
     // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
     project.pluginManager.withPlugin("org.gradle.java") {
-      configureJavaPlugin(project)
+      // Special case: KMP with JVM withJava():
+      // withKotlinMultiPlatformPlugin did already run, so the jvm target is already setup, so ignore another config.
+      if (!project.pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+        configureJavaPlugin(project)
+      }
     }
     project.pluginManager.withPlugin("org.jetbrains.kotlin.js") {
       // The JS plugin uses the same runtime configuration name as the Java plugin.
@@ -198,8 +202,8 @@ private fun configureJavaPlugin(
   }
 }
 
-private fun TaskContainer.configure(name: String, config: (LicenseeTask) -> Unit): TaskProvider<out Task> = if (name in names) {
-  named(name)
+private fun TaskContainer.configure(name: String, config: (LicenseeTask) -> Unit): TaskProvider<LicenseeTask> = if (name in names) {
+  named(name, LicenseeTask::class.java, config)
 } else {
   register(name, LicenseeTask::class.java, config)
 }
