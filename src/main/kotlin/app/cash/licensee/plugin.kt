@@ -61,7 +61,7 @@ class LicenseePlugin : Plugin<Project> {
     // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
     project.pluginManager.withPlugin("org.gradle.java") {
       // Special case: KMP with JVM withJava():
-      // withKotlinMultiPlatformPlugin did already run, so the jvm target is already setup, so ignore another config.
+      // withKotlinMultiPlatformPlugin did already run, so the jvm target is already set, ignore another setup.
       if (!project.pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
         configureJavaPlugin(project)
       }
@@ -81,6 +81,17 @@ class LicenseePlugin : Plugin<Project> {
     }
     project.pluginManager.withPlugin("com.android.dynamic-feature") {
       configureAndroidPlugin(project)
+    }
+
+    project.afterEvaluate {
+      require(baseTaskName in project.tasks.names) {
+        val name = if (project === project.rootProject) {
+          "root project"
+        } else {
+          "project ${project.path}"
+        }
+        "'app.cash.licensee' requires compatible language/platform plugin to be applied ($name)"
+      }
     }
   }
 }
