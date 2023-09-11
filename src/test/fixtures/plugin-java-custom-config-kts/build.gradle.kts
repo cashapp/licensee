@@ -6,8 +6,7 @@ plugins {
 val foo by configurations.registering
 
 dependencies {
-  // https://github.com/gradle/gradle/issues/24503
-  foo.name("com.example:example:1.0.0")
+  foo("com.example:example:1.0.0")
 }
 
 licensee {

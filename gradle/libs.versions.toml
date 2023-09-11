@@ -3,7 +3,7 @@ kotlin = "1.9.10"
 agp = "8.1.1"
 
 [libraries]
-androidGradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+androidGradleApi = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 junit = "junit:junit:4.13.2"
