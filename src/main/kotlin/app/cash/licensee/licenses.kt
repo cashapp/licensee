@@ -15,6 +15,8 @@
  */
 package app.cash.licensee
 
+import java.net.URL
+
 internal fun normalizeLicenseInfo(
   coordinateToPomInfo: Map<DependencyCoordinates, PomInfo>,
 ): List<ArtifactDetail> {
@@ -46,6 +48,68 @@ internal fun normalizeLicenseInfo(
   return artifactDetails
 }
 
+internal fun getFallbackId(url: String): String? {
+  val lowerUrl = URL(url.toLowerCase())
+  val host = lowerUrl.host.removePrefix("www.")
+  val path = lowerUrl.path.removeSuffix("/")
+    .removeSuffix(".txt")
+    .removeSuffix(".php")
+    .removeSuffix(".html")
+  val fixedUrl = host + path
+
+  return when (fixedUrl) {
+    "apache.org/licenses/license-2.0",
+    "api.github.com/licenses/apache-2.0",
+    "opensource.org/license/apache-2-0",
+    "opensource.org/licenses/apache2.0",
+    -> "Apache-2.0"
+
+    "api.github.com/licenses/cc0-1.0",
+    "creativecommons.org/publicdomain/zero/1.0",
+    -> "CC0-1.0"
+
+    "api.github.com/licenses/lgpl-2.1",
+    "gnu.org/licenses/old-licenses/lgpl-2.1",
+    "opensource.org/license/lgpl-2-1",
+    "opensource.org/licenses/lgpl-2.1",
+    -> "LGPL-2.1-only"
+
+    "api.github.com/licenses/mit",
+    "opensource.org/license/mit",
+    "opensource.org/licenses/mit-license",
+    -> "MIT"
+
+    "api.github.com/licenses/bsd-2-clause",
+    "opensource.org/license/bsd-2-clause",
+    "opensource.org/licenses/bsd-license",
+    -> "BSD-2-Clause"
+
+    "api.github.com/licenses/bsd-3-clause",
+    "opensource.org/license/bsd-3-clause",
+    "opensource.org/licenses/bsd-3-Clause",
+    -> "BSD-3-Clause"
+
+    "gnu.org/software/classpath/license",
+    -> "GPL-2.0-with-classpath-exception"
+
+    "api.github.com/licenses/gpl-2.0",
+    "choosealicense.com/licenses/gpl-2.0",
+    "gnu.org/licenses/old-licenses/gpl-2.0",
+    "opensource.org/license/gpl-2-0",
+    -> "GPL-2.0-or-later"
+
+    "api.github.com/licenses/epl-1.0",
+    "eclipse.org/org/documents/epl-v10",
+    -> "EPL-1.0"
+
+    "api.github.com/licenses/epl-2.0",
+    "eclipse.org/legal/epl-2.0",
+    -> "EPL-2.0"
+
+    else -> null
+  }
+}
+
 private val detailsComparator =
   compareBy(ArtifactDetail::groupId, ArtifactDetail::artifactId, ArtifactDetail::version)
 
@@ -54,87 +118,8 @@ private fun PomLicense.toSpdx(): List<SpdxLicense> {
     SpdxLicenses.embedded.findByUrl(url)?.let { license ->
       return license
     }
-    @Suppress("HttpUrlsUsage")
-    val fallbackId = when (url) {
-      "http://www.apache.org/licenses/LICENSE-2.0.txt",
-      "https://www.apache.org/licenses/LICENSE-2.0.txt",
-      "http://www.apache.org/licenses/LICENSE-2.0.html",
-      "https://www.apache.org/licenses/LICENSE-2.0.html",
-      "http://www.opensource.org/licenses/apache2.0.php",
-      "https://www.opensource.org/licenses/apache2.0.php",
-      "http://www.apache.org/licenses/LICENSE-2.0",
-      "https://www.apache.org/licenses/LICENSE-2.0",
-      "http://api.github.com/licenses/apache-2.0",
-      "https://api.github.com/licenses/apache-2.0",
-      -> "Apache-2.0"
 
-      "http://creativecommons.org/publicdomain/zero/1.0/",
-      "https://creativecommons.org/publicdomain/zero/1.0/",
-      "http://api.github.com/licenses/cc0-1.0",
-      "https://api.github.com/licenses/cc0-1.0",
-      -> "CC0-1.0"
-
-      "http://www.opensource.org/licenses/LGPL-2.1",
-      "https://www.opensource.org/licenses/LGPL-2.1",
-      "http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html",
-      "https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html",
-      "http://api.github.com/licenses/lgpl-2.1",
-      "https://api.github.com/licenses/lgpl-2.1",
-      -> "LGPL-2.1-only"
-
-      "http://opensource.org/licenses/mit-license",
-      "https://opensource.org/licenses/mit-license",
-      "http://www.opensource.org/licenses/mit-license.php",
-      "https://www.opensource.org/licenses/mit-license.php",
-      "http://opensource.org/licenses/MIT",
-      "https://opensource.org/licenses/MIT",
-      "http://api.github.com/licenses/mit",
-      "https://api.github.com/licenses/mit",
-      -> "MIT"
-
-      "http://www.opensource.org/licenses/bsd-license",
-      "https://www.opensource.org/licenses/bsd-license",
-      "http://www.opensource.org/licenses/bsd-license.php",
-      "https://www.opensource.org/licenses/bsd-license.php",
-      "http://api.github.com/licenses/bsd-2-clause",
-      "https://api.github.com/licenses/bsd-2-clause",
-      -> "BSD-2-Clause"
-
-      "http://opensource.org/licenses/BSD-3-Clause",
-      "https://opensource.org/licenses/BSD-3-Clause",
-      "http://api.github.com/licenses/bsd-3-clause",
-      "https://api.github.com/licenses/bsd-3-clause",
-      -> "BSD-3-Clause"
-
-      "http://www.gnu.org/software/classpath/license.html",
-      "https://www.gnu.org/software/classpath/license.html",
-      -> "GPL-2.0-with-classpath-exception"
-
-      "http://choosealicense.com/licenses/gpl-2.0",
-      "https://choosealicense.com/licenses/gpl-2.0",
-      "http://opensource.org/license/gpl-2-0",
-      "https://opensource.org/license/gpl-2-0",
-      "http://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
-      "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
-      "http://api.github.com/licenses/gpl-2.0",
-      "https://api.github.com/licenses/gpl-2.0",
-      -> "GPL-2.0-or-later"
-
-      "http://www.eclipse.org/org/documents/epl-v10.php",
-      "https://www.eclipse.org/org/documents/epl-v10.php",
-      "http://api.github.com/licenses/epl-1.0",
-      "https://api.github.com/licenses/epl-1.0",
-      -> "EPL-1.0"
-
-      "http://www.eclipse.org/legal/epl-2.0/",
-      "https://www.eclipse.org/legal/epl-2.0/",
-      "http://api.github.com/licenses/epl-2.0",
-      "https://api.github.com/licenses/epl-2.0",
-      -> "EPL-2.0"
-
-      else -> null
-    }
-    fallbackId?.let(SpdxLicenses.embedded::findByIdentifier)?.let { license ->
+    getFallbackId(url)?.let(SpdxLicenses.embedded::findByIdentifier)?.let { license ->
       return listOf(license)
     }
   } else if (name != null) {
