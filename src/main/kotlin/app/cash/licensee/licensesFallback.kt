@@ -24,7 +24,6 @@ internal val fallbackUrls = buildMap {
     add("http://www.opensource.org/licenses/apache2.0.php")
     add("https://www.opensource.org/licenses/apache2.0.php")
     add("http://www.apache.org/licenses/LICENSE-2.0")
-    add("https://www.apache.org/licenses/LICENSE-2.0")
     add("http://api.github.com/licenses/apache-2.0")
     add("https://api.github.com/licenses/apache-2.0")
   }
@@ -48,7 +47,6 @@ internal val fallbackUrls = buildMap {
     add("http://www.opensource.org/licenses/mit-license.php")
     add("https://www.opensource.org/licenses/mit-license.php")
     add("http://opensource.org/licenses/MIT")
-    add("https://opensource.org/licenses/MIT")
     add("http://api.github.com/licenses/mit")
     add("https://api.github.com/licenses/mit")
   }
@@ -62,13 +60,11 @@ internal val fallbackUrls = buildMap {
   }
   putLicense("BSD-3-Clause") {
     add("http://opensource.org/licenses/BSD-3-Clause")
-    add("https://opensource.org/licenses/BSD-3-Clause")
     add("http://api.github.com/licenses/bsd-3-clause")
     add("https://api.github.com/licenses/bsd-3-clause")
   }
   putLicense("GPL-2.0-with-classpath-exception") {
     add("http://www.gnu.org/software/classpath/license.html")
-    add("https://www.gnu.org/software/classpath/license.html")
   }
   putLicense("GPL-2.0", "GPL-2.0-or-later") {
     add("http://choosealicense.com/licenses/gpl-2.0")
@@ -103,6 +99,9 @@ private fun MutableMap<String, List<SpdxLicense>>.putLicense(
       ?: throw AssertionError("No SPDX identifier '$it' in the embedded set")
   }
   for (url in buildList(urls)) {
+    if (SpdxLicenses.embedded.findByUrl(url).orEmpty().isNotEmpty()) {
+      throw AssertionError("$url is canonical and does not need to be a fallback")
+    }
     if (put(url, licenses) != null) {
       throw AssertionError("$url specified twice")
     }
