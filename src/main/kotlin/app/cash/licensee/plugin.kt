@@ -38,6 +38,8 @@ private const val reportFolder = "licensee"
 @Suppress("unused") // Instantiated reflectively by Gradle.
 class LicenseePlugin : Plugin<Project> {
   override fun apply(project: Project) {
+    // HEY! If you update the minimum-supported Gradle version check to see if the Kotlin language version
+    // can be bumped. See https://docs.gradle.org/current/userguide/compatibility.html#kotlin.
     require(GradleVersion.current() >= GradleVersion.version("8.0")) {
       "Licensee plugin requires Gradle 8.0 or later. Found ${GradleVersion.current()}"
     }
@@ -143,7 +145,7 @@ private fun configureAndroidVariants(
 ) {
   val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
   androidComponents.onVariants { variant ->
-    val suffix = variant.name.capitalize(ROOT)
+    val suffix = variant.name.replaceFirstChar { it.titlecase(ROOT) }
     val taskName = "${baseTaskName}Android$suffix"
 
     val task = project.tasks.configure(taskName) {
@@ -176,7 +178,7 @@ private fun configureKotlinMultiplatformTargets(
       return@configureEach // handled by android logic.
     }
 
-    val suffix = target.name.capitalize(ROOT)
+    val suffix = target.name.replaceFirstChar { it.titlecase(ROOT) }
     val task = project.tasks.configure("$baseTaskName$suffix") {
       it.group = VERIFICATION_GROUP
       it.description = taskDescription("Kotlin ${target.name} target")
