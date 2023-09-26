@@ -11,6 +11,11 @@
                 "url": "https://www.apache.org/licenses/LICENSE-2.0"
             },
             {
+                "identifier": "OFL-1.1",
+                "name": "SIL Open Font License 1.1",
+                "url": "https://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web"
+            },
+            {
                 "identifier": "OFL-1.1-no-RFN",
                 "name": "SIL Open Font License 1.1 with no Reserved Font Name",
                 "url": "https://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web"
@@ -18,11 +23,6 @@
             {
                 "identifier": "OFL-1.1-RFN",
                 "name": "SIL Open Font License 1.1 with Reserved Font Name",
-                "url": "https://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web"
-            },
-            {
-                "identifier": "OFL-1.1",
-                "name": "SIL Open Font License 1.1",
                 "url": "https://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web"
             }
         ],
