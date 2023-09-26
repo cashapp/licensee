@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [1.8.0] - 2023-09-26
+
+**Changed**
+
+- Fallback URLs now map to multiple license SPDX IDs where appropriate.
+  For example, https://opensource.org/license/gpl-2-0 matches both GPL-2.0 and GPL-2.0-or-later.
+
+- Remove the use of `afterEvalute` internally. This causes some task names to slightly change and the output folders
+  to slightly change when used with the Android Gradle plugin.
+
+- Update SPDX database to version 3.21 (2023-06-18).
+
+- Minimum Gradle version is now 8.0
+
+
 ## [1.7.0] - 2023-05-05
 
 **Added**
@@ -148,7 +163,9 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.6.0...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.8.0...HEAD
+[1.8.0]: https://github.com/cashapp/licensee/releases/tag/1.8.0
+[1.7.0]: https://github.com/cashapp/licensee/releases/tag/1.7.0
 [1.6.0]: https://github.com/cashapp/licensee/releases/tag/1.6.0
 [1.5.0]: https://github.com/cashapp/licensee/releases/tag/1.5.0
 [1.4.1]: https://github.com/cashapp/licensee/releases/tag/1.4.1
