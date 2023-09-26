@@ -103,6 +103,8 @@ private fun MutableMap<String, List<SpdxLicense>>.putLicense(
       ?: throw AssertionError("No SPDX identifier '$it' in the embedded set")
   }
   for (url in buildList(urls)) {
-    put(url, licenses)
+    if (put(url, licenses) != null) {
+      throw AssertionError("$url specified twice")
+    }
   }
 }
