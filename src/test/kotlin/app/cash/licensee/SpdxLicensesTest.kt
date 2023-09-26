@@ -27,6 +27,13 @@ class SpdxLicensesTest {
     )
   }
 
+  @Test fun fallbackDatabaseLitmusTest() {
+    assertEquals(
+      SpdxLicense("BSD-2-Clause", "BSD 2-Clause \"Simplified\" License", "https://opensource.org/licenses/BSD-2-Clause"),
+      fallbackIds["https://api.github.com/licenses/bsd-2-clause"],
+    )
+  }
+
   @Test fun httpUrlGetsHttpsVariant() {
     val json = """
       |{"licenses":[
