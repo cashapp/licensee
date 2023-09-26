@@ -29,8 +29,15 @@ class SpdxLicensesTest {
 
   @Test fun fallbackDatabaseLitmusTest() {
     assertEquals(
-      SpdxLicense("BSD-2-Clause", "BSD 2-Clause \"Simplified\" License", "https://opensource.org/licenses/BSD-2-Clause"),
-      fallbackIds["https://api.github.com/licenses/bsd-2-clause"],
+      listOf(SpdxLicense("BSD-2-Clause", "BSD 2-Clause \"Simplified\" License", "https://opensource.org/licenses/BSD-2-Clause")),
+      fallbackUrls["https://api.github.com/licenses/bsd-2-clause"],
+    )
+    assertEquals(
+      listOf(
+        SpdxLicense("GPL-2.0", "GNU General Public License v2.0 only", "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html"),
+        SpdxLicense("GPL-2.0-or-later", "GNU General Public License v2.0 or later", "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html"),
+      ),
+      fallbackUrls["https://api.github.com/licenses/gpl-2.0"],
     )
   }
 

@@ -15,7 +15,7 @@
  */
 package app.cash.licensee
 
-internal val fallbackIds = buildMap {
+internal val fallbackUrls = buildMap {
   putLicense("Apache-2.0") {
     add("http://www.apache.org/licenses/LICENSE-2.0.txt")
     add("https://www.apache.org/licenses/LICENSE-2.0.txt")
@@ -70,7 +70,7 @@ internal val fallbackIds = buildMap {
     add("http://www.gnu.org/software/classpath/license.html")
     add("https://www.gnu.org/software/classpath/license.html")
   }
-  putLicense("GPL-2.0-or-later") {
+  putLicense("GPL-2.0", "GPL-2.0-or-later") {
     add("http://choosealicense.com/licenses/gpl-2.0")
     add("https://choosealicense.com/licenses/gpl-2.0")
     add("http://opensource.org/license/gpl-2-0")
@@ -94,13 +94,15 @@ internal val fallbackIds = buildMap {
   }
 }
 
-private fun MutableMap<String, SpdxLicense>.putLicense(
-  spdxId: String,
+private fun MutableMap<String, List<SpdxLicense>>.putLicense(
+  vararg spdxIds: String,
   urls: MutableList<String>.() -> Unit,
 ) {
-  val license = SpdxLicenses.embedded.findByIdentifier(spdxId)
-    ?: throw AssertionError("No SPDX identifier '$spdxId' in the embedded set")
+  val licenses = spdxIds.map {
+    SpdxLicenses.embedded.findByIdentifier(it)
+      ?: throw AssertionError("No SPDX identifier '$it' in the embedded set")
+  }
   for (url in buildList(urls)) {
-    put(url, license)
+    put(url, licenses)
   }
 }
