@@ -51,11 +51,11 @@ private val detailsComparator =
 
 private fun PomLicense.toSpdx(): List<SpdxLicense> {
   if (url != null) {
-    SpdxLicenses.embedded.findByUrl(url)?.let { license ->
-      return license
+    SpdxLicenses.embedded.findByUrl(url)?.let { licenses ->
+      return licenses
     }
-    fallbackIds[url]?.let { license ->
-      return listOf(license)
+    fallbackUrls[url]?.let { licenses ->
+      return licenses
     }
   } else if (name != null) {
     // Only fallback to name-based matching if the URL is null.
