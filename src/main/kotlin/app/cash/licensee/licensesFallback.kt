@@ -88,6 +88,9 @@ internal val fallbackUrls = buildMap {
     add("http://api.github.com/licenses/epl-2.0")
     add("https://api.github.com/licenses/epl-2.0")
   }
+  putLicense("ISC") {
+    add("https://opensource.org/licenses/isc-license.txt")
+  }
 }
 
 private fun MutableMap<String, List<SpdxLicense>>.putLicense(
