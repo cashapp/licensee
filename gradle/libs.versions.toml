@@ -8,7 +8,7 @@ kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ver
 
 junit = "junit:junit:4.13.2"
 truth = "com.google.truth:truth:1.1.5"
-testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:1.12"
+testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:1.13"
 
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0"
 
