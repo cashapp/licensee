@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.common
 
-private const val baseTaskName = "licensee"
-private const val reportFolder = "licensee"
+private const val BASE_TASK_NAME = "licensee"
+private const val REPORT_FOLDER = "licensee"
 
 @Suppress("unused") // Instantiated reflectively by Gradle.
 class LicenseePlugin : Plugin<Project> {
@@ -54,7 +54,7 @@ class LicenseePlugin : Plugin<Project> {
 
       it.outputDir.convention(
         project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(
-          reportFolder,
+          REPORT_FOLDER,
         ),
       )
     }
@@ -86,7 +86,7 @@ class LicenseePlugin : Plugin<Project> {
     }
 
     project.afterEvaluate {
-      require(baseTaskName in project.tasks.names) {
+      require(BASE_TASK_NAME in project.tasks.names) {
         val name = if (project === project.rootProject) {
           "root project"
         } else {
@@ -123,10 +123,10 @@ private fun registerRootTask(
   project: Project,
   target: String,
 ): TaskProvider<Task> {
-  val rootTask = if (baseTaskName in project.tasks.names) {
-    project.tasks.named(baseTaskName)
+  val rootTask = if (BASE_TASK_NAME in project.tasks.names) {
+    project.tasks.named(BASE_TASK_NAME)
   } else {
-    project.tasks.register(baseTaskName)
+    project.tasks.register(BASE_TASK_NAME)
   }
 
   rootTask.configure {
@@ -146,7 +146,7 @@ private fun configureAndroidVariants(
   val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
   androidComponents.onVariants { variant ->
     val suffix = variant.name.replaceFirstChar { it.titlecase(ROOT) }
-    val taskName = "${baseTaskName}Android$suffix"
+    val taskName = "${BASE_TASK_NAME}Android$suffix"
 
     val task = project.tasks.configure(taskName) {
       it.group = VERIFICATION_GROUP
@@ -154,7 +154,7 @@ private fun configureAndroidVariants(
 
       it.configurationToCheck(variant.runtimeConfiguration)
 
-      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(reportFolder)
+      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(REPORT_FOLDER)
       it.outputDir.set(reportBase.map { it.dir("android$suffix") })
     }
 
@@ -179,7 +179,7 @@ private fun configureKotlinMultiplatformTargets(
     }
 
     val suffix = target.name.replaceFirstChar { it.titlecase(ROOT) }
-    val task = project.tasks.configure("$baseTaskName$suffix") {
+    val task = project.tasks.configure("$BASE_TASK_NAME$suffix") {
       it.group = VERIFICATION_GROUP
       it.description = taskDescription("Kotlin ${target.name} target")
 
@@ -190,7 +190,7 @@ private fun configureKotlinMultiplatformTargets(
       val runtimeConfiguration = project.configurations.named(runtimeConfigurationName)
       it.configurationToCheck(runtimeConfiguration)
 
-      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(reportFolder)
+      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(REPORT_FOLDER)
       it.outputDir.set(reportBase.map { it.dir(target.name) })
     }
 
@@ -203,7 +203,7 @@ private fun configureKotlinMultiplatformTargets(
 private fun configureJavaPlugin(
   project: Project,
 ) {
-  val task = project.tasks.configure(baseTaskName) {
+  val task = project.tasks.configure(BASE_TASK_NAME) {
     it.group = VERIFICATION_GROUP
     it.description = taskDescription()
 

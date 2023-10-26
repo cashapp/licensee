@@ -181,10 +181,10 @@ abstract class LicenseeTask : DefaultTask() {
   @get:OutputDirectory
   abstract val outputDir: DirectoryProperty
 
-  private val _logger: Logger = Logging.getLogger(LicenseeTask::class.java)
+  private val logger: Logger = Logging.getLogger(LicenseeTask::class.java)
 
   @Internal
-  override fun getLogger() = _logger
+  override fun getLogger() = logger
 
   @TaskAction
   fun execute() {

@@ -126,7 +126,7 @@ spotless {
   kotlin {
     target('**/*.kt')
     targetExclude("**/src/test/test-build-logic/build/**")
-    ktlint('0.48.1').editorConfigOverride([
+    ktlint(libs.ktlint.get().version).editorConfigOverride([
       'ktlint_standard_filename': 'disabled',
     ])
     licenseHeaderFile(rootProject.file('gradle/license-header.txt'))
