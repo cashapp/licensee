@@ -22,5 +22,37 @@
                 "url": "https://www.apache.org/licenses/LICENSE-2.0"
             }
         ]
+    },
+    {
+        "groupId": "org.jetbrains",
+        "artifactId": "annotations",
+        "version": "13.0",
+        "name": "IntelliJ IDEA Annotations",
+        "spdxLicenses": [
+            {
+                "identifier": "Apache-2.0",
+                "name": "Apache License 2.0",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0"
+            }
+        ],
+        "scm": {
+            "url": "https://github.com/JetBrains/intellij-community"
+        }
+    },
+    {
+        "groupId": "org.jetbrains.kotlin",
+        "artifactId": "kotlin-stdlib",
+        "version": "1.9.20",
+        "name": "Kotlin Stdlib",
+        "spdxLicenses": [
+            {
+                "identifier": "Apache-2.0",
+                "name": "Apache License 2.0",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0"
+            }
+        ],
+        "scm": {
+            "url": "https://github.com/JetBrains/kotlin"
+        }
     }
 ]
