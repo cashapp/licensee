@@ -8,6 +8,7 @@ kotlin {
     nodejs()
   }
   jvm()
+  linuxX64()
 
   sourceSets {
     commonMain {
@@ -23,6 +24,11 @@ kotlin {
     jvmMain {
       dependencies {
         implementation 'com.example:example-c:1.0.0'
+      }
+    }
+    linuxX64Main {
+      dependencies {
+        implementation 'com.example:example-d:1.0.0'
       }
     }
   }
