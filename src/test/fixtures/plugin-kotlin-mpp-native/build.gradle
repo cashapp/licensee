@@ -1,0 +1,25 @@
+plugins {
+  alias(libs.plugins.kotlin.multiplatform)
+  alias(libs.plugins.licensee)
+}
+
+kotlin {
+  linuxX64()
+
+  sourceSets {
+    commonMain {
+      dependencies {
+        implementation 'com.example:example-a:1.0.0'
+      }
+    }
+    linuxX64Main {
+      dependencies {
+        implementation 'com.example:example-b:1.0.0'
+      }
+    }
+  }
+}
+
+licensee {
+  allow('Apache-2.0')
+}
