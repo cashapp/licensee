@@ -26,6 +26,6 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 spotless = { id = "com.diffplug.spotless", version = "6.23.3" }
-publish = { id = "com.vanniktech.maven.publish", version = "0.25.3" }
+publish = { id = "com.vanniktech.maven.publish", version = "0.26.0" }
 dokka = { id = "org.jetbrains.dokka", version = "1.9.10" }
 download = { id = "de.undercouch.download", version = "5.5.0" }
