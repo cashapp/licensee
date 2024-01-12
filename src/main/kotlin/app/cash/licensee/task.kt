@@ -15,8 +15,8 @@
  */
 package app.cash.licensee
 
-import app.cash.licensee.ViolationAction.FAIL
-import app.cash.licensee.ViolationAction.IGNORE
+import app.cash.licensee.ViolationAction
+import app.cash.licensee.UnusedAction
 import java.io.File
 import java.io.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -39,6 +39,7 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.LogLevel.ERROR
 import org.gradle.api.logging.LogLevel.INFO
 import org.gradle.api.logging.LogLevel.LIFECYCLE
@@ -64,6 +65,9 @@ abstract class LicenseeTask : DefaultTask() {
 
   @get:Input
   internal abstract val violationAction: Property<ViolationAction>
+
+  @get:Input
+  internal abstract val unusedAction: Property<UnusedAction>
 
   @get:Input
   internal abstract val coordinatesToPomInfo: MapProperty<DependencyCoordinates, PomInfo>
@@ -270,22 +274,27 @@ abstract class LicenseeTask : DefaultTask() {
     val validationReport = StringBuilder()
 
     val violationAction = violationAction.get()
-    val errorLevel = if (violationAction == IGNORE) INFO else ERROR
-    val warningLevel = if (violationAction == IGNORE) INFO else WARN
-    val lifecycleLevel = if (violationAction == IGNORE) INFO else LIFECYCLE
+    val violationErrorLevel = if (violationAction == ViolationAction.IGNORE) INFO else ERROR
+    val violationWarningLevel = if (violationAction == ViolationAction.IGNORE) INFO else WARN
 
-    fun logResult(configResult: ValidationResult, prefix: String = "") {
+    val unusedAction = unusedAction.get()
+    val unusedErrorLevel = if (unusedAction == UnusedAction.IGNORE) INFO else ERROR
+    val unusedWarningLevel = if (unusedAction == UnusedAction.IGNORE) INFO else WARN
+
+    val lifecycleLevel = if (violationAction == ViolationAction.IGNORE) INFO else LIFECYCLE
+
+    fun logResult(configResult: ValidationResult, error: LogLevel, warning: LogLevel, prefix: String = "") {
       when (configResult) {
         is ValidationResult.Error -> {
           val message = prefix + "ERROR: " + configResult.message
           validationReport.appendLine(message)
-          logger.log(errorLevel, message)
+          logger.log(error, message)
         }
 
         is ValidationResult.Warning -> {
           val message = prefix + "WARNING: " + configResult.message
           validationReport.appendLine(message)
-          logger.log(warningLevel, message)
+          logger.log(warning, message)
         }
 
         is ValidationResult.Info -> {
@@ -296,7 +305,7 @@ abstract class LicenseeTask : DefaultTask() {
       }
     }
     for (configResult in validationResult.configResults) {
-      logResult(configResult)
+      logResult(configResult, unusedErrorLevel, unusedWarningLevel)
     }
     if (validationResult.configResults.isNotEmpty() && validationResult.artifactResults.isNotEmpty()) {
       validationReport.appendLine()
@@ -320,7 +329,7 @@ abstract class LicenseeTask : DefaultTask() {
         logger.info(coordinateHeader)
       }
       for (result in results) {
-        logResult(result, prefix = " - ")
+        logResult(result, violationErrorLevel, violationWarningLevel, prefix = " - ")
       }
     }
 
@@ -328,7 +337,7 @@ abstract class LicenseeTask : DefaultTask() {
     validationReportFile.parentFile.mkdirs()
     validationReportFile.writeText(validationReport.toString())
 
-    if (violationAction == FAIL && validationResult.containsErrors) {
+    if (violationAction == ViolationAction.FAIL && validationResult.containsErrors) {
       throw RuntimeException("Artifacts failed validation. See output above.")
     }
   }

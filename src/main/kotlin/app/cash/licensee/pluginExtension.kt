@@ -192,6 +192,28 @@ interface LicenseeExtension {
    */
   fun violationAction(level: ViolationAction)
 
+  /**
+   * Build behavior when a declared license is not found in any dependencies of the project.
+   *
+   * This is intended for the case where you have a restricted list of allowed licenses for your
+   * organisation, so you can simply list them all in the Licensee config block and not have to
+   * fish through unnecessary warnings in your Gradle logs.
+   *
+   * ```
+   * licensee {
+   *   unusedAction(IGNORE)
+   * }
+   * ```
+   *
+   * The default behavior is to [warn][UnusedAction.WARN].
+   *
+   * Note: Setting this to [ignore][UnusedAction.IGNORE] does not affect the contents of the
+   * `validation.txt` file which always contains all artifacts and their validation status.
+   *
+   * @see UnusedAction
+   */
+  fun unusedAction(level: UnusedAction)
+
   interface AllowUrlOptions {
     fun because(reason: String)
   }
@@ -213,6 +235,12 @@ enum class ViolationAction {
   IGNORE,
 }
 
+@Suppress("unused") // Public API.
+enum class UnusedAction {
+  WARN,
+  IGNORE,
+}
+
 internal abstract class IgnoredCoordinate : Named {
   abstract val ignoredDatas: MapProperty<String, IgnoredData>
 }
@@ -223,10 +251,12 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   internal abstract val allowedDependencies: MapProperty<DependencyCoordinates, Optional<String>>
   internal abstract val ignoredGroupIds: MapProperty<String, IgnoredData>
   internal abstract val ignoredCoordinates: NamedDomainObjectContainer<IgnoredCoordinate>
-
   internal abstract val violationAction: Property<ViolationAction>
+  internal abstract val unusedAction: Property<UnusedAction>
+
   init {
     violationAction.convention(ViolationAction.FAIL)
+    unusedAction.convention(UnusedAction.WARN)
   }
 
   fun toDependencyTreeConfig(): Provider<DependencyConfig> {
@@ -345,6 +375,10 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
 
   override fun violationAction(level: ViolationAction) {
     violationAction.set(level)
+  }
+
+  override fun unusedAction(level: UnusedAction) {
+    unusedAction.set(level)
   }
 }
 
