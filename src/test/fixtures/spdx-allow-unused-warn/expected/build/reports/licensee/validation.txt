@@ -1,0 +1,4 @@
+WARNING: Allowed SPDX identifier 'MIT' is unused
+
+com.example:example:1.0.0
+ - SPDX identifier 'Apache-2.0' allowed
