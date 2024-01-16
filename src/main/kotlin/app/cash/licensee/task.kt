@@ -15,8 +15,6 @@
  */
 package app.cash.licensee
 
-import app.cash.licensee.ViolationAction
-import app.cash.licensee.UnusedAction
 import java.io.File
 import java.io.Serializable
 import kotlinx.serialization.builtins.ListSerializer
