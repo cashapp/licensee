@@ -247,6 +247,42 @@ class LicenseePluginFixtureTest {
     )
   }
 
+  @Test fun unusedIgnored(
+    @TestParameter(
+      "coordinate-allow-unused-ignored",
+      "coordinate-allow-unused-ignored-kts",
+      "spdx-allow-unused-ignored",
+      "url-allow-unused-ignored",
+    ) fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir).build()
+    assertExpectedFiles(fixtureDir)
+    assertThat(result.output).doesNotContainMatch(
+      """
+      |WARNING: Allowed .*? is unused
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun unusedWarn(
+    @TestParameter(
+      "coordinate-allow-unused-warn",
+      "coordinate-allow-unused-warn-kts",
+      "spdx-allow-unused-warn",
+      "url-allow-unused-warn",
+    ) fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir).build()
+    assertExpectedFiles(fixtureDir)
+    assertThat(result.output).containsMatch(
+      """
+      |WARNING: Allowed .*? is unused
+      """.trimMargin(),
+    )
+  }
+
   @Test fun allFixturesCovered() {
     val expectedDirs = javaClass.declaredMethods
       .filter { it.isAnnotationPresent(Test::class.java) }

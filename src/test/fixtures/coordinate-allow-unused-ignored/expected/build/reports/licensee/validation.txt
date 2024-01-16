@@ -1,0 +1,5 @@
+WARNING: Allowed dependency 'com.example:example2:1.0.0' is unused
+
+com.example:example:1.0.0
+ - SPDX identifier 'Apache-2.0' is NOT allowed
+ - Coordinate version is allowed

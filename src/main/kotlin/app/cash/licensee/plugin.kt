@@ -51,6 +51,7 @@ class LicenseePlugin : Plugin<Project> {
       it.dependencyConfig.convention(extension.toDependencyTreeConfig())
       it.validationConfig.convention(extension.toLicenseValidationConfig())
       it.violationAction.convention(extension.violationAction)
+      it.unusedAction.convention(extension.unusedAction)
 
       it.outputDir.convention(
         project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(
