@@ -1,4 +1,4 @@
-import app.cash.licensee.UnusedAction.WARN
+import app.cash.licensee.UnusedAction.LOG
 
 plugins {
   id("java-library")
@@ -12,5 +12,5 @@ dependencies {
 licensee {
   allowDependency("com.example", "example", "1.0.0")
   allowDependency("com.example", "example2", "1.0.0")
-  unusedAction(WARN)
+  unusedAction(LOG)
 }

@@ -10,5 +10,5 @@ dependencies {
 licensee {
   allowUrl('https://example.com/license')
   allowUrl('https://example.com/license2')
-  unusedAction("WARN")
+  unusedAction("LOG")
 }

@@ -205,7 +205,7 @@ interface LicenseeExtension {
    * }
    * ```
    *
-   * The default behavior is to [warn][UnusedAction.WARN].
+   * The default behavior is to [warn][UnusedAction.LOG].
    *
    * Note: Setting this to [ignore][UnusedAction.IGNORE] does not affect the contents of the
    * `validation.txt` file which always contains all artifacts and their validation status.
@@ -237,7 +237,7 @@ enum class ViolationAction {
 
 @Suppress("unused") // Public API.
 enum class UnusedAction {
-  WARN,
+  LOG,
   IGNORE,
 }
 
@@ -256,7 +256,7 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
 
   init {
     violationAction.convention(ViolationAction.FAIL)
-    unusedAction.convention(UnusedAction.WARN)
+    unusedAction.convention(UnusedAction.LOG)
   }
 
   fun toDependencyTreeConfig(): Provider<DependencyConfig> {

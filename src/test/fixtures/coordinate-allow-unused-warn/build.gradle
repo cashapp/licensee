@@ -10,5 +10,5 @@ dependencies {
 licensee {
   allowDependency('com.example', 'example', '1.0.0')
   allowDependency('com.example', 'example2', '1.0.0')
-  unusedAction("WARN")
+  unusedAction("LOG")
 }
