@@ -26,6 +26,7 @@ $dokka.location:app.cash.licensee/LicenseeExtension/allowDependency/#kotlin.Stri
 $dokka.location:app.cash.licensee/LicenseeExtension/allowDependency/#org.gradle.api.provider.Provider[org.gradle.api.artifacts.Dependency]#org.gradle.api.Action[app.cash.licensee.LicenseeExtension.AllowDependencyOptions]/PointingToDeclaration/licensee/app.cash.licensee/-licensee-extension/allow-dependency.html
 $dokka.location:app.cash.licensee/LicenseeExtension/allowUrl/#kotlin.String#org.gradle.api.Action[app.cash.licensee.LicenseeExtension.AllowUrlOptions]/PointingToDeclaration/licensee/app.cash.licensee/-licensee-extension/allow-url.html
 $dokka.location:app.cash.licensee/LicenseeExtension/ignoreDependencies/#kotlin.String#kotlin.String?#org.gradle.api.Action[app.cash.licensee.LicenseeExtension.IgnoreDependencyOptions]/PointingToDeclaration/licensee/app.cash.licensee/-licensee-extension/ignore-dependencies.html
+$dokka.location:app.cash.licensee/LicenseeExtension/unusedAction/#app.cash.licensee.UnusedAction/PointingToDeclaration/licensee/app.cash.licensee/-licensee-extension/unused-action.html
 $dokka.location:app.cash.licensee/LicenseeExtension/violationAction/#app.cash.licensee.ViolationAction/PointingToDeclaration/licensee/app.cash.licensee/-licensee-extension/violation-action.html
 $dokka.location:app.cash.licensee/LicenseePlugin///PointingToDeclaration/licensee/app.cash.licensee/-licensee-plugin/index.html
 $dokka.location:app.cash.licensee/LicenseePlugin/LicenseePlugin/#/PointingToDeclaration/licensee/app.cash.licensee/-licensee-plugin/-licensee-plugin.html
@@ -46,6 +47,12 @@ $dokka.location:app.cash.licensee/UnknownLicense///PointingToDeclaration/licens
 $dokka.location:app.cash.licensee/UnknownLicense/UnknownLicense/#kotlin.String?#kotlin.String?/PointingToDeclaration/licensee/app.cash.licensee/-unknown-license/-unknown-license.html
 $dokka.location:app.cash.licensee/UnknownLicense/name/#/PointingToDeclaration/licensee/app.cash.licensee/-unknown-license/name.html
 $dokka.location:app.cash.licensee/UnknownLicense/url/#/PointingToDeclaration/licensee/app.cash.licensee/-unknown-license/url.html
+$dokka.location:app.cash.licensee/UnusedAction.IGNORE///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}licensee/app.cash.licensee/-unused-action/-i-g-n-o-r-e/index.html
+$dokka.location:app.cash.licensee/UnusedAction.LOG///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}licensee/app.cash.licensee/-unused-action/-l-o-g/index.html
+$dokka.location:app.cash.licensee/UnusedAction///PointingToDeclaration/licensee/app.cash.licensee/-unused-action/index.html
+$dokka.location:app.cash.licensee/UnusedAction/entries/#/PointingToDeclaration/licensee/app.cash.licensee/-unused-action/entries.html
+$dokka.location:app.cash.licensee/UnusedAction/valueOf/#kotlin.String/PointingToDeclaration/licensee/app.cash.licensee/-unused-action/value-of.html
+$dokka.location:app.cash.licensee/UnusedAction/values/#/PointingToDeclaration/licensee/app.cash.licensee/-unused-action/values.html
 $dokka.location:app.cash.licensee/ViolationAction.FAIL///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}licensee/app.cash.licensee/-violation-action/-f-a-i-l/index.html
 $dokka.location:app.cash.licensee/ViolationAction.IGNORE///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}licensee/app.cash.licensee/-violation-action/-i-g-n-o-r-e/index.html
 $dokka.location:app.cash.licensee/ViolationAction.LOG///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}licensee/app.cash.licensee/-violation-action/-l-o-g/index.html
