@@ -1,6 +1,23 @@
 # Change Log
 
-## [Unreleased]
+## [1.9.0]
+
+**Added**
+
+- Add configuration option for behavior on unused license. By default we log, but you can now choose to ignore.
+
+   ```kotlin
+   licensee {
+     unusedAction(IGNORE)
+   }
+   ```
+
+- New fallback URL for ISC.
+
+**Changed**
+
+- Update SPDX database to version 3.22 (2023-10-05).
+
 
 ## [1.8.0] - 2023-09-26
 
@@ -163,7 +180,8 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.8.0...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.9.0...HEAD
+[1.9.0]: https://github.com/cashapp/licensee/releases/tag/1.9.0
 [1.8.0]: https://github.com/cashapp/licensee/releases/tag/1.8.0
 [1.7.0]: https://github.com/cashapp/licensee/releases/tag/1.7.0
 [1.6.0]: https://github.com/cashapp/licensee/releases/tag/1.6.0
