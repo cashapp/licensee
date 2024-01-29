@@ -1,3 +1,5 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
@@ -110,7 +112,14 @@ tasks.named('check') { check ->
 
 tasks.register('updateLicenses', de.undercouch.gradle.tasks.download.Download) { task ->
   task.src('https://spdx.org/licenses/licenses.json')
-  task.dest(file('src/main/resources/app/cash/licensee'))
+  def destDir = file('src/main/resources/app/cash/licensee')
+  task.dest(destDir)
+  task.doLast {
+    def destFile = new File(destDir, 'licenses.json')
+    def json = new JsonSlurper().parse(destFile)
+    json.licenses = json.licenses.sort { a,b -> a.licenseId <=> b.licenseId }
+    destFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(json))
+  }
 }
 
 publishing {
