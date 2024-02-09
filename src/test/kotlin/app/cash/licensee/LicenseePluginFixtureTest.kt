@@ -263,6 +263,7 @@ class LicenseePluginFixtureTest {
       |WARNING: Allowed .*? is unused
       """.trimMargin(),
     )
+    assertThat(result.output).doesNotContainMatch("""\n\n> Task :licensee""")
   }
 
   @Test fun unusedWarn(
