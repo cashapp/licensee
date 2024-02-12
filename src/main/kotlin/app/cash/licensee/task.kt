@@ -308,7 +308,9 @@ abstract class LicenseeTask : DefaultTask() {
     if (validationResult.configResults.isNotEmpty() && validationResult.artifactResults.isNotEmpty()) {
       validationReport.appendLine()
       // We know these are always at warning or error level, so use lifecycle for space.
-      logger.log(lifecycleLevel, "")
+      if (unusedWarningLevel > INFO || unusedErrorLevel > INFO || logger.isInfoEnabled) {
+        logger.log(lifecycleLevel, "")
+      }
     }
     for ((artifactDetail, results) in validationResult.artifactResults) {
       val coordinateHeader = buildString {
