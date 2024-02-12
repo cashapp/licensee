@@ -1,6 +1,13 @@
 # Change Log
 
-## [1.9.0]
+## [1.9.1] - 2024-02-09
+
+**Fixed**
+
+- Avoid task name showing up in logs when logging is disabled but unused licenses are present.
+
+
+## [1.9.0] - 2024-01-29
 
 **Added**
 
@@ -180,7 +187,8 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.9.0...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.9.1...HEAD
+[1.9.1]: https://github.com/cashapp/licensee/releases/tag/1.9.1
 [1.9.0]: https://github.com/cashapp/licensee/releases/tag/1.9.0
 [1.8.0]: https://github.com/cashapp/licensee/releases/tag/1.8.0
 [1.7.0]: https://github.com/cashapp/licensee/releases/tag/1.7.0
