@@ -15,28 +15,32 @@
  */
 package app.cash.licensee
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
 import org.junit.Test
 
 class SpdxLicensesTest {
   @Test fun embeddedDatabaseLitmusTest() {
-    assertEquals(
+    assertThat(
       SpdxLicense("MIT-0", "MIT No Attribution", "https://github.com/aws/mit-0"),
+    ).isEqualTo(
       SpdxLicenses.embedded.findByIdentifier("MIT-0"),
     )
   }
 
   @Test fun fallbackDatabaseLitmusTest() {
-    assertEquals(
+    assertThat(
       listOf(SpdxLicense("BSD-2-Clause", "BSD 2-Clause \"Simplified\" License", "https://opensource.org/licenses/BSD-2-Clause")),
+    ).isEqualTo(
       fallbackUrls["https://api.github.com/licenses/bsd-2-clause"],
     )
-    assertEquals(
+    assertThat(
       listOf(
         SpdxLicense("GPL-2.0", "GNU General Public License v2.0 only", "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html"),
         SpdxLicense("GPL-2.0-or-later", "GNU General Public License v2.0 or later", "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html"),
       ),
+    ).isEqualTo(
       fallbackUrls["https://api.github.com/licenses/gpl-2.0"],
     )
   }
@@ -64,17 +68,20 @@ class SpdxLicensesTest {
       |
     """.trimMargin()
     val spdxLicenses = SpdxLicenses.parseJson(json)
-    assertEquals(
+    assertThat(
       listOf(SpdxLicense("FOO-1.0", "Foo License", "https://example.com/foo")),
+    ).isEqualTo(
       spdxLicenses.findByUrl("http://example.com/foo"),
     )
-    assertEquals(
+    assertThat(
       listOf(SpdxLicense("FOO-1.0", "Foo License", "https://example.com/foo")),
+    ).isEqualTo(
       spdxLicenses.findByUrl("https://example.com/foo"),
     )
-    assertNull(spdxLicenses.findByUrl("http://example.com/bar"))
-    assertEquals(
+    assertThat(spdxLicenses.findByUrl("http://example.com/bar")).isNull()
+    assertThat(
       listOf(SpdxLicense("BAR-1.0", "Bar License", "https://example.com/bar")),
+    ).isEqualTo(
       spdxLicenses.findByUrl("https://example.com/bar"),
     )
   }
@@ -94,12 +101,14 @@ class SpdxLicensesTest {
       |
     """.trimMargin()
     val spdxLicenses = SpdxLicenses.parseJson(json)
-    assertEquals(
+    assertThat(
       listOf(SpdxLicense("FOO-1.0", "Foo License", "https://example.com/foo")),
+    ).isEqualTo(
       spdxLicenses.findByUrl("http://example.com/foo"),
     )
-    assertEquals(
+    assertThat(
       listOf(SpdxLicense("FOO-1.0", "Foo License", "https://example.com/foo")),
+    ).isEqualTo(
       spdxLicenses.findByUrl("https://spdx.org/licenses/FOO-1.0.html"),
     )
   }
@@ -125,12 +134,14 @@ class SpdxLicensesTest {
       |
     """.trimMargin()
     val spdxLicenses = SpdxLicenses.parseJson(json)
-    assertEquals(
+    assertThat(
       SpdxLicense("FOO-1.0", "Foo License", "https://spdx.org/licenses/FOO-1.0.html"),
+    ).isEqualTo(
       spdxLicenses.findByIdentifier("FOO-1.0"),
     )
-    assertEquals(
+    assertThat(
       SpdxLicense("BAR-1.0", "Bar License", "https://example.com/bar"),
+    ).isEqualTo(
       spdxLicenses.findByIdentifier("BAR-1.0"),
     )
   }
