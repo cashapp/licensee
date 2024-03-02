@@ -23,10 +23,10 @@ import org.junit.Test
 class SpdxLicensesTest {
   @Test fun embeddedDatabaseLitmusTest() {
     assertThat(
-      SpdxLicense("MIT-0", "MIT No Attribution", "https://github.com/aws/mit-0"),
+       SpdxLicenses.embedded.findByIdentifier("MIT-0"),
     ).isEqualTo(
-      SpdxLicenses.embedded.findByIdentifier("MIT-0"),
-    )
+       SpdxLicense("MIT-0", "MIT No Attribution", "https://github.com/aws/mit-0"),
+     )
   }
 
   @Test fun fallbackDatabaseLitmusTest() {
