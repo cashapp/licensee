@@ -294,17 +294,17 @@ class LicenseePluginFixtureTest {
   }
 
   @Test fun allFixturesCovered() {
-    val expectedDirs = javaClass.declaredMethods.asSequence()
+    val actualDirs = javaClass.declaredMethods.asSequence()
       .filter { it.isAnnotationPresent(Test::class.java) }
       .filter { it.parameterCount == 1 } // Assume single parameter means test parameter.
       .flatMap { it.parameters[0].getAnnotation(TestParameter::class.java).value.toList() }
       .sorted()
-    val actualDirs = fixturesDir.listFiles()!!.asSequence()
+      .toList()
+      .toTypedArray()
+    val expectedDirs = fixturesDir.listFiles()!!.asSequence()
       .filter { it.isDirectory }
       .map { it.name }
       .sorted()
-      .toList()
-      .toTypedArray()
     assertThat(expectedDirs).containsExactly(*actualDirs)
   }
 
