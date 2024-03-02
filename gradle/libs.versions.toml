@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.9.22"
-agp = "8.2.2"
+agp = "8.3.0"
 
 [libraries]
 androidGradleApi = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
