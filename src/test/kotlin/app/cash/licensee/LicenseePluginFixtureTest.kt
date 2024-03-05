@@ -18,7 +18,6 @@ package app.cash.licensee
 import assertk.Assert
 import assertk.assertThat
 import assertk.assertions.contains
-import assertk.assertions.containsExactly
 import assertk.assertions.containsMatch
 import assertk.assertions.doesNotContain
 import assertk.assertions.isEqualTo
@@ -294,18 +293,16 @@ class LicenseePluginFixtureTest {
   }
 
   @Test fun allFixturesCovered() {
-    val actualDirs = javaClass.declaredMethods.asSequence()
+    val expectedDirs = javaClass.declaredMethods
       .filter { it.isAnnotationPresent(Test::class.java) }
       .filter { it.parameterCount == 1 } // Assume single parameter means test parameter.
       .flatMap { it.parameters[0].getAnnotation(TestParameter::class.java).value.toList() }
       .sorted()
-      .toList()
-      .toTypedArray()
-    val expectedDirs = fixturesDir.listFiles()!!.asSequence()
+    val actualDirs = fixturesDir.listFiles()!!
       .filter { it.isDirectory }
       .map { it.name }
       .sorted()
-    assertThat(expectedDirs).containsExactly(*actualDirs)
+    assertThat(actualDirs).isEqualTo(expectedDirs)
   }
 
   private fun createRunner(fixtureDir: File): GradleRunner {
