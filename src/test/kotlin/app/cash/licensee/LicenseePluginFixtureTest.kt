@@ -15,7 +15,15 @@
  */
 package app.cash.licensee
 
-import com.google.common.truth.Truth.assertThat
+import assertk.Assert
+import assertk.assertThat
+import assertk.assertions.contains
+import assertk.assertions.containsMatch
+import assertk.assertions.doesNotContain
+import assertk.assertions.isEqualTo
+import assertk.assertions.isNotEmpty
+import assertk.assertions.support.expected
+import assertk.assertions.support.show
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import java.io.File
@@ -175,7 +183,7 @@ class LicenseePluginFixtureTest {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).containsMatch(
-      "Transitive dependency ignore on 'com\\.example(:example)?' is dangerous and requires a reason string",
+      "Transitive dependency ignore on 'com\\.example(:example)?' is dangerous and requires a reason string".toRegex(),
     )
   }
 
@@ -261,7 +269,7 @@ class LicenseePluginFixtureTest {
     assertThat(result.output).doesNotContainMatch(
       """
       |WARNING: Allowed .*? is unused
-      """.trimMargin(),
+      """.trimMargin().toRegex(),
     )
     assertThat(result.output).doesNotContain("\n\n> Task :licensee")
   }
@@ -280,7 +288,7 @@ class LicenseePluginFixtureTest {
     assertThat(result.output).containsMatch(
       """
       |WARNING: Allowed .*? is unused
-      """.trimMargin(),
+      """.trimMargin().toRegex(),
     )
   }
 
@@ -289,9 +297,12 @@ class LicenseePluginFixtureTest {
       .filter { it.isAnnotationPresent(Test::class.java) }
       .filter { it.parameterCount == 1 } // Assume single parameter means test parameter.
       .flatMap { it.parameters[0].getAnnotation(TestParameter::class.java).value.toList() }
-      .toSet()
-    val actualDirs = fixturesDir.listFiles()!!.filter { it.isDirectory }.map { it.name }
-    assertThat(expectedDirs).containsExactlyElementsIn(actualDirs)
+      .sorted()
+    val actualDirs = fixturesDir.listFiles()!!
+      .filter { it.isDirectory }
+      .map { it.name }
+      .sorted()
+    assertThat(actualDirs).isEqualTo(expectedDirs)
   }
 
   private fun createRunner(fixtureDir: File): GradleRunner {
@@ -328,3 +339,11 @@ class LicenseePluginFixtureTest {
 
 private val fixturesDir = File("src/test/fixtures")
 private val versionProperty = "-PlicenseeVersion=${System.getProperty("licenseeVersion")!!}"
+
+/**
+ * TODO: remove this after https://github.com/willowtreeapps/assertk/issues/515 is fixed.
+ */
+private fun Assert<CharSequence>.doesNotContainMatch(regex: Regex) = given { actual ->
+  if (!regex.containsMatchIn(actual)) return
+  expected("to not contain match:${show(regex)} but was:${show(actual)}")
+}

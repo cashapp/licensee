@@ -35,7 +35,7 @@ dependencies {
   implementation libs.maven.modelBuilder
 
   testImplementation libs.junit
-  testImplementation libs.truth
+  testImplementation libs.assertk
   testImplementation libs.testParameterInjector
   testImplementation gradleTestKit()
 }
