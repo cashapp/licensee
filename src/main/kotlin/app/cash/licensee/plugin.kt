@@ -184,9 +184,9 @@ private fun configureKotlinMultiplatformTargets(
       it.group = VERIFICATION_GROUP
       it.description = taskDescription("Kotlin ${target.name} target")
 
-      val complication = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+      val compilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
       // Fallback to compile dependencies when runtime isn't supported, e.g. Kotlin/Native.
-      val runtimeConfigurationName = complication.runtimeDependencyConfigurationName ?: complication.compileDependencyConfigurationName
+      val runtimeConfigurationName = compilation.runtimeDependencyConfigurationName ?: compilation.compileDependencyConfigurationName
 
       val runtimeConfiguration = project.configurations.named(runtimeConfigurationName)
       it.configurationToCheck(runtimeConfiguration)
