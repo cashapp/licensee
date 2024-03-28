@@ -23,6 +23,10 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
+import org.gradle.api.attributes.Category.ENFORCED_PLATFORM
+import org.gradle.api.attributes.Category.REGULAR_PLATFORM
 import org.gradle.api.logging.Logger
 
 internal data class DependencyConfig(
@@ -89,13 +93,18 @@ private fun loadDependencyCoordinates(
 
   var processTransitiveDependencies = true
   var ignoreSuffix: String? = null
-  when (id) {
-    is ProjectComponentIdentifier -> {
+  when {
+    id is ProjectComponentIdentifier -> {
       // Local dependency, do nothing.
       ignoreSuffix = " ignoring because project dependency"
     }
 
-    is ModuleComponentIdentifier -> {
+    root.isPlatform() -> {
+      // Platform (POM) dependency, do nothing.
+      ignoreSuffix = " ignoring because platform dependency"
+    }
+
+    id is ModuleComponentIdentifier -> {
       if (id.group == "" && id.version == "") {
         // Assuming flat-dir repository dependency, do nothing.
         ignoreSuffix = " ignoring because flat-dir repository artifact has no metadata"
@@ -158,6 +167,17 @@ private fun loadDependencyCoordinates(
         }
       }
     }
+  }
+}
+
+private fun ResolvedComponentResult.isPlatform(): Boolean {
+  val singleVariant = variants.singleOrNull() ?: return false
+  // https://github.com/gradle/gradle/issues/8854
+  val stringAttribute = Attribute.of(CATEGORY_ATTRIBUTE.name, String::class.java)
+  val category = singleVariant.attributes.getAttribute(stringAttribute) ?: return false
+  return when (category) {
+    ENFORCED_PLATFORM, REGULAR_PLATFORM -> true
+    else -> false
   }
 }
 
