@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.10.0] - 2024-03-28
+
+**New**
+
+- Gradle platform dependencies (also sometimes called BOMs) are now ignored since they only contribute version constraints and no code.
+
+
 ## [1.9.1] - 2024-02-09
 
 **Fixed**
@@ -187,7 +194,8 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.9.1...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.10.0...HEAD
+[1.10.0]: https://github.com/cashapp/licensee/releases/tag/1.10.0
 [1.9.1]: https://github.com/cashapp/licensee/releases/tag/1.9.1
 [1.9.0]: https://github.com/cashapp/licensee/releases/tag/1.9.0
 [1.8.0]: https://github.com/cashapp/licensee/releases/tag/1.8.0
