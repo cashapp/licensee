@@ -1,0 +1,13 @@
+plugins {
+  id("java-library")
+  alias(libs.plugins.licensee)
+}
+
+dependencies {
+  implementation platform(libs.examPlatform)
+  implementation libs.exam
+}
+
+licensee {
+  allow("Apache-2.0")
+}

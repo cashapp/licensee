@@ -71,6 +71,7 @@ class LicenseePluginFixtureTest {
       "local-file-tree-ignored",
       "multiple-with-spdx-allowed",
       "multiple-with-url-allowed",
+      "platform-pom-is-excluded",
       "plugin-android-application",
       "plugin-android-application-product-flavors",
       "plugin-android-dynamic-feature",

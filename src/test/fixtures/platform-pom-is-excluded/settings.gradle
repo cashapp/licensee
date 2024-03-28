@@ -1,0 +1,16 @@
+pluginManagement {
+  includeBuild("../../test-build-logic")
+}
+
+plugins {
+  id("licenseeTests")
+}
+
+dependencyResolutionManagement {
+  versionCatalogs {
+    "libs" {
+      library("exam", "com.example", "example").withoutVersion()
+      library("examPlatform", "com.example", "example-platform").version("1.0.0")
+    }
+  }
+}
