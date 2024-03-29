@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Square, Inc.
+ * Copyright (C) 2024 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package app.cash.licensee
 
-internal val fallbackUrls = buildMap {
+internal val defaultFallbackUrls: FallbackBuilder.() -> Unit = {
   putLicense("Apache-2.0") {
     add("http://www.apache.org/licenses/LICENSE-2.0.txt")
     add("https://www.apache.org/licenses/LICENSE-2.0.txt")
@@ -90,23 +90,5 @@ internal val fallbackUrls = buildMap {
   }
   putLicense("ISC") {
     add("https://opensource.org/licenses/isc-license.txt")
-  }
-}
-
-private fun MutableMap<String, List<SpdxLicense>>.putLicense(
-  vararg spdxIds: String,
-  urls: MutableList<String>.() -> Unit,
-) {
-  val licenses = spdxIds.map {
-    SpdxLicenses.embedded.findByIdentifier(it)
-      ?: throw AssertionError("No SPDX identifier '$it' in the embedded set")
-  }
-  for (url in buildList(urls)) {
-    if (SpdxLicenses.embedded.findByUrl(url).orEmpty().isNotEmpty()) {
-      throw AssertionError("$url is canonical and does not need to be a fallback")
-    }
-    if (put(url, licenses) != null) {
-      throw AssertionError("$url specified twice")
-    }
   }
 }
