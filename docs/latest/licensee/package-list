@@ -37,7 +37,9 @@ $dokka.location:app.cash.licensee/LicenseeTask/configurationToCheck/#org.gradle.
 $dokka.location:app.cash.licensee/LicenseeTask/configurationToCheck/#org.gradle.api.provider.Provider[org.gradle.api.artifacts.Configuration]/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/configuration-to-check.html
 $dokka.location:app.cash.licensee/LicenseeTask/execute/#/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/execute.html
 $dokka.location:app.cash.licensee/LicenseeTask/getLogger/#/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/get-logger.html
+$dokka.location:app.cash.licensee/LicenseeTask/jsonOutput/#/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/json-output.html
 $dokka.location:app.cash.licensee/LicenseeTask/outputDir/#/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/output-dir.html
+$dokka.location:app.cash.licensee/LicenseeTask/validationOutput/#/PointingToDeclaration/licensee/app.cash.licensee/-licensee-task/validation-output.html
 $dokka.location:app.cash.licensee/SpdxLicense///PointingToDeclaration/licensee/app.cash.licensee/-spdx-license/index.html
 $dokka.location:app.cash.licensee/SpdxLicense/SpdxLicense/#kotlin.String#kotlin.String#kotlin.String/PointingToDeclaration/licensee/app.cash.licensee/-spdx-license/-spdx-license.html
 $dokka.location:app.cash.licensee/SpdxLicense/identifier/#/PointingToDeclaration/licensee/app.cash.licensee/-spdx-license/identifier.html
