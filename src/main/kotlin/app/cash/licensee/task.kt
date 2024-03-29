@@ -37,6 +37,7 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.LogLevel.ERROR
 import org.gradle.api.logging.LogLevel.INFO
@@ -183,6 +184,11 @@ abstract class LicenseeTask : DefaultTask() {
   @get:OutputDirectory
   abstract val outputDir: DirectoryProperty
 
+  @Internal
+  val jsonOutput: Provider<RegularFile> = outputDir.file(ARTIFACTS_JSON)
+  @Internal
+  val validationOutput: Provider<RegularFile> = outputDir.file(VALIDATION_TXT)
+
   private val logger: Logger = Logging.getLogger(LicenseeTask::class.java)
 
   @Internal
@@ -218,8 +224,7 @@ abstract class LicenseeTask : DefaultTask() {
     val artifactsJson = outputFormat.encodeToString(listOfArtifactDetail, artifactDetails)
 
     val outputDir = outputDir.asFile.get()
-    val artifactsJsonFile = File(outputDir, "artifacts.json")
-    artifactsJsonFile.parentFile.mkdirs()
+    val artifactsJsonFile = File(outputDir, ARTIFACTS_JSON)
     artifactsJsonFile.writeText(artifactsJson)
     if (!artifactsJson.endsWith("\n")) {
       // Force a trailing newline because it makes editing expected files easier.
@@ -333,8 +338,7 @@ abstract class LicenseeTask : DefaultTask() {
       }
     }
 
-    val validationReportFile = File(outputDir, "validation.txt")
-    validationReportFile.parentFile.mkdirs()
+    val validationReportFile = File(outputDir, VALIDATION_TXT)
     validationReportFile.writeText(validationReport.toString())
 
     if (violationAction == ViolationAction.FAIL && validationResult.containsErrors) {
@@ -365,3 +369,5 @@ internal data class PomScm(
 
 private val outputFormat = Json { prettyPrint = true }
 private val listOfArtifactDetail = ListSerializer(ArtifactDetail.serializer())
+private val ARTIFACTS_JSON = "artifacts.json"
+private val VALIDATION_TXT = "validation.txt"

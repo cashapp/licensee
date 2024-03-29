@@ -158,6 +158,23 @@ class LicenseePluginFixtureTest {
     assertExpectedFiles(fixtureDir)
   }
 
+  @Test
+  fun consumeArtifactsJson(
+    @TestParameter(
+      "consume-artifact-json-as-task-input",
+    ) fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+
+    GradleRunner.create()
+      .withProjectDir(fixtureDir)
+      .withDebug(true) // Run in-process
+      .withArguments("clean", "myCopy", "--configuration-cache", versionProperty)
+      .forwardOutput()
+      .build()
+    assertExpectedFiles(fixtureDir)
+  }
+
   @Test fun failure(
     @TestParameter(
       "coordinate-version-mismatch",
