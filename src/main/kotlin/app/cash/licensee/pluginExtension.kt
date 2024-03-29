@@ -46,19 +46,6 @@ interface LicenseeExtension {
   fun allow(spdxId: String)
 
   /**
-   * Allow artifacts with a license that matches a SPDX identifier.
-   *
-   * ```
-   * licensee {
-   *   allow("Apache-2.0")
-   * }
-   * ```
-   *
-   * A full list of supported identifiers is available at [https://spdx.org/licenses/].
-   */
-  fun allow(spdxId: Provider<String>)
-
-  /**
    * Allow artifacts with an unknown (non-SPDX) license which matches a URL.
    *
    * ```
@@ -318,10 +305,6 @@ internal abstract class MutableLicenseeExtension @Inject constructor(
 
   override fun allow(spdxId: String) {
     allowedIdentifiers.register(spdxId)
-  }
-
-  override fun allow(spdxId: Provider<String>) {
-    allowedIdentifiers.addLater(spdxId.map { objects.named(SpdxId::class.java, it) })
   }
 
   override fun allowUrl(url: String, options: Action<LicenseeExtension.AllowUrlOptions>) {
