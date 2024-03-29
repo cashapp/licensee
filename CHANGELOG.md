@@ -1,5 +1,17 @@
 # Change Log
 
+## [1.11.0] - 2024-03-29
+
+**New**
+
+- `LicenseeTask` exposes `jsonOutput` and `validationOutput` properties which are providers of the generated file that you can use to copy elsewhere or bundle into binaries.
+
+**Changed**
+
+- Invalid SPDX identifiers passed to `allow` will now throw an exception.
+- Update SPDX database to version 3.23 (2024-02-08).
+
+
 ## [1.10.0] - 2024-03-28
 
 **New**
@@ -194,7 +206,8 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.10.0...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.11.0...HEAD
+[1.11.0]: https://github.com/cashapp/licensee/releases/tag/1.11.0
 [1.10.0]: https://github.com/cashapp/licensee/releases/tag/1.10.0
 [1.9.1]: https://github.com/cashapp/licensee/releases/tag/1.9.1
 [1.9.0]: https://github.com/cashapp/licensee/releases/tag/1.9.0
