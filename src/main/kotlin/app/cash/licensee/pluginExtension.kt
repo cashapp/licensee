@@ -24,7 +24,6 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -258,7 +257,6 @@ internal abstract class SpdxId(private val spdxId: String) : Named {
 }
 
 internal abstract class MutableLicenseeExtension @Inject constructor(
-  private val objects: ObjectFactory,
   private val providers: ProviderFactory,
 ) : LicenseeExtension {
   internal abstract val allowedIdentifiers: NamedDomainObjectContainer<SpdxId>
