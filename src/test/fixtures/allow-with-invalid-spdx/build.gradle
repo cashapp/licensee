@@ -1,0 +1,8 @@
+plugins {
+  id("java-library")
+  alias(libs.plugins.licensee)
+}
+
+licensee {
+  allow("ASDF")
+}

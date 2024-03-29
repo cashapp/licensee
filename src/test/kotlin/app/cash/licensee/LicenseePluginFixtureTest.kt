@@ -205,6 +205,16 @@ class LicenseePluginFixtureTest {
     )
   }
 
+  @Test fun invalidSpdxFails(
+    @TestParameter("allow-with-invalid-spdx") fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir).buildAndFail()
+    assertThat(result.output).contains(
+      "ASDF is not a valid SPDX id.",
+    )
+  }
+
   @Test fun pluginMissingOnRootFails(
     @TestParameter("plugin-missing-on-root-fails") fixtureName: String,
   ) {
