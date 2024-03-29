@@ -185,10 +185,10 @@ abstract class LicenseeTask : DefaultTask() {
   abstract val outputDir: DirectoryProperty
 
   @Internal
-  val jsonOutput: Provider<RegularFile> = outputDir.file(ARTIFACTS_JSON)
+  val jsonOutput: Provider<RegularFile> = outputDir.file("artifacts.json")
 
   @Internal
-  val validationOutput: Provider<RegularFile> = outputDir.file(VALIDATION_TXT)
+  val validationOutput: Provider<RegularFile> = outputDir.file("validation.txt")
 
   private val logger: Logger = Logging.getLogger(LicenseeTask::class.java)
 
@@ -224,8 +224,7 @@ abstract class LicenseeTask : DefaultTask() {
 
     val artifactsJson = outputFormat.encodeToString(listOfArtifactDetail, artifactDetails)
 
-    val outputDir = outputDir.asFile.get()
-    val artifactsJsonFile = File(outputDir, ARTIFACTS_JSON)
+    val artifactsJsonFile = jsonOutput.get().asFile
     artifactsJsonFile.writeText(artifactsJson)
     if (!artifactsJson.endsWith("\n")) {
       // Force a trailing newline because it makes editing expected files easier.
@@ -339,7 +338,7 @@ abstract class LicenseeTask : DefaultTask() {
       }
     }
 
-    val validationReportFile = File(outputDir, VALIDATION_TXT)
+    val validationReportFile = validationOutput.get().asFile
     validationReportFile.writeText(validationReport.toString())
 
     if (violationAction == ViolationAction.FAIL && validationResult.containsErrors) {
@@ -370,5 +369,3 @@ internal data class PomScm(
 
 private val outputFormat = Json { prettyPrint = true }
 private val listOfArtifactDetail = ListSerializer(ArtifactDetail.serializer())
-private val ARTIFACTS_JSON = "artifacts.json"
-private val VALIDATION_TXT = "validation.txt"
