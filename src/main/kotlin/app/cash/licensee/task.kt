@@ -186,6 +186,7 @@ abstract class LicenseeTask : DefaultTask() {
 
   @Internal
   val jsonOutput: Provider<RegularFile> = outputDir.file(ARTIFACTS_JSON)
+
   @Internal
   val validationOutput: Provider<RegularFile> = outputDir.file(VALIDATION_TXT)
 
