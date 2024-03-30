@@ -17,9 +17,9 @@ package app.cash.licensee
 
 import assertk.assertThat
 import assertk.assertions.containsExactly
+import assertk.assertions.doesNotContain
 import assertk.assertions.isEqualTo
 import java.io.File
-import org.junit.Assert
 import org.junit.Test
 
 class SpdxLicensesTest {
@@ -47,6 +47,6 @@ class SpdxLicensesTest {
 
   @Test fun spdxIdsAreValidGroovy() {
     val file = File(System.getProperty("generatedSpdxFile")).readText()
-    Assert.assertTrue('`' !in file)
+    assertThat(file).doesNotContain("`")
   }
 }

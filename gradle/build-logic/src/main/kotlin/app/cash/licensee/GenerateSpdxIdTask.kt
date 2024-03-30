@@ -62,7 +62,7 @@ private fun SpdxLicenses.generate(): FileSpec {
 }
 
 private val SpdxId: ClassName = ClassName("app.cash.licensee", "SpdxId")
-private val SpdxIdCompanion: ClassName = ClassName("app.cash.licensee", "SpdxId", "Companion")
+private val SpdxIdCompanion: ClassName = SpdxId.nestedClass("Companion")
 
 private val SpdxLicenseJson.identifier: String get() = if (id == "0BSD") {
   "ZeroBSD" // hardcoded because it is the only id starting with a digit.
