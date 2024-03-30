@@ -27,8 +27,9 @@ internal class SpdxLicenses(
   val simplified: List<Pair<List<String>, List<SpdxLicenseJson>>> = urlToLicense.simplify()
 
   companion object {
-    private val format: Json = Json {
+    internal val format: Json = Json {
       ignoreUnknownKeys = true
+      prettyPrint = true
     }
 
     internal fun parseJson(

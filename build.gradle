@@ -107,7 +107,19 @@ tasks.named('check') { check ->
   check.dependsOn(checkFixtureJars)
 }
 
-sourceSets.main.kotlin.srcDir(tasks.register('generateSpdx', app.cash.licensee.GenerateSpdxIdTask))
+RegularFile jsonFile = layout.projectDirectory.file("src/main/resources/app/cash/licensee/licenses.json")
+
+tasks.register("downloadLicensesJson", app.cash.licensee.SortedSpdx) {
+  json.set(resources.text.fromUri("https://spdx.org/licenses/licenses.json").asString())
+  sortedLicencesJson.set(jsonFile)
+}
+
+TaskProvider<app.cash.licensee.GenerateSpdxIdTask> generateSpdx = tasks.register('generateSpdx', app.cash.licensee.GenerateSpdxIdTask) {
+  // Do not wire the output from writeSortedSpdx here to split downloading the remote file and code gen.
+  inputJson.set(jsonFile)
+}
+
+sourceSets.main.kotlin.srcDir(generateSpdx)
 
 publishing {
   repositories {

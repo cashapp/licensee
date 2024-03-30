@@ -27,28 +27,31 @@ import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeSpec
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.Property
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
 @CacheableTask
 abstract class GenerateSpdxIdTask : DefaultTask() {
-  @get:Input
-  abstract val inputJson: Property<String>
+  @get:InputFile
+  @get:PathSensitive(PathSensitivity.RELATIVE)
+  abstract val inputJson: RegularFileProperty
 
   @get:OutputDirectory
   abstract val generatedSpdx: DirectoryProperty
 
   init {
-    inputJson.convention(project.resources.text.fromUri("https://spdx.org/licenses/licenses.json").asString())
+    group = "generateSpdx"
     generatedSpdx.convention(project.layout.buildDirectory.dir("generated/spdx"))
   }
 
   @TaskAction
   fun write() {
-    val parsed = SpdxLicenses.parseJson(inputJson.get(), defaultFallbackUrls)
+    val parsed = SpdxLicenses.parseJson(inputJson.asFile.get().readText(), defaultFallbackUrls)
     parsed.generate().writeTo(generatedSpdx.asFile.get())
   }
 }

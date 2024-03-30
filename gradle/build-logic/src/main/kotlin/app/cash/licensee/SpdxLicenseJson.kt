@@ -20,7 +20,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class SpdxLicensesJson(
+  @SerialName("licenseListVersion")
+  val version: String,
   val licenses: List<SpdxLicenseJson>,
+  val releaseDate: String,
 )
 
 @Serializable
