@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 plugins {
   alias(libs.plugins.kotlin.jvm)
   alias(libs.plugins.kotlin.serialization)
+  alias(libs.plugins.android.lint)
   id("java-gradle-plugin")
   alias(libs.plugins.publish)
   alias(libs.plugins.dokka)
@@ -38,6 +39,8 @@ dependencies {
   testImplementation libs.assertk
   testImplementation libs.testParameterInjector
   testImplementation gradleTestKit()
+
+  lintChecks libs.androidx.gradlePluginLints
 }
 
 kotlin {
