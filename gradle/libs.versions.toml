@@ -7,7 +7,7 @@ androidGradleApi = { module = "com.android.tools.build:gradle-api", version.ref 
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 junit = "junit:junit:4.13.2"
-assertk = "com.willowtreeapps.assertk:assertk:0.28.0"
+assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
 testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:1.15"
 
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
