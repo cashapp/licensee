@@ -140,6 +140,8 @@ spotless {
     targetExclude("**/src/test/test-build-logic/build/**")
     ktlint(libs.ktlint.get().version).editorConfigOverride([
       'ktlint_standard_filename': 'disabled',
+      // Making something an expression body should be a choice around readability.
+      'ktlint_standard_function-expression-body': 'disabled',
     ])
     licenseHeaderFile(rootProject.file('gradle/license-header.txt'))
   }
