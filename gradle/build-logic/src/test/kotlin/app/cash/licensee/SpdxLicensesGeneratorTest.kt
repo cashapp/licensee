@@ -24,32 +24,23 @@ import kotlin.test.Test
 
 class SpdxLicensesGeneratorTest {
   @Test fun httpUrlGetsHttpsVariant() {
-    // language=json
     val json = """
       |{"licenses":[
       |  {
-      |    "reference": "https://spdx.org/licenses/FOO-1.0.html",
-      |    "isDeprecatedLicenseId": false,
-      |    "detailsUrl": "https://ignor.ed",
-      |    "referenceNumber": 42,
-      |    "name": "Foo License",
       |    "licenseId": "FOO-1.0",
+      |    "name": "Foo License",
+      |    "reference": "https://spdx.org/licenses/FOO-1.0.html",
       |    "seeAlso": [
       |      "http://example.com/foo"
-      |    ],
-      |    "isOsiApproved": false
+      |    ]
       |  },
       |  {
-      |    "reference": "https://spdx.org/licenses/BAR-1.0.html",
-      |    "isDeprecatedLicenseId": false,
-      |    "detailsUrl": "https://ignor.ed",
-      |    "referenceNumber": 42,
-      |    "name": "Bar License",
       |    "licenseId": "BAR-1.0",
+      |    "name": "Bar License",
+      |    "reference": "https://spdx.org/licenses/BAR-1.0.html",
       |    "seeAlso": [
       |      "https://example.com/bar"
-      |    ],
-      |    "isOsiApproved": false
+      |    ]
       |  }
       |]}
       |
@@ -74,20 +65,15 @@ class SpdxLicensesGeneratorTest {
   }
 
   @Test fun spdxUrlSupported() {
-    // language=json
     val json = """
       |{"licenses":[
       |  {
-      |    "reference": "https://spdx.org/licenses/FOO-1.0.html",
-      |    "isDeprecatedLicenseId": false,
-      |    "detailsUrl": "https://ignor.ed",
-      |    "referenceNumber": 42,
-      |    "name": "Foo License",
       |    "licenseId": "FOO-1.0",
+      |    "name": "Foo License",
+      |    "reference": "https://spdx.org/licenses/FOO-1.0.html",
       |    "seeAlso": [
       |      "http://example.com/foo"
-      |    ],
-      |    "isOsiApproved": false
+      |    ]
       |  }
       |]}
       |
@@ -106,28 +92,19 @@ class SpdxLicensesGeneratorTest {
   }
 
   @Test fun spdxUrlFallback() {
-    // language=json
     val json = """
       |{"licenses":[
       |  {
-      |   "reference": "https://spdx.org/licenses/FOO-1.0.html",
-      |   "isDeprecatedLicenseId": false,
-      |    "detailsUrl": "https://ignor.ed",
-      |    "referenceNumber": 42,
-      |    "name": "Foo License",
       |    "licenseId": "FOO-1.0",
-      |    "seeAlso": [],
-      |    "isOsiApproved": false
+      |    "name": "Foo License",
+      |    "reference": "https://spdx.org/licenses/FOO-1.0.html",
+      |    "seeAlso": []
       |  },
       |  {
-      |    "reference": "https://spdx.org/licenses/BAR-1.0.html",
-      |    "isDeprecatedLicenseId": false,
-      |    "detailsUrl": "https://ignor.ed",
-      |    "referenceNumber": 42,
-      |    "name": "Bar License",
       |    "licenseId": "BAR-1.0",
-      |    "seeAlso": [],
-      |    "isOsiApproved": false
+      |    "name": "Bar License",
+      |    "reference": "https://spdx.org/licenses/BAR-1.0.html",
+      |    "seeAlso": []
       |  }
       |]}
       |

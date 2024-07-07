@@ -107,18 +107,11 @@ tasks.named('check') { check ->
   check.dependsOn(checkFixtureJars)
 }
 
-Directory jsonFolder = layout.projectDirectory.dir("src/main/resources/app/cash/licensee")
-RegularFile jsonFile = jsonFolder.file("licenses.json")
+RegularFile jsonFile = layout.projectDirectory.file("src/main/resources/app/cash/licensee/licenses.json")
 
-tasks.register("downloadLicensesJson", Copy) {
-  group = "generatespdx"
-
-  from(resources.text.fromUri("https://spdx.org/licenses/licenses.json").asFile()) {
-    rename {
-      jsonFile.asFile.name
-    }
-  }
-  into(jsonFolder)
+tasks.register("downloadLicensesJson", app.cash.licensee.SortedSpdx) {
+  json.set(resources.text.fromUri("https://spdx.org/licenses/licenses.json").asString())
+  sortedLicencesJson.set(jsonFile)
 }
 
 TaskProvider<app.cash.licensee.GenerateSpdxIdTask> generateSpdx = tasks.register('generateSpdx', app.cash.licensee.GenerateSpdxIdTask) {
