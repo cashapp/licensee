@@ -1,6 +1,7 @@
 plugins {
   `kotlin-dsl`
-  kotlin("plugin.serialization") version embeddedKotlinVersion
+  alias(libs.plugins.kotlin.jvm)
+  alias(libs.plugins.kotlin.serialization)
 }
 
 dependencies {
