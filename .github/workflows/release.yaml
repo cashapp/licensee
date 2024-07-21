@@ -15,6 +15,9 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 11
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          validate-wrappers: true
 
       - run: ./gradlew publish
         env:
