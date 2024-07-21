@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 plugins {
   alias(libs.plugins.kotlin.jvm)
   alias(libs.plugins.kotlin.serialization)
+  alias(libs.plugins.android.lint)
   id("java-gradle-plugin")
   alias(libs.plugins.publish)
   alias(libs.plugins.dokka)
@@ -34,6 +35,8 @@ dependencies {
   testImplementation libs.assertk
   testImplementation libs.testParameterInjector
   testImplementation gradleTestKit()
+
+  lintChecks libs.androidx.gradlePluginLints
 }
 
 kotlin {
@@ -143,6 +146,8 @@ spotless {
     targetExclude("**/src/test/test-build-logic/build/**", "**/generated-sources/**")
     ktlint(libs.ktlint.get().version).editorConfigOverride([
       'ktlint_standard_filename': 'disabled',
+      // Making something an expression body should be a choice around readability.
+      'ktlint_standard_function-expression-body': 'disabled',
     ])
     licenseHeaderFile(rootProject.file('gradle/license-header.txt'))
   }
