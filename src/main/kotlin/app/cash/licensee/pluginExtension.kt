@@ -18,16 +18,14 @@ package app.cash.licensee
 import app.cash.licensee.LicenseeExtension.AllowDependencyOptions
 import app.cash.licensee.LicenseeExtension.IgnoreDependencyOptions
 import java.util.Optional
-import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.provider.SetProperty
 
 @Suppress("unused") // Public API for Gradle build scripts.
 interface LicenseeExtension {
@@ -247,19 +245,8 @@ internal abstract class IgnoredCoordinate : Named {
   abstract val ignoredDatas: MapProperty<String, IgnoredData>
 }
 
-internal abstract class SpdxId(private val spdxId: String) : Named {
-  override fun getName(): String = spdxId
-  init {
-    requireNotNull(SpdxLicenses.embedded.findByIdentifier(spdxId)) {
-      "$name is not a valid SPDX id."
-    }
-  }
-}
-
-internal abstract class MutableLicenseeExtension @Inject constructor(
-  private val providers: ProviderFactory,
-) : LicenseeExtension {
-  internal abstract val allowedIdentifiers: NamedDomainObjectContainer<SpdxId>
+internal abstract class MutableLicenseeExtension : LicenseeExtension {
+  internal abstract val allowedIdentifiers: SetProperty<String>
   internal abstract val allowedUrls: MapProperty<String, Optional<String>>
   internal abstract val allowedDependencies: MapProperty<DependencyCoordinates, Optional<String>>
   internal abstract val ignoredGroupIds: MapProperty<String, IgnoredData>
@@ -286,9 +273,7 @@ internal abstract class MutableLicenseeExtension @Inject constructor(
   }
 
   fun toLicenseValidationConfig(): Provider<ValidationConfig> {
-    return allowedIdentifiers.elements(providers) {
-      it.name
-    }.zip(allowedUrls, allowedDependencies) { allowedIdentifiers, allowedUrls, allowedDependencies ->
+    return allowedIdentifiers.zip(allowedUrls, allowedDependencies) { allowedIdentifiers, allowedUrls, allowedDependencies ->
       ValidationConfig(
         allowedIdentifiers,
         allowedUrls.mapValues {
@@ -302,7 +287,10 @@ internal abstract class MutableLicenseeExtension @Inject constructor(
   }
 
   override fun allow(spdxId: String) {
-    allowedIdentifiers.register(spdxId)
+    requireNotNull(SpdxId.findByIdentifier(spdxId)) {
+      "$spdxId is not a valid SPDX id."
+    }
+    allowedIdentifiers.add(spdxId)
   }
 
   override fun allowUrl(url: String, options: Action<LicenseeExtension.AllowUrlOptions>) {
@@ -410,15 +398,5 @@ private fun <T> NamedDomainObjectContainer<T>.configure(name: String, config: Ac
     named(name, config)
   } else {
     register(name, config)
-  }
-}
-
-// https://github.com/gradle/gradle/issues/28043
-inline fun <reified T : Any, R> NamedDomainObjectCollection<T>.elements(
-  providers: ProviderFactory,
-  crossinline transform: (T) -> R,
-): Provider<out Set<R>> {
-  return providers.provider {
-    mapTo(mutableSetOf(), transform)
   }
 }

@@ -1,4 +1,5 @@
 pluginManagement {
+  includeBuild("gradle/build-logic")
   repositories {
     mavenCentral()
     google()
@@ -7,14 +8,8 @@ pluginManagement {
 }
 
 plugins {
+  id "app.cash.licensee.repos"
   id "org.gradle.toolchains.foojay-resolver-convention" version "0.8.0"
-}
-
-dependencyResolutionManagement {
-  repositories {
-    mavenCentral()
-    google()
-  }
 }
 
 rootProject.name = 'licensee'

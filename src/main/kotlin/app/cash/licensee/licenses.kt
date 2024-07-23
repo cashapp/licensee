@@ -49,20 +49,27 @@ internal fun normalizeLicenseInfo(
 private val detailsComparator =
   compareBy(ArtifactDetail::groupId, ArtifactDetail::artifactId, ArtifactDetail::version)
 
-private fun PomLicense.toSpdx(): List<SpdxLicense> {
-  if (url != null) {
-    SpdxLicenses.embedded.findByUrl(url)?.let { licenses ->
-      return licenses
-    }
-    fallbackUrls[url]?.let { licenses ->
-      return licenses
-    }
-  } else if (name != null) {
-    // Only fallback to name-based matching if the URL is null.
-    SpdxLicenses.embedded.findByIdentifier(name)?.let { license ->
-      return listOf(license)
+private fun PomLicense.toSpdx(): List<SpdxLicense> = when {
+  url != null -> {
+    val licenses = SpdxId.findByUrl(url)
+    licenses.map { license ->
+      license.toSpdxLicense()
     }
   }
-
-  return emptyList()
+  name != null -> {
+    // Only fallback to name-based matching if the URL is null.
+    val license = SpdxId.findByIdentifier(name)
+    if (license != null) {
+      listOf(license.toSpdxLicense())
+    } else {
+      emptyList()
+    }
+  }
+  else -> emptyList()
 }
+
+internal fun SpdxId.toSpdxLicense() = SpdxLicense(
+  identifier = id,
+  name = name,
+  url = url,
+)
