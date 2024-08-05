@@ -79,8 +79,8 @@ apply plugin: 'app.cash.licensee'
 
 ```groovy
 buildscript {
-  repository {
-    mavenCental()
+  repositories {
+    mavenCentral()
     maven {
       url 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
