@@ -88,7 +88,7 @@ class LicenseePlugin : Plugin<Project> {
 
     project.afterEvaluate {
       require(BASE_TASK_NAME in project.tasks.names) {
-        val name = if (project === project.rootProject) {
+        val name = if (project.path == ":") {
           "root project"
         } else {
           "project ${project.path}"
