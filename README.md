@@ -171,6 +171,7 @@ A reason string can be supplied to document why the URL is allowed.
 licensee {
   allowUrl('https://example.com/license.html') {
     because 'Apache-2.0, but self-hosted copy of the license'
+  }
 }
 ```
 
