@@ -1,3 +1,5 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
@@ -122,6 +124,13 @@ tasks.register("downloadLicensesJson", Copy) {
     }
   }
   into(jsonFolder)
+
+  doLast {
+    def destFile = jsonFile.asFile
+    def json = new JsonSlurper().parse(destFile)
+    json.licenses = json.licenses.sort { a, b -> a.licenseId <=> b.licenseId }
+    destFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(json))
+  }
 }
 
 TaskProvider<app.cash.licensee.GenerateSpdxIdTask> generateSpdx = tasks.register('generateSpdx', app.cash.licensee.GenerateSpdxIdTask) {
