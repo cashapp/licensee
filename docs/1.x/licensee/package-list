@@ -1,7 +1,6 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
 $dokka.location:app.cash.licensee////PointingToDeclaration/licensee/app.cash.licensee/index.html
-$dokka.location:app.cash.licensee//elements/org.gradle.api.NamedDomainObjectCollection[TypeParam(bounds=[kotlin.Any])]#org.gradle.api.provider.ProviderFactory#kotlin.Function1[TypeParam(bounds=[kotlin.Any]),TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/licensee/app.cash.licensee/elements.html
 $dokka.location:app.cash.licensee/ArtifactDetail///PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/index.html
 $dokka.location:app.cash.licensee/ArtifactDetail/ArtifactDetail/#kotlin.String#kotlin.String#kotlin.String#kotlin.String?#kotlin.collections.Set[app.cash.licensee.SpdxLicense]#kotlin.collections.Set[app.cash.licensee.UnknownLicense]#app.cash.licensee.ArtifactScm?/PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/-artifact-detail.html
 $dokka.location:app.cash.licensee/ArtifactDetail/artifactId/#/PointingToDeclaration/licensee/app.cash.licensee/-artifact-detail/artifact-id.html
