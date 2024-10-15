@@ -67,14 +67,18 @@ private fun SpdxLicenses.generate(): FileSpec {
 private val SpdxId: ClassName = ClassName("app.cash.licensee", "SpdxId")
 private val SpdxIdCompanion: ClassName = SpdxId.nestedClass("Companion")
 
-private val SpdxLicenseJson.identifier: String get() = if (id == "0BSD") {
-  "ZeroBSD" // hardcoded because it is the only id starting with a digit.
-} else {
-  id
-    .replace("-", "_")
-    .replace(".", "")
-    .replace("+", "Plus")
-}
+private val SpdxLicenseJson.identifier: String
+  get() = when (id) {
+    // Special-case IDs which start with a digit:
+    "0BSD" -> "ZeroBSD"
+    "3D-Slicer-1.0" -> "ThreeD_Slicer_10"
+    else -> {
+      id
+        .replace("-", "_")
+        .replace(".", "")
+        .replace("+", "Plus")
+    }
+  }
 
 private fun SpdxLicenses.addSpdxIdInterface(): TypeSpec = TypeSpec.classBuilder("SpdxId").apply {
   primaryConstructor(
