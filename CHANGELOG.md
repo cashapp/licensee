@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.12.0] - 2024-10-15
+
+**Changed**
+
+- Update SPDX database to version 3.25 (2024-08-19).
+- Add fallback URL for popular MIT variant.
+
+
 ## [1.11.0] - 2024-03-29
 
 **New**
@@ -206,7 +214,8 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.11.0...HEAD
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.12.0...HEAD
+[1.12.0]: https://github.com/cashapp/licensee/releases/tag/1.12.0
 [1.11.0]: https://github.com/cashapp/licensee/releases/tag/1.11.0
 [1.10.0]: https://github.com/cashapp/licensee/releases/tag/1.10.0
 [1.9.1]: https://github.com/cashapp/licensee/releases/tag/1.9.1
