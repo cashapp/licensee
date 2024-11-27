@@ -14,7 +14,7 @@
     {
         "groupId": "org.jetbrains.kotlin",
         "artifactId": "kotlin-dom-api-compat",
-        "version": "2.0.21",
+        "version": "2.1.0",
         "name": "Kotlin Dom Api Compat",
         "spdxLicenses": [
             {
@@ -30,7 +30,7 @@
     {
         "groupId": "org.jetbrains.kotlin",
         "artifactId": "kotlin-stdlib",
-        "version": "2.0.21",
+        "version": "2.1.0",
         "name": "Kotlin Stdlib",
         "spdxLicenses": [
             {
@@ -46,7 +46,7 @@
     {
         "groupId": "org.jetbrains.kotlin",
         "artifactId": "kotlin-stdlib-js",
-        "version": "2.0.21",
+        "version": "2.1.0",
         "name": "Kotlin Stdlib Js",
         "spdxLicenses": [
             {

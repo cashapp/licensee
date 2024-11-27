@@ -4,5 +4,5 @@ com.example:example-b:1.0.0
  - SPDX identifier 'Apache-2.0' allowed
 org.jetbrains:annotations:13.0
  - SPDX identifier 'Apache-2.0' allowed
-org.jetbrains.kotlin:kotlin-stdlib:2.0.21
+org.jetbrains.kotlin:kotlin-stdlib:2.1.0
  - SPDX identifier 'Apache-2.0' allowed
