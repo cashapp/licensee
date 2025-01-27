@@ -30,7 +30,7 @@
     {
         "groupId": "org.jetbrains.kotlin",
         "artifactId": "kotlin-stdlib",
-        "version": "2.1.0",
+        "version": "2.1.10",
         "name": "Kotlin Stdlib",
         "spdxLicenses": [
             {
