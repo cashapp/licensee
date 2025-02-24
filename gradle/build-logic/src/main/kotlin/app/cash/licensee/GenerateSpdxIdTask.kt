@@ -80,7 +80,7 @@ private val SpdxLicenseJson.identifier: String
     }
   }
 
-private fun SpdxLicenses.addSpdxIdInterface(): TypeSpec = TypeSpec.classBuilder("SpdxId").apply {
+private fun SpdxLicenses.addSpdxIdInterface(): TypeSpec = TypeSpec.classBuilder("SpdxId").addModifiers(KModifier.INTERNAL).apply {
   primaryConstructor(
     FunSpec.constructorBuilder()
       .addParameter("id", STRING)
