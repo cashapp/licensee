@@ -15,10 +15,12 @@
  */
 package app.cash.licensee
 
+import dev.drewhamilton.poko.Poko
 import kotlinx.serialization.Serializable
 
+@Poko
 @Serializable
-data class ArtifactDetail(
+class ArtifactDetail(
   val groupId: String,
   val artifactId: String,
   val version: String,
@@ -29,20 +31,23 @@ data class ArtifactDetail(
   val scm: ArtifactScm? = null,
 )
 
+@Poko
 @Serializable
-data class SpdxLicense(
+class SpdxLicense(
   val identifier: String,
   val name: String,
   val url: String,
 )
 
+@Poko
 @Serializable
-data class UnknownLicense(
+class UnknownLicense(
   val name: String?,
   val url: String?,
 )
 
+@Poko
 @Serializable
-data class ArtifactScm(
+class ArtifactScm(
   val url: String,
 )
