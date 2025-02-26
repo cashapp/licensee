@@ -53,16 +53,20 @@ public final class app/cash/licensee/ArtifactScm$Companion {
 
 public abstract interface class app/cash/licensee/LicenseeExtension {
 	public abstract fun allow (Ljava/lang/String;)V
-	public abstract synthetic fun allowDependency (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun allowDependency (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun allowDependency (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)V
-	public abstract synthetic fun allowDependency (Lorg/gradle/api/provider/Provider;)V
+	public synthetic fun allowDependency (Lorg/gradle/api/provider/Provider;)V
 	public abstract fun allowDependency (Lorg/gradle/api/provider/Provider;Lorg/gradle/api/Action;)V
-	public abstract synthetic fun allowUrl (Ljava/lang/String;)V
+	public static synthetic fun allowDependency$default (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
+	public static synthetic fun allowDependency$default (Lapp/cash/licensee/LicenseeExtension;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/Action;ILjava/lang/Object;)V
+	public synthetic fun allowUrl (Ljava/lang/String;)V
 	public abstract fun allowUrl (Ljava/lang/String;Lorg/gradle/api/Action;)V
-	public abstract synthetic fun ignoreDependencies (Ljava/lang/String;)V
-	public abstract synthetic fun ignoreDependencies (Ljava/lang/String;Ljava/lang/String;)V
+	public static synthetic fun allowUrl$default (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
+	public synthetic fun ignoreDependencies (Ljava/lang/String;)V
+	public synthetic fun ignoreDependencies (Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun ignoreDependencies (Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)V
-	public abstract synthetic fun ignoreDependencies (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public synthetic fun ignoreDependencies (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public static synthetic fun ignoreDependencies$default (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
 	public abstract fun unusedAction (Lapp/cash/licensee/UnusedAction;)V
 	public abstract fun violationAction (Lapp/cash/licensee/ViolationAction;)V
 }
@@ -73,19 +77,6 @@ public abstract interface class app/cash/licensee/LicenseeExtension$AllowDepende
 
 public abstract interface class app/cash/licensee/LicenseeExtension$AllowUrlOptions {
 	public abstract fun because (Ljava/lang/String;)V
-}
-
-public final class app/cash/licensee/LicenseeExtension$DefaultImpls {
-	public static synthetic fun allowDependency (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public static synthetic fun allowDependency (Lapp/cash/licensee/LicenseeExtension;Lorg/gradle/api/provider/Provider;)V
-	public static synthetic fun allowDependency$default (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
-	public static synthetic fun allowDependency$default (Lapp/cash/licensee/LicenseeExtension;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/Action;ILjava/lang/Object;)V
-	public static synthetic fun allowUrl (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;)V
-	public static synthetic fun allowUrl$default (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
-	public static synthetic fun ignoreDependencies (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;)V
-	public static synthetic fun ignoreDependencies (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Ljava/lang/String;)V
-	public static synthetic fun ignoreDependencies (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Lorg/gradle/api/Action;)V
-	public static synthetic fun ignoreDependencies$default (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
 }
 
 public abstract interface class app/cash/licensee/LicenseeExtension$IgnoreDependencyOptions {
