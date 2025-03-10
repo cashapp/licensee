@@ -76,13 +76,20 @@ abstract class LicenseeTask : DefaultTask() {
   }
 
   fun configurationToCheck(configuration: Provider<Configuration>) {
-    loadDependenciesFromConfiguration(configuration.flatMap { it.incoming.resolutionResult.rootComponent })
+    loadDependenciesFromConfiguration(
+      configuration.flatMap {
+        it.incoming.resolutionResult.rootComponent
+      },
+    )
   }
 
   private fun loadDependenciesFromConfiguration(root: Provider<ResolvedComponentResult>) {
     val dependencies = project.dependencies
     val configurations = project.configurations
-    val pomInfos: Provider<Map<DependencyCoordinates, PomInfo>> = root.zip(dependencyConfig) { root, depConfig ->
+    val pomInfos: Provider<Map<DependencyCoordinates, PomInfo>> = root.zip(dependencyConfig) {
+        root,
+        depConfig,
+      ->
       val directDependencies = loadDependencyCoordinates(
         logger,
         root,
@@ -120,14 +127,18 @@ abstract class LicenseeTask : DefaultTask() {
         return FileModelSource(pomFile)
       }
 
-      override fun resolveModel(groupId: String, artifactId: String, version: String): ModelSource2 =
-        resolve(DependencyCoordinates(groupId, artifactId, version))
+      override fun resolveModel(
+        groupId: String,
+        artifactId: String,
+        version: String,
+      ): ModelSource2 = resolve(DependencyCoordinates(groupId, artifactId, version))
 
       override fun resolveModel(parent: Parent): ModelSource2 =
         resolve(DependencyCoordinates(parent.groupId, parent.artifactId, parent.version))
 
-      override fun resolveModel(dependency: Dependency): ModelSource2 =
-        resolve(DependencyCoordinates(dependency.groupId, dependency.artifactId, dependency.version))
+      override fun resolveModel(dependency: Dependency): ModelSource2 = resolve(
+        DependencyCoordinates(dependency.groupId, dependency.artifactId, dependency.version),
+      )
 
       override fun addRepository(repository: Repository) { }
       override fun addRepository(repository: Repository, replace: Boolean) { }
@@ -174,12 +185,16 @@ abstract class LicenseeTask : DefaultTask() {
 
     return (withVariants + withoutVariants).map {
       // Cast is safe because all resolved artifacts are pom files.
-      val coordinates = (it.id.componentIdentifier as ModuleComponentIdentifier).toDependencyCoordinates()
+      val coordinates = (it.id.componentIdentifier as ModuleComponentIdentifier)
+        .toDependencyCoordinates()
       DependencyCoordinatesWithPomFile(coordinates, it.file)
     }.distinctBy { it.dependencyCoordinates }
   }
 
-  private fun Configuration.artifacts() = resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap { it.allModuleArtifacts }
+  private fun Configuration.artifacts() = resolvedConfiguration
+    .lenientConfiguration
+    .allModuleDependencies
+    .flatMap { it.allModuleArtifacts }
 
   @get:OutputDirectory
   abstract val outputDir: DirectoryProperty
@@ -286,7 +301,12 @@ abstract class LicenseeTask : DefaultTask() {
 
     val lifecycleLevel = if (violationAction == ViolationAction.IGNORE) INFO else LIFECYCLE
 
-    fun logResult(configResult: ValidationResult, error: LogLevel, warning: LogLevel, prefix: String = "") {
+    fun logResult(
+      configResult: ValidationResult,
+      error: LogLevel,
+      warning: LogLevel,
+      prefix: String = "",
+    ) {
       when (configResult) {
         is ValidationResult.Error -> {
           val message = prefix + "ERROR: " + configResult.message
@@ -310,7 +330,9 @@ abstract class LicenseeTask : DefaultTask() {
     for (configResult in validationResult.configResults) {
       logResult(configResult, unusedErrorLevel, unusedWarningLevel)
     }
-    if (validationResult.configResults.isNotEmpty() && validationResult.artifactResults.isNotEmpty()) {
+    if (validationResult.configResults.isNotEmpty() &&
+      validationResult.artifactResults.isNotEmpty()
+    ) {
       validationReport.appendLine()
       // We know these are always at warning or error level, so use lifecycle for space.
       if (unusedWarningLevel > INFO || unusedErrorLevel > INFO || logger.isInfoEnabled) {
@@ -352,20 +374,12 @@ private data class DependencyCoordinatesWithPomFile(
   val pomFile: File,
 )
 
-internal data class PomInfo(
-  val name: String?,
-  val licenses: Set<PomLicense>,
-  val scm: PomScm?,
-) : Serializable
+internal data class PomInfo(val name: String?, val licenses: Set<PomLicense>, val scm: PomScm?) :
+  Serializable
 
-internal data class PomLicense(
-  val name: String?,
-  val url: String?,
-) : Serializable
+internal data class PomLicense(val name: String?, val url: String?) : Serializable
 
-internal data class PomScm(
-  val url: String?,
-) : Serializable
+internal data class PomScm(val url: String?) : Serializable
 
 private val outputFormat = Json { prettyPrint = true }
 private val listOfArtifactDetail = ListSerializer(ArtifactDetail.serializer())

@@ -115,6 +115,7 @@ internal class FallbackBuilder(
   }
 }
 
+@Suppress("ktlint:standard:max-line-length")
 internal fun Map<String, List<SpdxLicenseJson>>.simplify(): List<Pair<List<String>, List<SpdxLicenseJson>>> =
   entries.groupBy({ it.value }, { it.key }).toList().map {
     it.second.sorted() to it.first
@@ -122,11 +123,12 @@ internal fun Map<String, List<SpdxLicenseJson>>.simplify(): List<Pair<List<Strin
     it.first.first()
   }
 
-internal val SpdxLicenseJson.targetUrl get() = (otherUrls.firstOrNull() ?: spdxUrl).let { firstUrl ->
-  if (firstUrl.startsWith("http://")) {
-    // Assume an 'https' variant is reachable.
-    "https" + firstUrl.substring(4)
-  } else {
-    firstUrl
+internal val SpdxLicenseJson.targetUrl
+  get() = (otherUrls.firstOrNull() ?: spdxUrl).let { firstUrl ->
+    if (firstUrl.startsWith("http://")) {
+      // Assume an 'https' variant is reachable.
+      "https" + firstUrl.substring(4)
+    } else {
+      firstUrl
+    }
   }
-}

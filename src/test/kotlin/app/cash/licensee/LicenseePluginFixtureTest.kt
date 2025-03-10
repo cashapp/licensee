@@ -201,13 +201,14 @@ class LicenseePluginFixtureTest {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).containsMatch(
-      "Transitive dependency ignore on 'com\\.example(:example)?' is dangerous and requires a reason string".toRegex(),
+      Regex(
+        "Transitive dependency ignore on 'com\\.example(:example)?' " +
+          "is dangerous and requires a reason string",
+      ),
     )
   }
 
-  @Test fun invalidSpdxFails(
-    @TestParameter("allow-with-invalid-spdx") fixtureName: String,
-  ) {
+  @Test fun invalidSpdxFails(@TestParameter("allow-with-invalid-spdx") fixtureName: String) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
     assertThat(result.output).contains(
@@ -343,7 +344,15 @@ class LicenseePluginFixtureTest {
     return GradleRunner.create()
       .withProjectDir(fixtureDir)
       .withDebug(true) // Run in-process
-      .withArguments("clean", "assemble", "licensee", "--stacktrace", "--continue", "--configuration-cache", versionProperty)
+      .withArguments(
+        "clean",
+        "assemble",
+        "licensee",
+        "--stacktrace",
+        "--continue",
+        "--configuration-cache",
+        versionProperty,
+      )
       .forwardOutput()
   }
 

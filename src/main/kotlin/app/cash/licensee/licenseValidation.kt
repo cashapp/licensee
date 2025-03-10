@@ -142,13 +142,17 @@ internal fun validateArtifacts(
   }
 
   for (unusedAllowedIdentifier in unusedAllowedIdentifiers) {
-    configResults += ValidationResult.Warning("Allowed SPDX identifier '$unusedAllowedIdentifier' is unused")
+    configResults +=
+      ValidationResult.Warning("Allowed SPDX identifier '$unusedAllowedIdentifier' is unused")
   }
   for (unusedAllowedUrl in unusedAllowedUrls.keys) {
     configResults += ValidationResult.Warning("Allowed license URL '$unusedAllowedUrl' is unused")
   }
   for (unusedAllowedCoordinate in unusedAllowedCoordinates) {
-    configResults += ValidationResult.Warning("Allowed dependency '${unusedAllowedCoordinate.group}:${unusedAllowedCoordinate.artifact}:${unusedAllowedCoordinate.version}' is unused")
+    configResults +=
+      ValidationResult.Warning(
+        "Allowed dependency '${unusedAllowedCoordinate.group}:${unusedAllowedCoordinate.artifact}:${unusedAllowedCoordinate.version}' is unused",
+      )
   }
 
   return ValidationResults(configResults, artifactResultMap)

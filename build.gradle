@@ -155,6 +155,7 @@ spotless {
     targetExclude("**/src/test/test-build-logic/build/**", "**/generated-sources/**")
     ktlint(libs.ktlint.get().version).editorConfigOverride([
       'ktlint_standard_filename': 'disabled',
+      'ktlint_standard_max-lint-length': 'enabled',
       // Making something an expression body should be a choice around readability.
       'ktlint_standard_function-expression-body': 'disabled',
     ])

@@ -99,18 +99,13 @@ class LicenseePlugin : Plugin<Project> {
   }
 }
 
-private fun configureAndroidPlugin(
-  project: Project,
-) {
+private fun configureAndroidPlugin(project: Project) {
   val rootTask = registerRootTask(project, "all Android variants")
   configureAndroidVariants(project, rootTask)
   withKotlinMultiPlatformPlugin(project, withAndroid = true)
 }
 
-private fun withKotlinMultiPlatformPlugin(
-  project: Project,
-  withAndroid: Boolean,
-) {
+private fun withKotlinMultiPlatformPlugin(project: Project, withAndroid: Boolean) {
   project.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
     val rootTask = registerRootTask(project, "all Kotlin targets")
     configureKotlinMultiplatformTargets(project, rootTask)
@@ -120,10 +115,7 @@ private fun withKotlinMultiPlatformPlugin(
   }
 }
 
-private fun registerRootTask(
-  project: Project,
-  target: String,
-): TaskProvider<Task> {
+private fun registerRootTask(project: Project, target: String): TaskProvider<Task> {
   val rootTask = if (BASE_TASK_NAME in project.tasks.names) {
     project.tasks.named(BASE_TASK_NAME)
   } else {
@@ -140,10 +132,7 @@ private fun registerRootTask(
   return rootTask
 }
 
-private fun configureAndroidVariants(
-  project: Project,
-  rootTask: TaskProvider<Task>,
-) {
+private fun configureAndroidVariants(project: Project, rootTask: TaskProvider<Task>) {
   val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
   androidComponents.onVariants { variant ->
     val suffix = variant.name.replaceFirstChar { it.titlecase(ROOT) }
@@ -155,7 +144,9 @@ private fun configureAndroidVariants(
 
       it.configurationToCheck(variant.runtimeConfiguration)
 
-      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(REPORT_FOLDER)
+      val reportBase = project.extensions.getByType(
+        ReportingExtension::class.java,
+      ).baseDirectory.dir(REPORT_FOLDER)
       it.outputDir.set(reportBase.map { it.dir("android$suffix") })
     }
 
@@ -165,10 +156,7 @@ private fun configureAndroidVariants(
   }
 }
 
-private fun configureKotlinMultiplatformTargets(
-  project: Project,
-  rootTask: TaskProvider<Task>,
-) {
+private fun configureKotlinMultiplatformTargets(project: Project, rootTask: TaskProvider<Task>) {
   val kotlin = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
   val targets = kotlin.targets
   targets.configureEach { target ->
@@ -186,12 +174,16 @@ private fun configureKotlinMultiplatformTargets(
 
       val compilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
       // Fallback to compile dependencies when runtime isn't supported, e.g. Kotlin/Native.
-      val runtimeConfigurationName = compilation.runtimeDependencyConfigurationName ?: compilation.compileDependencyConfigurationName
+      val runtimeConfigurationName =
+        compilation.runtimeDependencyConfigurationName
+          ?: compilation.compileDependencyConfigurationName
 
       val runtimeConfiguration = project.configurations.named(runtimeConfigurationName)
       it.configurationToCheck(runtimeConfiguration)
 
-      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(REPORT_FOLDER)
+      val reportBase = project.extensions.getByType(
+        ReportingExtension::class.java,
+      ).baseDirectory.dir(REPORT_FOLDER)
       it.outputDir.set(reportBase.map { it.dir(target.name) })
     }
 
@@ -201,9 +193,7 @@ private fun configureKotlinMultiplatformTargets(
   }
 }
 
-private fun configureJavaPlugin(
-  project: Project,
-) {
+private fun configureJavaPlugin(project: Project) {
   val task = project.tasks.configure(BASE_TASK_NAME) {
     it.group = VERIFICATION_GROUP
     it.description = taskDescription()
@@ -216,7 +206,12 @@ private fun configureJavaPlugin(
   }
 }
 
-private fun TaskContainer.configure(name: String, config: (LicenseeTask) -> Unit): TaskProvider<LicenseeTask> = if (name in names) {
+private fun TaskContainer.configure(
+  name: String,
+  config: (LicenseeTask) -> Unit,
+): TaskProvider<LicenseeTask> = if (name in
+  names
+) {
   named(name, LicenseeTask::class.java, config)
 } else {
   register(name, LicenseeTask::class.java, config)

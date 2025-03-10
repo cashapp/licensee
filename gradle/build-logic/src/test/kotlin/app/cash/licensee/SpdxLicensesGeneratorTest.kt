@@ -58,18 +58,33 @@ class SpdxLicensesGeneratorTest {
     assertThat(
       spdxLicenses.findByUrl("http://example.com/foo"),
     ).isNotNull().containsExactly(
-      SpdxLicenseJson("FOO-1.0", "Foo License", "https://spdx.org/licenses/FOO-1.0.html", listOf("http://example.com/foo")),
+      SpdxLicenseJson(
+        "FOO-1.0",
+        "Foo License",
+        "https://spdx.org/licenses/FOO-1.0.html",
+        listOf("http://example.com/foo"),
+      ),
     )
     assertThat(
       spdxLicenses.findByUrl("https://example.com/foo"),
     ).isNotNull().containsExactly(
-      SpdxLicenseJson("FOO-1.0", "Foo License", "https://spdx.org/licenses/FOO-1.0.html", listOf("http://example.com/foo")),
+      SpdxLicenseJson(
+        "FOO-1.0",
+        "Foo License",
+        "https://spdx.org/licenses/FOO-1.0.html",
+        listOf("http://example.com/foo"),
+      ),
     )
     assertThat(spdxLicenses.findByUrl("http://example.com/bar")).isNull()
     assertThat(
       spdxLicenses.findByUrl("https://example.com/bar"),
     ).isNotNull().containsExactly(
-      SpdxLicenseJson("BAR-1.0", "Bar License", "https://spdx.org/licenses/BAR-1.0.html", listOf("https://example.com/bar")),
+      SpdxLicenseJson(
+        "BAR-1.0",
+        "Bar License",
+        "https://spdx.org/licenses/BAR-1.0.html",
+        listOf("https://example.com/bar"),
+      ),
     )
   }
 
@@ -96,12 +111,22 @@ class SpdxLicensesGeneratorTest {
     assertThat(
       spdxLicenses.findByUrl("http://example.com/foo"),
     ).isNotNull().containsExactly(
-      SpdxLicenseJson("FOO-1.0", "Foo License", "https://spdx.org/licenses/FOO-1.0.html", listOf("http://example.com/foo")),
+      SpdxLicenseJson(
+        "FOO-1.0",
+        "Foo License",
+        "https://spdx.org/licenses/FOO-1.0.html",
+        listOf("http://example.com/foo"),
+      ),
     )
     assertThat(
       spdxLicenses.findByUrl("https://spdx.org/licenses/FOO-1.0.html"),
     ).isNotNull().containsExactly(
-      SpdxLicenseJson("FOO-1.0", "Foo License", "https://spdx.org/licenses/FOO-1.0.html", listOf("http://example.com/foo")),
+      SpdxLicenseJson(
+        "FOO-1.0",
+        "Foo License",
+        "https://spdx.org/licenses/FOO-1.0.html",
+        listOf("http://example.com/foo"),
+      ),
     )
   }
 
@@ -136,12 +161,22 @@ class SpdxLicensesGeneratorTest {
     assertThat(
       spdxLicenses.findByIdentifier("FOO-1.0"),
     ).isEqualTo(
-      SpdxLicenseJson("FOO-1.0", "Foo License", "https://spdx.org/licenses/FOO-1.0.html", emptyList()),
+      SpdxLicenseJson(
+        "FOO-1.0",
+        "Foo License",
+        "https://spdx.org/licenses/FOO-1.0.html",
+        emptyList(),
+      ),
     )
     assertThat(
       spdxLicenses.findByIdentifier("BAR-1.0"),
     ).isEqualTo(
-      SpdxLicenseJson("BAR-1.0", "Bar License", "https://spdx.org/licenses/BAR-1.0.html", emptyList()),
+      SpdxLicenseJson(
+        "BAR-1.0",
+        "Bar License",
+        "https://spdx.org/licenses/BAR-1.0.html",
+        emptyList(),
+      ),
     )
   }
 
@@ -175,9 +210,27 @@ class SpdxLicensesGeneratorTest {
         add("https://example.com/bar")
       }
     }
-    val foo = SpdxLicenseJson("FOO-1.0", "Foo License", "https://spdx.org/licenses/FOO-1.0.html", emptyList())
-    val bar1 = SpdxLicenseJson("BAR-1.0", "Bar License", "https://spdx.org/licenses/BAR-1.0.html", emptyList())
-    val bar2 = SpdxLicenseJson("BAR-2.0", "Bar 2 License", "https://spdx.org/licenses/BAR-2.0.html", emptyList())
+    val foo =
+      SpdxLicenseJson(
+        "FOO-1.0",
+        "Foo License",
+        "https://spdx.org/licenses/FOO-1.0.html",
+        emptyList(),
+      )
+    val bar1 =
+      SpdxLicenseJson(
+        "BAR-1.0",
+        "Bar License",
+        "https://spdx.org/licenses/BAR-1.0.html",
+        emptyList(),
+      )
+    val bar2 =
+      SpdxLicenseJson(
+        "BAR-2.0",
+        "Bar 2 License",
+        "https://spdx.org/licenses/BAR-2.0.html",
+        emptyList(),
+      )
     assertThat(
       spdxLicenses.findByUrl("https://spdx.org/licenses/FOO-1.0.html"),
     ).isNotNull().containsExactly(

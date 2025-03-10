@@ -95,19 +95,13 @@ interface LicenseeExtension {
 
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun allowDependency(
-    groupId: String,
-    artifactId: String,
-    version: String,
-  ) {
+  fun allowDependency(groupId: String, artifactId: String, version: String) {
     allowDependency(groupId, artifactId, version, {})
   }
 
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun allowDependency(
-    dependencyProvider: Provider<out Dependency>,
-  ) {
+  fun allowDependency(dependencyProvider: Provider<out Dependency>) {
     allowDependency(dependencyProvider, {})
   }
 
@@ -273,7 +267,11 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   }
 
   fun toLicenseValidationConfig(): Provider<ValidationConfig> {
-    return allowedIdentifiers.zip(allowedUrls, allowedDependencies) { allowedIdentifiers, allowedUrls, allowedDependencies ->
+    return allowedIdentifiers.zip(allowedUrls, allowedDependencies) {
+        allowedIdentifiers,
+        allowedUrls,
+        allowedDependencies,
+      ->
       ValidationConfig(
         allowedIdentifiers,
         allowedUrls.mapValues {
@@ -312,7 +310,10 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   ) {
     val optionsImpl = AllowDependencyOptionsImpl()
     options.execute(optionsImpl)
-    allowedDependencies.put(DependencyCoordinates(group = groupId, artifact = artifactId, version = version), Optional.ofNullable(optionsImpl.setReason))
+    allowedDependencies.put(
+      DependencyCoordinates(group = groupId, artifact = artifactId, version = version),
+      Optional.ofNullable(optionsImpl.setReason),
+    )
   }
 
   private class AllowDependencyOptionsImpl : AllowDependencyOptions {
@@ -335,14 +336,20 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
           DependencyCoordinates(
             group = requireNotNull(it.group) { "group was null in allowDependency for ${it.name}" },
             artifact = it.name,
-            version = requireNotNull(it.version) { "version was null in allowDependency for ${it.name}" },
+            version = requireNotNull(it.version) {
+              "version was null in allowDependency for ${it.name}"
+            },
           ) to Optional.ofNullable(optionsImpl.setReason),
         )
       },
     )
   }
 
-  override fun ignoreDependencies(groupId: String, artifactId: String?, options: Action<IgnoreDependencyOptions>) {
+  override fun ignoreDependencies(
+    groupId: String,
+    artifactId: String?,
+    options: Action<IgnoreDependencyOptions>,
+  ) {
     val option = object : IgnoreDependencyOptions {
       var setReason: String? = null
       override fun because(reason: String) {
@@ -385,7 +392,11 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   }
 }
 
-private fun <T, L, R, V> Provider<T>.zip(left: Provider<L>, right: Provider<R>, merge: (T, L, R) -> V): Provider<V> {
+private fun <T, L, R, V> Provider<T>.zip(
+  left: Provider<L>,
+  right: Provider<R>,
+  merge: (T, L, R) -> V,
+): Provider<V> {
   return zip(left) { t, l ->
     t to l
   }.zip(right) { (t, l), r ->

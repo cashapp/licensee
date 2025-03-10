@@ -34,10 +34,7 @@ internal data class DependencyConfig(
   val ignoredCoordinates: Map<String, Map<String, IgnoredData>>,
 ) : Serializable
 
-internal data class IgnoredData(
-  val reason: String?,
-  val transitive: Boolean,
-) : Serializable
+internal data class IgnoredData(val reason: String?, val transitive: Boolean) : Serializable
 
 internal fun loadDependencyCoordinates(
   logger: Logger,
@@ -60,7 +57,16 @@ internal fun loadDependencyCoordinates(
   }
 
   val coordinates = mutableSetOf<DependencyCoordinates>()
-  loadDependencyCoordinates(logger, root, config, unusedGroupIds, unusedCoordinates, coordinates, mutableSetOf(), depth = 1)
+  loadDependencyCoordinates(
+    logger,
+    root,
+    config,
+    unusedGroupIds,
+    unusedCoordinates,
+    coordinates,
+    mutableSetOf(),
+    depth = 1,
+  )
 
   for (unusedGroupId in unusedGroupIds) {
     warnings += "Dependency ignore for $unusedGroupId is unused"
@@ -77,7 +83,8 @@ internal data class DependencyResolutionResult(
   val configWarnings: List<String>,
 )
 
-internal fun ModuleComponentIdentifier.toDependencyCoordinates() = DependencyCoordinates(group, module, version)
+internal fun ModuleComponentIdentifier.toDependencyCoordinates() =
+  DependencyCoordinates(group, module, version)
 
 private fun loadDependencyCoordinates(
   logger: Logger,
@@ -181,10 +188,7 @@ private fun ResolvedComponentResult.isPlatform(): Boolean {
   }
 }
 
-internal fun loadPomInfo(
-  pom: Model,
-  getRawModel: (String) -> Model?,
-): PomInfo {
+internal fun loadPomInfo(pom: Model, getRawModel: (String) -> Model?): PomInfo {
   val parentRawModel = pom.parent?.let {
     getRawModel("${it.groupId}:${it.artifactId}:${it.version}")
   }
@@ -208,11 +212,12 @@ internal fun loadPomInfo(
     pomScm?.url
   }
 
+  val rawLicenses = pom.licenses.takeUnless { it.isEmpty() }
+    ?: parentRawModel?.licenses
+    ?: emptyList()
   return PomInfo(
     name = pom.name ?: parentRawModel?.name,
-    licenses = (pom.licenses.takeUnless { it.isEmpty() } ?: parentRawModel?.licenses)?.mapTo(mutableSetOf()) {
-      PomLicense(it.name, it.url)
-    } ?: emptySet(),
+    licenses = rawLicenses.mapTo(mutableSetOf()) { PomLicense(it.name, it.url) },
     scm = PomScm(url),
   )
 }

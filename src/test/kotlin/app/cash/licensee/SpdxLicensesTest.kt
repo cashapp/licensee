@@ -35,13 +35,25 @@ class SpdxLicensesTest {
     assertThat(
       SpdxId.findByUrl("https://api.github.com/licenses/bsd-2-clause").map { it.toSpdxLicense() },
     ).containsExactly(
-      SpdxLicense("BSD-2-Clause", "BSD 2-Clause \"Simplified\" License", "https://opensource.org/licenses/BSD-2-Clause"),
+      SpdxLicense(
+        "BSD-2-Clause",
+        "BSD 2-Clause \"Simplified\" License",
+        "https://opensource.org/licenses/BSD-2-Clause",
+      ),
     )
     assertThat(
       SpdxId.findByUrl("https://api.github.com/licenses/gpl-2.0").map { it.toSpdxLicense() },
     ).containsExactly(
-      SpdxLicense("GPL-2.0", "GNU General Public License v2.0 only", "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html"),
-      SpdxLicense("GPL-2.0-or-later", "GNU General Public License v2.0 or later", "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html"),
+      SpdxLicense(
+        "GPL-2.0",
+        "GNU General Public License v2.0 only",
+        "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html",
+      ),
+      SpdxLicense(
+        "GPL-2.0-or-later",
+        "GNU General Public License v2.0 or later",
+        "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html",
+      ),
     )
   }
 

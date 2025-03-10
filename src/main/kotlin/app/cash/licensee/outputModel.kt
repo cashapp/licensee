@@ -30,19 +30,10 @@ data class ArtifactDetail(
 )
 
 @Serializable
-data class SpdxLicense(
-  val identifier: String,
-  val name: String,
-  val url: String,
-)
+data class SpdxLicense(val identifier: String, val name: String, val url: String)
 
 @Serializable
-data class UnknownLicense(
-  val name: String?,
-  val url: String?,
-)
+data class UnknownLicense(val name: String?, val url: String?)
 
 @Serializable
-data class ArtifactScm(
-  val url: String,
-)
+data class ArtifactScm(val url: String)
