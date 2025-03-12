@@ -109,9 +109,7 @@ private fun loadDependencyCoordinates(
         // Assuming flat-dir repository dependency, do nothing.
         ignoreSuffix = " ignoring because flat-dir repository artifact has no metadata"
       } else {
-        val ignoredData = null
-          ?: config.ignoredGroupIds[id.group]
-            ?.also { unusedGroupIds -= id.group }
+        val ignoredData = config.ignoredGroupIds[id.group]?.also { unusedGroupIds -= id.group }
           ?: config.ignoredCoordinates[id.group]?.get(id.module)
             ?.also { unusedCoordinates -= id.group to id.module }
         if (ignoredData != null) {
