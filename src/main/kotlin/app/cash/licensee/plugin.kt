@@ -16,12 +16,10 @@
 package app.cash.licensee
 
 import com.android.build.api.variant.AndroidComponentsExtension
-import java.io.File
 import java.util.Locale.ROOT
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
 import org.gradle.api.reporting.ReportingExtension
 import org.gradle.api.tasks.TaskContainer
@@ -181,24 +179,15 @@ private fun configureAndroidVariants(
         }
       }
 
-      val licensee17ArtifactsFile = reportingExtension.file("licensee/${variant.name}/artifacts.json")
-      val licensee18ArtifactsFile =
-        reportingExtension.file("licensee/android$capitalizedVariantName/artifacts.json")
-
       val copyArtifactsTask =
         project.tasks.register(
           "copy${capitalizedVariantName}LicenseeReportToAssets",
           AssetCopyTask::class.java,
         ) { asset ->
           asset.targetFileName.set("artifacts.json")
-
           project.tasks.withType(LicenseeTask::class.java)
             .findByName("licenseeAndroid$capitalizedVariantName")?.let {
-              wireAssetCopyingTask(asset, asset.inputFile, it, licensee18ArtifactsFile)
-            }
-          project.tasks.withType(LicenseeTask::class.java)
-            .findByName("licensee$capitalizedVariantName")?.let {
-              wireAssetCopyingTask(asset, asset.inputFile, it, licensee17ArtifactsFile)
+              asset.inputFile.set(it.jsonOutput)
             }
         }
 
@@ -207,22 +196,6 @@ private fun configureAndroidVariants(
         AssetCopyTask::outputDirectory,
       )
     }
-  }
-}
-
-private fun wireAssetCopyingTask(
-  task: AssetCopyTask,
-  inputFile: RegularFileProperty,
-  licenseeTask: LicenseeTask,
-  licenseeArtifactsFile: File,
-) {
-  try {
-    // licensee 1.11 + behavior
-    inputFile.set(licenseeTask.jsonOutput)
-  } catch (_: NoSuchMethodError) {
-    // licensee 1.7/1.8 behavior - jsonOutput was introduced in 1.11
-    inputFile.set(licenseeArtifactsFile)
-    task.dependsOn(licenseeTask)
   }
 }
 
