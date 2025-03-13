@@ -15,6 +15,7 @@
  */
 package app.cash.licensee
 
+import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -26,7 +27,6 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 @CacheableTask
 abstract class AssetCopyTask : DefaultTask() {
@@ -45,9 +45,9 @@ abstract class AssetCopyTask : DefaultTask() {
     inputFile.get().asFile.copyTo(
       target = File(
         outputDirectory.get().asFile,
-        targetFileName.get()
+        targetFileName.get(),
       ),
-      overwrite = true
+      overwrite = true,
     )
   }
 }

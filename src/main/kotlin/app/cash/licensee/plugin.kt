@@ -188,7 +188,7 @@ private fun configureAndroidVariants(
       val copyArtifactsTask =
         project.tasks.register(
           "copy${capitalizedVariantName}LicenseeReportToAssets",
-          AssetCopyTask::class.java
+          AssetCopyTask::class.java,
         ) { asset ->
           asset.targetFileName.set("artifacts.json")
 
@@ -214,7 +214,7 @@ private fun wireAssetCopyingTask(
   task: AssetCopyTask,
   inputFile: RegularFileProperty,
   licenseeTask: LicenseeTask,
-  licenseeArtifactsFile: File
+  licenseeArtifactsFile: File,
 ) {
   try {
     // licensee 1.11 + behavior
