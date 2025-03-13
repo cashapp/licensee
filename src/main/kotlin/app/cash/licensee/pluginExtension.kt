@@ -29,6 +29,13 @@ import org.gradle.api.provider.SetProperty
 
 @Suppress("unused") // Public API for Gradle build scripts.
 interface LicenseeExtension {
+
+  /**
+   * Enable asset generation. Will copy licensee report to
+   * android asset directory making it available as 'androidAssetFileName'
+   */
+  fun enableAndroidAssetGeneration(enabled: Boolean)
+
   /**
    * Allow artifacts with a license that matches a SPDX identifier.
    *
@@ -253,10 +260,12 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   internal abstract val ignoredCoordinates: NamedDomainObjectContainer<IgnoredCoordinate>
   internal abstract val violationAction: Property<ViolationAction>
   internal abstract val unusedAction: Property<UnusedAction>
+  internal abstract val enableAndroidAssetGeneration: Property<Boolean>
 
   init {
     violationAction.convention(ViolationAction.FAIL)
     unusedAction.convention(UnusedAction.LOG)
+    enableAndroidAssetGeneration.convention(false)
   }
 
   fun toDependencyTreeConfig(): Provider<DependencyConfig> {
@@ -284,6 +293,10 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
         },
       )
     }
+  }
+
+  override fun enableAndroidAssetGeneration(enabled: Boolean) {
+    enableAndroidAssetGeneration.set(enabled)
   }
 
   override fun allow(spdxId: String) {

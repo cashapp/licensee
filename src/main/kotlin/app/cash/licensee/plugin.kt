@@ -16,10 +16,12 @@
 package app.cash.licensee
 
 import com.android.build.api.variant.AndroidComponentsExtension
+import java.io.File
 import java.util.Locale.ROOT
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
 import org.gradle.api.reporting.ReportingExtension
 import org.gradle.api.tasks.TaskContainer
@@ -52,6 +54,7 @@ class LicenseePlugin : Plugin<Project> {
       it.validationConfig.convention(extension.toLicenseValidationConfig())
       it.violationAction.convention(extension.violationAction)
       it.unusedAction.convention(extension.unusedAction)
+      it.enableAndroidAssetGeneration.convention(extension.enableAndroidAssetGeneration)
 
       it.outputDir.convention(
         project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(
@@ -74,16 +77,16 @@ class LicenseePlugin : Plugin<Project> {
       configureJavaPlugin(project)
     }
 
-    withKotlinMultiPlatformPlugin(project, withAndroid = false) // see android logic below
+    withKotlinMultiPlatformPlugin(project, withAndroid = false, extension = extension) // see android logic below
 
     project.pluginManager.withPlugin("com.android.application") {
-      configureAndroidPlugin(project)
+      configureAndroidPlugin(project, extension)
     }
     project.pluginManager.withPlugin("com.android.library") {
-      configureAndroidPlugin(project)
+      configureAndroidPlugin(project, extension)
     }
     project.pluginManager.withPlugin("com.android.dynamic-feature") {
-      configureAndroidPlugin(project)
+      configureAndroidPlugin(project, extension)
     }
 
     project.afterEvaluate {
@@ -101,21 +104,23 @@ class LicenseePlugin : Plugin<Project> {
 
 private fun configureAndroidPlugin(
   project: Project,
+  extension: MutableLicenseeExtension,
 ) {
   val rootTask = registerRootTask(project, "all Android variants")
-  configureAndroidVariants(project, rootTask)
-  withKotlinMultiPlatformPlugin(project, withAndroid = true)
+  configureAndroidVariants(project, rootTask, extension)
+  withKotlinMultiPlatformPlugin(project, withAndroid = true, extension)
 }
 
 private fun withKotlinMultiPlatformPlugin(
   project: Project,
   withAndroid: Boolean,
+  extension: MutableLicenseeExtension,
 ) {
   project.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
     val rootTask = registerRootTask(project, "all Kotlin targets")
     configureKotlinMultiplatformTargets(project, rootTask)
     if (withAndroid) {
-      configureAndroidVariants(project, rootTask)
+      configureAndroidVariants(project, rootTask, extension)
     }
   }
 }
@@ -143,11 +148,15 @@ private fun registerRootTask(
 private fun configureAndroidVariants(
   project: Project,
   rootTask: TaskProvider<Task>,
+  extension: MutableLicenseeExtension,
 ) {
   val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
   androidComponents.onVariants { variant ->
     val suffix = variant.name.replaceFirstChar { it.titlecase(ROOT) }
     val taskName = "${BASE_TASK_NAME}Android$suffix"
+
+    val reportingExtension: ReportingExtension =
+      project.extensions.getByType(ReportingExtension::class.java)
 
     val task = project.tasks.configure(taskName) {
       it.group = VERIFICATION_GROUP
@@ -155,13 +164,65 @@ private fun configureAndroidVariants(
 
       it.configurationToCheck(variant.runtimeConfiguration)
 
-      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(REPORT_FOLDER)
+      val reportBase = reportingExtension.baseDirectory.dir(REPORT_FOLDER)
       it.outputDir.set(reportBase.map { it.dir("android$suffix") })
     }
 
     rootTask.configure {
       it.dependsOn(task)
     }
+
+    if (extension.enableAndroidAssetGeneration.get()) {
+      val capitalizedVariantName = variant.name.replaceFirstChar {
+        if (it.isLowerCase()) {
+          it.titlecase(ROOT)
+        } else {
+          it.toString()
+        }
+      }
+
+      val licensee17ArtifactsFile = reportingExtension.file("licensee/${variant.name}/artifacts.json")
+      val licensee18ArtifactsFile =
+        reportingExtension.file("licensee/android$capitalizedVariantName/artifacts.json")
+
+      val copyArtifactsTask =
+        project.tasks.register(
+          "copy${capitalizedVariantName}LicenseeReportToAssets",
+          AssetCopyTask::class.java
+        ) { asset ->
+          asset.targetFileName.set("artifacts.json")
+
+          project.tasks.withType(LicenseeTask::class.java)
+            .findByName("licenseeAndroid$capitalizedVariantName")?.let {
+              wireAssetCopyingTask(asset, asset.inputFile, it, licensee18ArtifactsFile)
+            }
+          project.tasks.withType(LicenseeTask::class.java)
+            .findByName("licensee$capitalizedVariantName")?.let {
+              wireAssetCopyingTask(asset, asset.inputFile, it, licensee17ArtifactsFile)
+            }
+        }
+
+      variant.sources.assets!!.addGeneratedSourceDirectory(
+        copyArtifactsTask,
+        AssetCopyTask::outputDirectory,
+      )
+    }
+  }
+}
+
+private fun wireAssetCopyingTask(
+  task: AssetCopyTask,
+  inputFile: RegularFileProperty,
+  licenseeTask: LicenseeTask,
+  licenseeArtifactsFile: File
+) {
+  try {
+    // licensee 1.11 + behavior
+    inputFile.set(licenseeTask.jsonOutput)
+  } catch (_: NoSuchMethodError) {
+    // licensee 1.7/1.8 behavior - jsonOutput was introduced in 1.11
+    inputFile.set(licenseeArtifactsFile)
+    task.dependsOn(licenseeTask)
   }
 }
 
