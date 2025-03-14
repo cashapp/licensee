@@ -153,16 +153,13 @@ private fun configureAndroidVariants(
     val suffix = variant.name.replaceFirstChar { it.titlecase(ROOT) }
     val taskName = "${BASE_TASK_NAME}Android$suffix"
 
-    val reportingExtension: ReportingExtension =
-      project.extensions.getByType(ReportingExtension::class.java)
-
     val task = project.tasks.configure(taskName) {
       it.group = VERIFICATION_GROUP
       it.description = taskDescription("Android ${variant.name} variant")
 
       it.configurationToCheck(variant.runtimeConfiguration)
 
-      val reportBase = reportingExtension.baseDirectory.dir(REPORT_FOLDER)
+      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(REPORT_FOLDER)
       it.outputDir.set(reportBase.map { it.dir("android$suffix") })
     }
 
