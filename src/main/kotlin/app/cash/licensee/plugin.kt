@@ -168,14 +168,7 @@ private fun configureAndroidVariants(
     }
 
     if (extension.enableAndroidAssetGeneration.get()) {
-      val capitalizedVariantName = variant.name.replaceFirstChar {
-        if (it.isLowerCase()) {
-          it.titlecase(ROOT)
-        } else {
-          it.toString()
-        }
-      }
-
+      val capitalizedVariantName = variant.name.replaceFirstChar { it.titlecase(ROOT) }
       val copyArtifactsTask =
         project.tasks.register(
           "copy${capitalizedVariantName}LicenseeReportToAssets",
