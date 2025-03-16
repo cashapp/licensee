@@ -80,6 +80,7 @@ class LicenseePluginFixtureTest {
       "plugin-android-library-product-flavors",
       "plugin-android-report-dir",
       "plugin-java",
+      "plugin-java-typed",
       "plugin-java-library",
       "plugin-java-report-dir",
       "plugin-kotlin-js",
