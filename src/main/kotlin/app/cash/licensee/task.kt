@@ -69,9 +69,6 @@ abstract class LicenseeTask : DefaultTask() {
   internal abstract val unusedAction: Property<UnusedAction>
 
   @get:Input
-  internal abstract val bundleAndroidAsset: Property<Boolean>
-
-  @get:Input
   internal abstract val coordinatesToPomInfo: MapProperty<DependencyCoordinates, PomInfo>
 
   fun configurationToCheck(configuration: Configuration) {

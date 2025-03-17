@@ -52,7 +52,6 @@ class LicenseePlugin : Plugin<Project> {
       it.validationConfig.convention(extension.toLicenseValidationConfig())
       it.violationAction.convention(extension.violationAction)
       it.unusedAction.convention(extension.unusedAction)
-      it.bundleAndroidAsset.convention(extension.bundleAndroidAsset)
 
       it.outputDir.convention(
         project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(
