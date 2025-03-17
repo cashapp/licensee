@@ -1,3 +1,5 @@
+import app.cash.licensee.SpdxId
+
 plugins {
   id("java")
   alias(libs.plugins.licensee)
@@ -8,5 +10,5 @@ dependencies {
 }
 
 licensee {
-  allow('Apache-2.0')
+  allow(SpdxId.Apache_20)
 }
