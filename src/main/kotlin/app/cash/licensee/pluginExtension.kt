@@ -43,6 +43,19 @@ interface LicenseeExtension {
   fun allow(spdxId: String)
 
   /**
+   * Allow artifacts with a license that matches a SPDX identifier.
+   *
+   * ```
+   * licensee {
+   *   allow(SpdxId.Apache_20)
+   * }
+   * ```
+   *
+   * A full list of supported identifiers is available at [https://spdx.org/licenses/].
+   */
+  fun allow(spdxId: SpdxId)
+
+  /**
    * Allow artifacts with an unknown (non-SPDX) license which matches a URL.
    *
    * ```
@@ -291,6 +304,10 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
       "$spdxId is not a valid SPDX id."
     }
     allowedIdentifiers.add(spdxId)
+  }
+
+  override fun allow(spdxId: SpdxId) {
+    allowedIdentifiers.add(spdxId.id)
   }
 
   override fun allowUrl(url: String, options: Action<LicenseeExtension.AllowUrlOptions>) {
