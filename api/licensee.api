@@ -51,14 +51,6 @@ public final class app/cash/licensee/ArtifactScm$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public abstract class app/cash/licensee/AssetCopyTask : org/gradle/api/DefaultTask {
-	public fun <init> ()V
-	public final fun action ()V
-	public abstract fun getInputFile ()Lorg/gradle/api/file/RegularFileProperty;
-	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
-	public abstract fun getTargetFileName ()Lorg/gradle/api/provider/Property;
-}
-
 public abstract interface class app/cash/licensee/LicenseeExtension {
 	public abstract fun allow (Ljava/lang/String;)V
 	public synthetic fun allowDependency (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
@@ -70,7 +62,7 @@ public abstract interface class app/cash/licensee/LicenseeExtension {
 	public synthetic fun allowUrl (Ljava/lang/String;)V
 	public abstract fun allowUrl (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public static synthetic fun allowUrl$default (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
-	public abstract fun enableAndroidAssetGeneration (Z)V
+	public abstract fun getBundleAndroidAsset ()Lorg/gradle/api/provider/Property;
 	public synthetic fun ignoreDependencies (Ljava/lang/String;)V
 	public synthetic fun ignoreDependencies (Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun ignoreDependencies (Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)V
