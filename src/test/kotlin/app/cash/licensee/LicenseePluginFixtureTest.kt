@@ -215,6 +215,14 @@ class LicenseePluginFixtureTest {
     )
   }
 
+  @Test fun bundleAndroidAsset(
+    @TestParameter("bundle-android-asset") fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    createRunner(fixtureDir).build()
+    assertExpectedFiles(fixtureDir)
+  }
+
   @Test fun pluginMissingOnRootFails(
     @TestParameter("plugin-missing-on-root-fails") fixtureName: String,
   ) {
