@@ -52,7 +52,7 @@ class LicenseePlugin : Plugin<Project> {
       it.validationConfig.convention(extension.toLicenseValidationConfig())
       it.violationAction.convention(extension.violationAction)
       it.unusedAction.convention(extension.unusedAction)
-      it.enableAndroidAssetGeneration.convention(extension.enableAndroidAssetGeneration)
+      it.bundleAndroidAsset.convention(extension.bundleAndroidAsset)
 
       it.outputDir.convention(
         project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(
@@ -167,7 +167,7 @@ private fun configureAndroidVariants(
       it.dependsOn(task)
     }
 
-    if (extension.enableAndroidAssetGeneration.get()) {
+    if (extension.bundleAndroidAsset.get()) {
       val capitalizedVariantName = variant.name.replaceFirstChar { it.titlecase(ROOT) }
       val copyArtifactsTask =
         project.tasks.register(
@@ -175,10 +175,7 @@ private fun configureAndroidVariants(
           AssetCopyTask::class.java,
         ) { asset ->
           asset.targetFileName.set("artifacts.json")
-          project.tasks.withType(LicenseeTask::class.java)
-            .findByName("licenseeAndroid$capitalizedVariantName")?.let {
-              asset.inputFile.set(it.jsonOutput)
-            }
+          asset.inputFile.set(task.flatMap { it.jsonOutput })
         }
 
       variant.sources.assets!!.addGeneratedSourceDirectory(

@@ -20,16 +20,16 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
-@CacheableTask
-abstract class AssetCopyTask : DefaultTask() {
+@DisableCachingByDefault
+internal abstract class AssetCopyTask : DefaultTask() {
   @get:OutputDirectory
   abstract val outputDirectory: DirectoryProperty
 
@@ -44,7 +44,7 @@ abstract class AssetCopyTask : DefaultTask() {
   fun action() {
     inputFile.get().asFile.copyTo(
       target = File(
-        outputDirectory.get().asFile,
+        outputDirectory.dir("app/cash/licensee").get().asFile,
         targetFileName.get(),
       ),
       overwrite = true,
