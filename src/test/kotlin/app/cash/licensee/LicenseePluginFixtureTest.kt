@@ -220,7 +220,7 @@ class LicenseePluginFixtureTest {
     @TestParameter("bundle-android-asset") fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
-    createRunner(fixtureDir).build()
+    createRunner(fixtureDir, "assemble").build()
     assertExpectedFiles(fixtureDir)
   }
 
@@ -342,7 +342,7 @@ class LicenseePluginFixtureTest {
     assertThat(actualDirs).isEqualTo(expectedDirs)
   }
 
-  private fun createRunner(fixtureDir: File): GradleRunner {
+  private fun createRunner(fixtureDir: File, vararg tasks: String = arrayOf("licensee")): GradleRunner {
     val gradleRoot = File(fixtureDir, "gradle").also { it.mkdir() }
     File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
     val androidSdkFile = File("local.properties")
@@ -352,7 +352,7 @@ class LicenseePluginFixtureTest {
     return GradleRunner.create()
       .withProjectDir(fixtureDir)
       .withDebug(true) // Run in-process
-      .withArguments("clean", "assemble", "licensee", "--stacktrace", "--continue", "--configuration-cache", versionProperty)
+      .withArguments("clean", *tasks, "--stacktrace", "--continue", "--configuration-cache", versionProperty)
       .forwardOutput()
   }
 
