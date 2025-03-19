@@ -74,16 +74,16 @@ class LicenseePlugin : Plugin<Project> {
       configureJavaPlugin(project)
     }
 
-    withKotlinMultiPlatformPlugin(project, withAndroid = false) // see android logic below
+    withKotlinMultiPlatformPlugin(project, withAndroid = false, extension = extension) // see android logic below
 
     project.pluginManager.withPlugin("com.android.application") {
-      configureAndroidPlugin(project)
+      configureAndroidPlugin(project, extension)
     }
     project.pluginManager.withPlugin("com.android.library") {
-      configureAndroidPlugin(project)
+      configureAndroidPlugin(project, extension)
     }
     project.pluginManager.withPlugin("com.android.dynamic-feature") {
-      configureAndroidPlugin(project)
+      configureAndroidPlugin(project, extension)
     }
 
     project.afterEvaluate {
@@ -101,21 +101,23 @@ class LicenseePlugin : Plugin<Project> {
 
 private fun configureAndroidPlugin(
   project: Project,
+  extension: MutableLicenseeExtension,
 ) {
   val rootTask = registerRootTask(project, "all Android variants")
-  configureAndroidVariants(project, rootTask)
-  withKotlinMultiPlatformPlugin(project, withAndroid = true)
+  configureAndroidVariants(project, rootTask, extension)
+  withKotlinMultiPlatformPlugin(project, withAndroid = true, extension)
 }
 
 private fun withKotlinMultiPlatformPlugin(
   project: Project,
   withAndroid: Boolean,
+  extension: MutableLicenseeExtension,
 ) {
   project.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
     val rootTask = registerRootTask(project, "all Kotlin targets")
     configureKotlinMultiplatformTargets(project, rootTask)
     if (withAndroid) {
-      configureAndroidVariants(project, rootTask)
+      configureAndroidVariants(project, rootTask, extension)
     }
   }
 }
@@ -143,6 +145,7 @@ private fun registerRootTask(
 private fun configureAndroidVariants(
   project: Project,
   rootTask: TaskProvider<Task>,
+  extension: MutableLicenseeExtension,
 ) {
   val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
   androidComponents.onVariants { variant ->
@@ -161,6 +164,23 @@ private fun configureAndroidVariants(
 
     rootTask.configure {
       it.dependsOn(task)
+    }
+
+    if (extension.bundleAndroidAsset.get()) {
+      val capitalizedVariantName = variant.name.replaceFirstChar { it.titlecase(ROOT) }
+      val copyArtifactsTask =
+        project.tasks.register(
+          "copy${capitalizedVariantName}LicenseeReportToAssets",
+          AssetCopyTask::class.java,
+        ) { asset ->
+          asset.targetFileName.set("artifacts.json")
+          asset.inputFile.set(task.flatMap { it.jsonOutput })
+        }
+
+      variant.sources.assets!!.addGeneratedSourceDirectory(
+        copyArtifactsTask,
+        AssetCopyTask::outputDirectory,
+      )
     }
   }
 }
