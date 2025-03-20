@@ -1,5 +1,37 @@
 # Change Log
 
+## [Unreleased]
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.13.0...HEAD]
+
+Nothing yet!
+
+
+## [1.13.0] - 2025-03-20
+[1.13.0]: https://github.com/cashapp/licensee/releases/tag/1.13.0
+
+**New**
+
+- DSL now has a type-safe version of `allow` which accepts a `SpdxId` constant.
+
+    ```
+    licensee {
+      allow(SpdxId.Apache_20)
+    }
+    ```
+- The `artifacts.json` report can now be automatically bundled into your Android APK (at `app/cash/licensee/artifacts.json` path).
+
+    ```
+    licensee {
+      bundleAndroidAsset = true
+    }
+    ```
+- Update SPDX database to version 3.26 (2024-12-30).
+
+**Changed**
+
+- Removed Kotlin stdlib dependency. This is provided by the enclosing Gradle classpath in which the plugin is running.
+
+
 ## [1.12.0] - 2024-10-15
 
 **Changed**
@@ -214,7 +246,6 @@ Initial release.
 
 
 
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.12.0...HEAD
 [1.12.0]: https://github.com/cashapp/licensee/releases/tag/1.12.0
 [1.11.0]: https://github.com/cashapp/licensee/releases/tag/1.11.0
 [1.10.0]: https://github.com/cashapp/licensee/releases/tag/1.10.0
