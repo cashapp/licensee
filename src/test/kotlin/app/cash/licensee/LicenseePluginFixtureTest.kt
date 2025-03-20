@@ -22,11 +22,13 @@ import assertk.assertions.containsMatch
 import assertk.assertions.doesNotContain
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEmpty
+import assertk.assertions.isRegularFile
 import assertk.assertions.support.expected
 import assertk.assertions.support.show
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import java.io.File
+import java.nio.file.FileSystems
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.Assert.assertEquals
@@ -222,6 +224,13 @@ class LicenseePluginFixtureTest {
     val fixtureDir = File(fixturesDir, fixtureName)
     createRunner(fixtureDir, "assemble").build()
     assertExpectedFiles(fixtureDir)
+
+    // Ensure the asset made it into the APK at the expected relative path.
+    val apk = fixtureDir.resolve("build/outputs/apk/release/bundle-android-asset-release-unsigned.apk")
+    FileSystems.newFileSystem(apk.absoluteFile.toPath(), null as ClassLoader?).use {
+      val json = it.rootDirectories.single().resolve("assets/app/cash/licensee/artifacts.json")
+      assertThat(json).isRegularFile()
+    }
   }
 
   @Test fun pluginMissingOnRootFails(
