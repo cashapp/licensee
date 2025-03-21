@@ -18,7 +18,7 @@ Nothing yet!
       allow(SpdxId.Apache_20)
     }
     ```
-- The `artifacts.json` report can now be automatically bundled into your Android APK (at `app/cash/licensee/artifacts.json` path).
+- The `artifacts.json` report can now be automatically bundled into your Android APK (at `assets/app/cash/licensee/artifacts.json` path).
 
     ```
     licensee {
