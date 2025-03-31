@@ -26,6 +26,7 @@ internal val defaultFallbackUrls: FallbackBuilder.() -> Unit = {
     add("http://www.apache.org/licenses/LICENSE-2.0")
     add("http://api.github.com/licenses/apache-2.0")
     add("https://api.github.com/licenses/apache-2.0")
+    add("https://opensource.org/license/apache-2-0")
   }
   putLicense("CC0-1.0") {
     add("http://creativecommons.org/publicdomain/zero/1.0/")
