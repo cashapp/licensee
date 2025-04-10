@@ -372,26 +372,23 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
       dependencyProvider.map {
         mapOf(
           DependencyCoordinates(
-            group = it.getLicenseeGroup(),
+            group = it.validateGroup(),
             artifact = it.name,
-            version = it.getLicenseeVersion(),
+            version = it.validateVersion(),
           ) to Optional.ofNullable(optionsImpl.setReason),
         )
       },
     )
   }
 
-  private fun Dependency.getLicenseeGroup() = requireNotNull(group) { "group was null in allowDependency for $name" }
-  private fun Dependency.getLicenseeVersion() = requireNotNull(version) { "version was null in allowDependency for $name" }
-
   override fun allowDependency(
     externalModuleDependency: ExternalModuleDependency,
     options: Action<AllowDependencyOptions>,
   ) {
     allowDependency(
-      groupId = externalModuleDependency.getLicenseeGroup(),
+      groupId = externalModuleDependency.validateGroup(),
       artifactId = externalModuleDependency.name,
-      version = externalModuleDependency.getLicenseeVersion(),
+      version = externalModuleDependency.validateVersion(),
       options = options,
     )
   }
@@ -454,3 +451,6 @@ private fun <T> NamedDomainObjectContainer<T>.configure(name: String, config: Ac
     register(name, config)
   }
 }
+
+private fun Dependency.validateGroup() = requireNotNull(group) { "group was null in allowDependency for $name" }
+private fun Dependency.validateVersion() = requireNotNull(version) { "version was null in allowDependency for $name" }
