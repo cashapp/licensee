@@ -1,0 +1,16 @@
+plugins {
+  id("java-library")
+  alias(libs.plugins.licensee)
+}
+
+ExternalModuleDependency exam = dependencyFactory.create("com.example:example:1.0.0")
+
+dependencies {
+  implementation(exam)
+}
+
+licensee {
+  allowDependency(exam) {
+    because('there are reasons!')
+  }
+}

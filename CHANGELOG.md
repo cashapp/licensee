@@ -3,7 +3,9 @@
 ## [Unreleased]
 [Unreleased]: https://github.com/cashapp/licensee/compare/1.13.0...HEAD]
 
-Nothing yet!
+**New**
+
+- DSL now has an overload of `allowDependency` which accepts an `ExternalModuleDependency`.
 
 
 ## [1.13.0] - 2025-03-20

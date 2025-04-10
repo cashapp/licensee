@@ -1,0 +1,3 @@
+com.example:example:1.0.0
+ - SPDX identifier 'Apache-2.0' is NOT allowed
+ - Coordinate version is allowed because there are reasons!
