@@ -32,7 +32,7 @@ interface LicenseeExtension {
 
   /**
    * Enable asset generation. Will copy licensee report to
-   * android asset directory making it available as 'androidAssetFileName'
+   * android asset directory making it available in `assets/app/cash/licensee/artifacts.json`.
    */
   val bundleAndroidAsset: Property<Boolean>
 

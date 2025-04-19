@@ -239,8 +239,8 @@ licensee {
 
 ### `bundleAndroidAsset`
 
-Enables asset generation. Will copy licensee report to android asset directory making it available as
-'androidAssetFileName'.
+Enables asset generation. Will copy licensee report to android asset directory making it available in
+`assets/app/cash/licensee/artifacts.json`.
 
 ```groovy
 licensee {
