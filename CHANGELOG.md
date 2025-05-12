@@ -3,7 +3,9 @@
 ## [Unreleased]
 [Unreleased]: https://github.com/cashapp/licensee/compare/1.13.0...HEAD]
 
-Nothing yet!
+**Changed**
+
+- In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.
 
 
 ## [1.13.0] - 2025-03-20
