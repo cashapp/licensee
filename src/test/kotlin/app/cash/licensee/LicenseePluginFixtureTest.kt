@@ -49,6 +49,7 @@ class LicenseePluginFixtureTest {
       "coordinate-allowed-kts",
       "coordinate-allowed-override-spdx",
       "coordinate-allowed-override-url",
+      "coordinate-allowed-with-external-module-dependency",
       "coordinate-allowed-with-reason",
       "coordinate-allowed-with-reason-kts",
       "coordinate-allowed-with-reason-version-catalog",
@@ -256,6 +257,7 @@ class LicenseePluginFixtureTest {
   @Test fun allowDependencyWithoutVersionFails(
     @TestParameter(
       "coordinate-allowed-with-reason-version-catalog-null-version",
+      "coordinate-allowed-with-external-module-dependency-null-version",
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)

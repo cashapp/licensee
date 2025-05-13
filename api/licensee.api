@@ -56,9 +56,12 @@ public abstract interface class app/cash/licensee/LicenseeExtension {
 	public abstract fun allow (Ljava/lang/String;)V
 	public synthetic fun allowDependency (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun allowDependency (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public synthetic fun allowDependency (Lorg/gradle/api/artifacts/ExternalModuleDependency;)V
+	public abstract fun allowDependency (Lorg/gradle/api/artifacts/ExternalModuleDependency;Lorg/gradle/api/Action;)V
 	public synthetic fun allowDependency (Lorg/gradle/api/provider/Provider;)V
 	public abstract fun allowDependency (Lorg/gradle/api/provider/Provider;Lorg/gradle/api/Action;)V
 	public static synthetic fun allowDependency$default (Lapp/cash/licensee/LicenseeExtension;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
+	public static synthetic fun allowDependency$default (Lapp/cash/licensee/LicenseeExtension;Lorg/gradle/api/artifacts/ExternalModuleDependency;Lorg/gradle/api/Action;ILjava/lang/Object;)V
 	public static synthetic fun allowDependency$default (Lapp/cash/licensee/LicenseeExtension;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/Action;ILjava/lang/Object;)V
 	public synthetic fun allowUrl (Ljava/lang/String;)V
 	public abstract fun allowUrl (Ljava/lang/String;Lorg/gradle/api/Action;)V

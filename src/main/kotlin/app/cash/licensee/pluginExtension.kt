@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -129,6 +130,19 @@ interface LicenseeExtension {
     dependencyProvider: Provider<out Dependency>,
   ) {
     allowDependency(dependencyProvider, {})
+  }
+
+  fun allowDependency(
+    externalModuleDependency: ExternalModuleDependency,
+    options: Action<AllowDependencyOptions> = Action { },
+  )
+
+  /** @suppress */
+  @JvmSynthetic
+  fun allowDependency(
+    externalModuleDependency: ExternalModuleDependency,
+  ) {
+    allowDependency(externalModuleDependency, {})
   }
 
   /**
@@ -358,12 +372,24 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
       dependencyProvider.map {
         mapOf(
           DependencyCoordinates(
-            group = requireNotNull(it.group) { "group was null in allowDependency for ${it.name}" },
+            group = it.validateGroup(),
             artifact = it.name,
-            version = requireNotNull(it.version) { "version was null in allowDependency for ${it.name}" },
+            version = it.validateVersion(),
           ) to Optional.ofNullable(optionsImpl.setReason),
         )
       },
+    )
+  }
+
+  override fun allowDependency(
+    externalModuleDependency: ExternalModuleDependency,
+    options: Action<AllowDependencyOptions>,
+  ) {
+    allowDependency(
+      groupId = externalModuleDependency.validateGroup(),
+      artifactId = externalModuleDependency.name,
+      version = externalModuleDependency.validateVersion(),
+      options = options,
     )
   }
 
@@ -425,3 +451,6 @@ private fun <T> NamedDomainObjectContainer<T>.configure(name: String, config: Ac
     register(name, config)
   }
 }
+
+private fun Dependency.validateGroup() = requireNotNull(group) { "group was null in allowDependency for $name" }
+private fun Dependency.validateVersion() = requireNotNull(version) { "version was null in allowDependency for $name" }
