@@ -3,7 +3,9 @@
 ## [Unreleased]
 [Unreleased]: https://github.com/cashapp/licensee/compare/1.13.0...HEAD]
 
-Nothing yet!
+**Changed**
+
+- Add support for usage with Gradle 9.
 
 
 ## [1.13.0] - 2025-03-20
