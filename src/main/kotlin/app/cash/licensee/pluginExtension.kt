@@ -294,7 +294,7 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   }
 
   fun toLicenseValidationConfig(): Provider<ValidationConfig> {
-    return allowedIdentifiers.zip(allowedUrls, allowedDependencies) { allowedIdentifiers, allowedUrls, allowedDependencies ->
+    return allowedIdentifiers.zip2(allowedUrls, allowedDependencies) { allowedIdentifiers, allowedUrls, allowedDependencies ->
       ValidationConfig(
         allowedIdentifiers,
         allowedUrls.mapValues {
@@ -410,7 +410,11 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   }
 }
 
-private fun <T, L, R, V> Provider<T>.zip(left: Provider<L>, right: Provider<R>, merge: (T, L, R) -> V): Provider<V> {
+private fun <T : Any, L : Any, R : Any, V : Any> Provider<T>.zip2(
+  left: Provider<L>,
+  right: Provider<R>,
+  merge: (T, L, R) -> V,
+): Provider<V> {
   return zip(left) { t, l ->
     t to l
   }.zip(right) { (t, l), r ->
@@ -418,7 +422,7 @@ private fun <T, L, R, V> Provider<T>.zip(left: Provider<L>, right: Provider<R>, 
   }
 }
 
-private fun <T> NamedDomainObjectContainer<T>.configure(name: String, config: Action<T>) {
+private fun <T : Any> NamedDomainObjectContainer<T>.configure(name: String, config: Action<T>) {
   if (name in names) {
     named(name, config)
   } else {
