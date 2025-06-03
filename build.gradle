@@ -54,6 +54,7 @@ tasks.withType(KotlinJvmCompile).configureEach { task ->
   task.compilerOptions {
     // Ensure compatibility with old Gradle versions. Keep in sync with LicenseePlugin.kt.
     apiVersion = KotlinVersion.KOTLIN_1_8
+    languageVersion = KotlinVersion.KOTLIN_1_8
     jvmTarget = JvmTarget.JVM_11
     freeCompilerArgs.add('-Xjvm-default=all')
   }

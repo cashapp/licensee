@@ -3,7 +3,9 @@
 ## [Unreleased]
 [Unreleased]: https://github.com/cashapp/licensee/compare/1.13.0...HEAD]
 
-Nothing yet!
+**Changed**
+
+- Limit the plugin used Kotlin language version to 1.8.
 
 
 ## [1.13.0] - 2025-03-20
