@@ -14,13 +14,13 @@ public final class app/cash/licensee/ArtifactDetail {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class app/cash/licensee/ArtifactDetail$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class app/cash/licensee/ArtifactDetail$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lapp/cash/licensee/ArtifactDetail$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lapp/cash/licensee/ArtifactDetail;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lapp/cash/licensee/ArtifactDetail;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/licensee/ArtifactDetail;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/licensee/ArtifactDetail;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 }
 
@@ -37,13 +37,13 @@ public final class app/cash/licensee/ArtifactScm {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class app/cash/licensee/ArtifactScm$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class app/cash/licensee/ArtifactScm$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lapp/cash/licensee/ArtifactScm$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lapp/cash/licensee/ArtifactScm;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lapp/cash/licensee/ArtifactScm;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/licensee/ArtifactScm;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/licensee/ArtifactScm;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 }
 
@@ -811,13 +811,13 @@ public final class app/cash/licensee/SpdxLicense {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class app/cash/licensee/SpdxLicense$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class app/cash/licensee/SpdxLicense$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lapp/cash/licensee/SpdxLicense$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lapp/cash/licensee/SpdxLicense;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lapp/cash/licensee/SpdxLicense;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/licensee/SpdxLicense;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/licensee/SpdxLicense;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 }
 
@@ -835,13 +835,13 @@ public final class app/cash/licensee/UnknownLicense {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class app/cash/licensee/UnknownLicense$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class app/cash/licensee/UnknownLicense$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lapp/cash/licensee/UnknownLicense$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lapp/cash/licensee/UnknownLicense;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lapp/cash/licensee/UnknownLicense;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/licensee/UnknownLicense;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/licensee/UnknownLicense;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 }
 
@@ -852,7 +852,6 @@ public final class app/cash/licensee/UnknownLicense$Companion {
 public final class app/cash/licensee/UnusedAction : java/lang/Enum {
 	public static final field IGNORE Lapp/cash/licensee/UnusedAction;
 	public static final field LOG Lapp/cash/licensee/UnusedAction;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lapp/cash/licensee/UnusedAction;
 	public static fun values ()[Lapp/cash/licensee/UnusedAction;
 }
@@ -861,7 +860,6 @@ public final class app/cash/licensee/ViolationAction : java/lang/Enum {
 	public static final field FAIL Lapp/cash/licensee/ViolationAction;
 	public static final field IGNORE Lapp/cash/licensee/ViolationAction;
 	public static final field LOG Lapp/cash/licensee/ViolationAction;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lapp/cash/licensee/ViolationAction;
 	public static fun values ()[Lapp/cash/licensee/ViolationAction;
 }
