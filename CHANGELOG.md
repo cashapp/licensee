@@ -6,6 +6,7 @@
 **Changed**
 
 - In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.
+- Limit the plugin used Kotlin language version to 1.8.
 
 
 ## [1.13.0] - 2025-03-20

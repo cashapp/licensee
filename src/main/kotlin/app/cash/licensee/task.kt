@@ -164,7 +164,7 @@ abstract class LicenseeTask : DefaultTask() {
           val variantAttrs = variant.attributes
           for (attrs in variantAttrs.keySet()) {
             @Suppress("UNCHECKED_CAST")
-            it.attribute(attrs as Attribute<Any?>, variantAttrs.getAttribute(attrs)!!)
+            it.attribute(attrs as Attribute<Any>, variantAttrs.getAttribute(attrs)!!)
           }
         }
       }
