@@ -1,0 +1,11 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>example</artifactId>
+  <version>1.0.0</version>
+  <licenses>
+    <license>
+      <url>https://opensource.org/license/mit</url>
+    </license>
+  </licenses>
+</project>

@@ -125,6 +125,7 @@ class LicenseePluginFixtureTest {
       "url-allowed-kts",
       "url-missing-name-fallback-is-spdx",
       "url-mapping-to-multiple-licenses",
+      "url-normalization",
     ) fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)

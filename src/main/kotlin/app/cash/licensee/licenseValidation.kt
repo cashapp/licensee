@@ -69,6 +69,16 @@ internal fun validateArtifacts(
         validated = true
         break
       }
+
+      val normalizedUrl = normalizeUrl(spdxLicense.url)
+      if (normalizedUrl in validationConfig.allowedUrls) {
+        unusedAllowedUrls -= spdxLicense.url
+        artifactResults += ValidationResult.Warning(
+          "License URL '${spdxLicense.url}' was allowed but could use SPDX identifier '${spdxLicense.identifier}'",
+        )
+        validated = true
+        break
+      }
     }
 
     if (!validated) {

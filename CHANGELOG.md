@@ -5,6 +5,7 @@
 
 **Changed**
 
+- License URL lookups that don't have any matches are retried with a normalized URL
 - In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.
 - Limit the plugin used Kotlin language version to 1.8.
 
