@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.1.21"
+kotlin = "2.2.0"
 agp = "8.10.1"
 
 [libraries]
@@ -31,6 +31,5 @@ kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 spotless = { id = "com.diffplug.spotless", version = "7.0.4" }
 publish = { id = "com.vanniktech.maven.publish", version = "0.33.0" }
-binaryCompabilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.17.0" }
 dokka = { id = "org.jetbrains.dokka", version = "2.0.0" }
 poko = { id = "dev.drewhamilton.poko", version = "0.18.7" }

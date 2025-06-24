@@ -10,7 +10,6 @@ plugins {
   alias(libs.plugins.android.lint)
   id("java-gradle-plugin")
   alias(libs.plugins.publish)
-  alias(libs.plugins.binaryCompabilityValidator)
   alias(libs.plugins.dokka)
   alias(libs.plugins.spotless)
   alias(libs.plugins.poko)
@@ -24,6 +23,12 @@ gradlePlugin {
       description = "Gradle plugin which validates the licenses of your dependency graph match what you expect"
       implementationClass = "app.cash.licensee.LicenseePlugin"
     }
+  }
+}
+
+kotlin {
+  abiValidation {
+    enabled = true
   }
 }
 
@@ -114,7 +119,11 @@ def checkFixtureJars = tasks.register('checkFixtureJars') { task ->
 }
 
 tasks.named('check') { check ->
-  check.dependsOn(checkFixtureJars)
+  check.dependsOn(
+    checkFixtureJars,
+    // TODO: https://youtrack.jetbrains.com/issue/KT-78525
+    tasks.named('checkLegacyAbi'),
+  )
 }
 
 Directory jsonFolder = layout.projectDirectory.dir("src/main/resources/app/cash/licensee")
