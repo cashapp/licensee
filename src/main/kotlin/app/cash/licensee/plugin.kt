@@ -49,6 +49,7 @@ class LicenseePlugin : Plugin<Project> {
 
     project.tasks.withType(LicenseeTask::class.java).configureEach {
       it.dependencyConfig.convention(extension.toDependencyTreeConfig())
+      it.licenseSources.convention(extension.licenseSources)
       it.validationConfig.convention(extension.toLicenseValidationConfig())
       it.violationAction.convention(extension.violationAction)
       it.unusedAction.convention(extension.unusedAction)

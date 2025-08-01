@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -195,6 +196,11 @@ interface LicenseeExtension {
   }
 
   /**
+   *
+   */
+  fun licenseSources(block: Action<LicenseSourceHandler>)
+
+  /**
    * Build behavior when a license violation is found.
    *
    * ```
@@ -271,10 +277,12 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   internal abstract val allowedDependencies: MapProperty<DependencyCoordinates, Optional<String>>
   internal abstract val ignoredGroupIds: MapProperty<String, IgnoredData>
   internal abstract val ignoredCoordinates: NamedDomainObjectContainer<IgnoredCoordinate>
+  internal abstract val licenseSources: ListProperty<LicenseSource>
   internal abstract val violationAction: Property<ViolationAction>
   internal abstract val unusedAction: Property<UnusedAction>
 
   init {
+    licenseSources.convention(listOf(LicenseSource.LICENSE_URL, LicenseSource.LICENSE_NAME))
     violationAction.convention(ViolationAction.FAIL)
     unusedAction.convention(UnusedAction.LOG)
     bundleAndroidAsset.set(false)
@@ -399,6 +407,35 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
         it.ignoredDatas.put(artifactId, ignoredData)
       }
     }
+  }
+
+  override fun licenseSources(block: Action<LicenseSourceHandler>) {
+    val licenseSources = buildList {
+      val handler = object : LicenseSourceHandler {
+
+        override fun licenseName() {
+          if (LicenseSource.LICENSE_NAME in this@buildList) {
+            throw IllegalStateException("License name has already been added as license source")
+          }
+          add(LicenseSource.LICENSE_NAME)
+        }
+
+        override fun licenseUrl() {
+          if (LicenseSource.LICENSE_URL in this@buildList) {
+            throw IllegalStateException("License URL has already been added as license source")
+          }
+          add(LicenseSource.LICENSE_URL)
+        }
+      }
+
+      block.execute(handler)
+    }
+
+    if (licenseSources.isEmpty()) {
+      throw IllegalStateException("At least one license source must be specified")
+    }
+
+    this.licenseSources.set(licenseSources)
   }
 
   override fun violationAction(level: ViolationAction) {

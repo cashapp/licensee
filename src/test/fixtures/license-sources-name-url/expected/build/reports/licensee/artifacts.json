@@ -1,0 +1,14 @@
+[
+    {
+        "groupId": "com.example",
+        "artifactId": "example",
+        "version": "1.0.0",
+        "spdxLicenses": [
+            {
+                "identifier": "MIT",
+                "name": "MIT License",
+                "url": "https://opensource.org/license/mit/"
+            }
+        ]
+    }
+]

@@ -17,13 +17,14 @@ package app.cash.licensee
 
 internal fun normalizeLicenseInfo(
   coordinateToPomInfo: Map<DependencyCoordinates, PomInfo>,
+  licenseSources: List<LicenseSource>,
 ): List<ArtifactDetail> {
   val artifactDetails = mutableListOf<ArtifactDetail>()
   for ((id, pomInfo) in coordinateToPomInfo) {
     val spdxLicenses = mutableSetOf<SpdxLicense>()
     val unknownLicenses = mutableSetOf<UnknownLicense>()
     for (license in pomInfo.licenses) {
-      val spdxLicense = license.toSpdx()
+      val spdxLicense = license.toSpdx(licenseSources)
       if (spdxLicense.isNotEmpty()) {
         spdxLicenses += spdxLicense
       } else {
@@ -49,23 +50,24 @@ internal fun normalizeLicenseInfo(
 private val detailsComparator =
   compareBy(ArtifactDetail::groupId, ArtifactDetail::artifactId, ArtifactDetail::version)
 
-private fun PomLicense.toSpdx(): List<SpdxLicense> = when {
-  url != null -> {
-    val licenses = SpdxId.findByUrl(url)
-    licenses.map { license ->
-      license.toSpdxLicense()
+private fun PomLicense.toSpdx(
+  sources: List<LicenseSource>,
+): List<SpdxLicense> {
+  for (source in sources) {
+    return when (source) {
+      LicenseSource.LICENSE_NAME -> {
+        if (name == null) continue
+        val license = SpdxId.findByIdentifier(name) ?: continue
+        listOf(license.toSpdxLicense())
+      }
+      LicenseSource.LICENSE_URL -> {
+        if (url == null) continue
+        SpdxId.findByUrl(url).map(SpdxId::toSpdxLicense)
+      }
     }
   }
-  name != null -> {
-    // Only fallback to name-based matching if the URL is null.
-    val license = SpdxId.findByIdentifier(name)
-    if (license != null) {
-      listOf(license.toSpdxLicense())
-    } else {
-      emptyList()
-    }
-  }
-  else -> emptyList()
+
+  return emptyList()
 }
 
 internal fun SpdxId.toSpdxLicense() = SpdxLicense(

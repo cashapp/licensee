@@ -45,6 +45,7 @@ import org.gradle.api.logging.LogLevel.LIFECYCLE
 import org.gradle.api.logging.LogLevel.WARN
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -70,6 +71,18 @@ abstract class LicenseeTask : DefaultTask() {
 
   @get:Input
   internal abstract val coordinatesToPomInfo: MapProperty<DependencyCoordinates, PomInfo>
+
+  @get:Input
+  internal abstract val licenseSources: ListProperty<LicenseSource>
+
+  init {
+    licenseSources.convention(
+      listOf(
+        LicenseSource.LICENSE_URL,
+        LicenseSource.LICENSE_NAME,
+      ),
+    )
+  }
 
   fun configurationToCheck(configuration: Configuration) {
     loadDependenciesFromConfiguration(configuration.incoming.resolutionResult.rootComponent)
@@ -203,7 +216,8 @@ abstract class LicenseeTask : DefaultTask() {
       logger.info("")
     }
     val coordinatesToPomInfo = coordinatesToPomInfo.get()
-    val artifactDetails = normalizeLicenseInfo(coordinatesToPomInfo)
+    val licenseSources = licenseSources.get()
+    val artifactDetails = normalizeLicenseInfo(coordinatesToPomInfo, licenseSources)
     if (logger.isInfoEnabled) {
       for (artifactDetail in artifactDetails) {
         logger.info(

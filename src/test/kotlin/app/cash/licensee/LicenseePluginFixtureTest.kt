@@ -69,6 +69,8 @@ class LicenseePluginFixtureTest {
       "ignore-group-kts",
       "ignore-group-transitive",
       "ignore-group-transitive-kts",
+      "license-sources-name",
+      "license-sources-name-url",
       "local-file-ignored",
       "local-file-tree-ignored",
       "multiple-with-spdx-allowed",
