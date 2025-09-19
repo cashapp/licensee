@@ -1,7 +1,7 @@
 pluginManagement {
   repositories {
     maven {
-      url = "file://${settingsDir.absolutePath}/../../../../build/localMaven"
+      url = new File(rootDir.parentFile.parentFile.parentFile.parentFile, "build/localMaven")
     }
     mavenCentral()
     google()
