@@ -12,10 +12,8 @@ licensee {
 }
 
 reporting {
-  baseDir "$buildDir/my-reports/"
+  baseDirectory = layout.buildDirectory.dir('my-reports')
 }
-
-
 
 android {
   compileSdk 33
