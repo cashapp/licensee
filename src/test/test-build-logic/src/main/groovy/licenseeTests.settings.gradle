@@ -23,6 +23,7 @@ dependencyResolutionManagement {
       url = new File(rootDir, "repo")
       metadataSources {
         gradleMetadata()
+        mavenPom()
       }
     }
     mavenCentral()
