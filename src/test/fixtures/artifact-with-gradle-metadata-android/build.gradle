@@ -11,17 +11,6 @@ licensee {
   allow('Apache-2.0')
 }
 
-repositories {
-  maven {
-    url "file://${rootDir.absolutePath}/repo"
-    metadataSources {
-      gradleMetadata()
-    }
-  }
-  mavenCentral()
-  google()
-}
-
 android {
   compileSdk 33
   namespace 'com.example'

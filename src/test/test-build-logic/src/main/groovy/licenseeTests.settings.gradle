@@ -20,7 +20,10 @@ dependencyResolutionManagement {
 
   repositories {
     maven {
-      url = new File(rootDir.absoluteFile, "repo")
+      url = new File(rootDir, "repo")
+      metadataSources {
+        gradleMetadata()
+      }
     }
     mavenCentral()
     google()
