@@ -20,7 +20,7 @@ dependencyResolutionManagement {
 
   repositories {
     maven {
-      url = "file://${rootDir.absolutePath}/repo"
+      url = new File(rootDir.absoluteFile, "repo")
     }
     mavenCentral()
     google()
