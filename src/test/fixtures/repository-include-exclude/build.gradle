@@ -13,12 +13,12 @@ licensee {
 
 repositories {
   maven {
-    url "file://${rootDir.absolutePath}/repo-bad"
+    url new File(rootDir, "repo-bad")
     content {
       includeGroup('com.other')
     }
   }
   maven {
-    url "file://${rootDir.absolutePath}/repo-good"
+    url new File(rootDir, "repo-good")
   }
 }

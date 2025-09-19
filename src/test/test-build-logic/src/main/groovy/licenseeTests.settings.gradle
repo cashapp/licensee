@@ -1,7 +1,7 @@
 pluginManagement {
   repositories {
     maven {
-      url = "file://${settingsDir.absolutePath}/../../../../build/localMaven"
+      url = new File(rootDir.parentFile.parentFile.parentFile.parentFile, "build/localMaven")
     }
     mavenCentral()
     google()
@@ -20,7 +20,11 @@ dependencyResolutionManagement {
 
   repositories {
     maven {
-      url = "file://${rootDir.absolutePath}/repo"
+      url = new File(rootDir, "repo")
+      metadataSources {
+        gradleMetadata()
+        mavenPom()
+      }
     }
     mavenCentral()
     google()
