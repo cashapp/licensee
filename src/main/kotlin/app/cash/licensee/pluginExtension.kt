@@ -37,7 +37,7 @@ interface LicenseeExtension {
   val bundleAndroidAsset: Property<Boolean>
 
   /**
-   * The path within the Android assets/ directory to copy the licensee report to.
+   * The path within the Android `assets/` directory to which the licensee report will be copied.
    *
    * Defaults to `app/cash/licensee/artifacts.json`.
    */
