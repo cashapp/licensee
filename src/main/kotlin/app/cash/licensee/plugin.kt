@@ -173,13 +173,13 @@ private fun configureAndroidVariants(
           "copy${capitalizedVariantName}LicenseeReportToAssets",
           AssetCopyTask::class.java,
         ) { asset ->
-          asset.targetFileName.set("artifacts.json")
           asset.inputFile.set(task.flatMap { it.jsonOutput })
+          asset.outputFilePath.set(extension.androidAssetReportPath)
         }
 
       variant.sources.assets!!.addGeneratedSourceDirectory(
         copyArtifactsTask,
-        AssetCopyTask::outputDirectory,
+        AssetCopyTask::assetDirectory,
       )
     }
   }
