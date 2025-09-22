@@ -233,6 +233,21 @@ class LicenseePluginFixtureTest {
     }
   }
 
+  @Test fun bundleAndroidAssetWithCustomAssetFile(
+    @TestParameter("bundle-android-asset-with-custom-asset-file") fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    createRunner(fixtureDir, "assemble").build()
+    assertExpectedFiles(fixtureDir)
+
+    // Ensure the asset made it into the APK at the expected relative path.
+    val apk = fixtureDir.resolve("build/outputs/apk/release/bundle-android-asset-with-custom-asset-file-release-unsigned.apk")
+    FileSystems.newFileSystem(apk.absoluteFile.toPath(), null as ClassLoader?).use {
+      val json = it.rootDirectories.single().resolve("assets/example/licenses.json")
+      assertThat(json).isRegularFile()
+    }
+  }
+
   @Test fun pluginMissingOnRootFails(
     @TestParameter("plugin-missing-on-root-fails") fixtureName: String,
   ) {

@@ -3,6 +3,17 @@
 ## [Unreleased]
 [Unreleased]: https://github.com/cashapp/licensee/compare/1.13.0...HEAD]
 
+**New**
+
+- Support overriding `artifacts.json` report path bundled into your Android APK (under `assets/` path).
+
+    ```
+    licensee {
+      bundleAndroidAsset = true
+      androidAssetReportPath = "example/licenses.json"
+    }
+    ```
+
 **Changed**
 
 - In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.

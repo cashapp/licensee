@@ -240,11 +240,12 @@ licensee {
 ### `bundleAndroidAsset`
 
 Enables asset generation. Will copy licensee report to android asset directory making it available in
-`assets/app/cash/licensee/artifacts.json`.
+`assets/app/cash/licensee/artifacts.json` by default.
 
 ```groovy
 licensee {
-  bundleAndroidAsset.set(true)
+  bundleAndroidAsset = true
+  androidAssetReportPath = "example/licenses.json" // Override the default path.
 }
 ```
 

@@ -32,9 +32,16 @@ interface LicenseeExtension {
 
   /**
    * Enable asset generation. Will copy licensee report to
-   * android asset directory making it available in `assets/app/cash/licensee/artifacts.json`.
+   * android asset directory making it available in [androidAssetReportPath] under `assets/` in the APK.
    */
   val bundleAndroidAsset: Property<Boolean>
+
+  /**
+   * The path within the Android assets/ directory to copy the licensee report to.
+   *
+   * Defaults to `app/cash/licensee/artifacts.json`.
+   */
+  val androidAssetReportPath: Property<String>
 
   /**
    * Allow artifacts with a license that matches a SPDX identifier.
@@ -277,7 +284,8 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   init {
     violationAction.convention(ViolationAction.FAIL)
     unusedAction.convention(UnusedAction.LOG)
-    bundleAndroidAsset.set(false)
+    bundleAndroidAsset.convention(false)
+    androidAssetReportPath.convention("app/cash/licensee/artifacts.json")
   }
 
   fun toDependencyTreeConfig(): Provider<DependencyConfig> {
