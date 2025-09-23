@@ -151,6 +151,8 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field Artistic_10_Perl Lapp/cash/licensee/SpdxId;
 	public static final field Artistic_10_cl8 Lapp/cash/licensee/SpdxId;
 	public static final field Artistic_20 Lapp/cash/licensee/SpdxId;
+	public static final field Artistic_dist Lapp/cash/licensee/SpdxId;
+	public static final field Aspell_RU Lapp/cash/licensee/SpdxId;
 	public static final field BSD_1_Clause Lapp/cash/licensee/SpdxId;
 	public static final field BSD_2_Clause Lapp/cash/licensee/SpdxId;
 	public static final field BSD_2_Clause_Darwin Lapp/cash/licensee/SpdxId;
@@ -159,6 +161,7 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field BSD_2_Clause_Patent Lapp/cash/licensee/SpdxId;
 	public static final field BSD_2_Clause_Views Lapp/cash/licensee/SpdxId;
 	public static final field BSD_2_Clause_first_lines Lapp/cash/licensee/SpdxId;
+	public static final field BSD_2_Clause_pkgconf_disclaimer Lapp/cash/licensee/SpdxId;
 	public static final field BSD_3_Clause Lapp/cash/licensee/SpdxId;
 	public static final field BSD_3_Clause_Attribution Lapp/cash/licensee/SpdxId;
 	public static final field BSD_3_Clause_Clear Lapp/cash/licensee/SpdxId;
@@ -300,6 +303,7 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field Cornell_Lossless_JPEG Lapp/cash/licensee/SpdxId;
 	public static final field Cronyx Lapp/cash/licensee/SpdxId;
 	public static final field Crossword Lapp/cash/licensee/SpdxId;
+	public static final field CryptoSwift Lapp/cash/licensee/SpdxId;
 	public static final field CrystalStacker Lapp/cash/licensee/SpdxId;
 	public static final field Cube Lapp/cash/licensee/SpdxId;
 	public static final field DEC_3_Clause Lapp/cash/licensee/SpdxId;
@@ -310,6 +314,7 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field DRL_11 Lapp/cash/licensee/SpdxId;
 	public static final field DSDP Lapp/cash/licensee/SpdxId;
 	public static final field D_FSL_10 Lapp/cash/licensee/SpdxId;
+	public static final field DocBook_DTD Lapp/cash/licensee/SpdxId;
 	public static final field DocBook_Schema Lapp/cash/licensee/SpdxId;
 	public static final field DocBook_Stylesheet Lapp/cash/licensee/SpdxId;
 	public static final field DocBook_XML Lapp/cash/licensee/SpdxId;
@@ -335,7 +340,10 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field FSFAP_no_warranty_disclaimer Lapp/cash/licensee/SpdxId;
 	public static final field FSFUL Lapp/cash/licensee/SpdxId;
 	public static final field FSFULLR Lapp/cash/licensee/SpdxId;
+	public static final field FSFULLRSD Lapp/cash/licensee/SpdxId;
 	public static final field FSFULLRWD Lapp/cash/licensee/SpdxId;
+	public static final field FSL_11_ALv2 Lapp/cash/licensee/SpdxId;
+	public static final field FSL_11_MIT Lapp/cash/licensee/SpdxId;
 	public static final field FTL Lapp/cash/licensee/SpdxId;
 	public static final field Fair Lapp/cash/licensee/SpdxId;
 	public static final field Ferguson_Twofish Lapp/cash/licensee/SpdxId;
@@ -387,11 +395,13 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field GPL_30_or_later Lapp/cash/licensee/SpdxId;
 	public static final field GPL_30_with_GCC_exception Lapp/cash/licensee/SpdxId;
 	public static final field GPL_30_with_autoconf_exception Lapp/cash/licensee/SpdxId;
+	public static final field Game_Programming_Gems Lapp/cash/licensee/SpdxId;
 	public static final field Giftware Lapp/cash/licensee/SpdxId;
 	public static final field Glide Lapp/cash/licensee/SpdxId;
 	public static final field Glulxe Lapp/cash/licensee/SpdxId;
 	public static final field Graphics_Gems Lapp/cash/licensee/SpdxId;
 	public static final field Gutmann Lapp/cash/licensee/SpdxId;
+	public static final field HDF5 Lapp/cash/licensee/SpdxId;
 	public static final field HIDAPI Lapp/cash/licensee/SpdxId;
 	public static final field HPND Lapp/cash/licensee/SpdxId;
 	public static final field HPND_DEC Lapp/cash/licensee/SpdxId;
@@ -543,6 +553,7 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field NPL_11 Lapp/cash/licensee/SpdxId;
 	public static final field NPOSL_30 Lapp/cash/licensee/SpdxId;
 	public static final field NRL Lapp/cash/licensee/SpdxId;
+	public static final field NTIA_PD Lapp/cash/licensee/SpdxId;
 	public static final field NTP Lapp/cash/licensee/SpdxId;
 	public static final field NTP_0 Lapp/cash/licensee/SpdxId;
 	public static final field Naumen Lapp/cash/licensee/SpdxId;
@@ -647,11 +658,13 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field SMLNJ Lapp/cash/licensee/SpdxId;
 	public static final field SMPPL Lapp/cash/licensee/SpdxId;
 	public static final field SNIA Lapp/cash/licensee/SpdxId;
+	public static final field SOFA Lapp/cash/licensee/SpdxId;
 	public static final field SPL_10 Lapp/cash/licensee/SpdxId;
 	public static final field SSH_OpenSSH Lapp/cash/licensee/SpdxId;
 	public static final field SSH_short Lapp/cash/licensee/SpdxId;
 	public static final field SSLeay_standalone Lapp/cash/licensee/SpdxId;
 	public static final field SSPL_10 Lapp/cash/licensee/SpdxId;
+	public static final field SUL_10 Lapp/cash/licensee/SpdxId;
 	public static final field SWL Lapp/cash/licensee/SpdxId;
 	public static final field Saxpath Lapp/cash/licensee/SpdxId;
 	public static final field SchemeReport Lapp/cash/licensee/SpdxId;
@@ -699,6 +712,8 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field Unicode_TOU Lapp/cash/licensee/SpdxId;
 	public static final field UnixCrypt Lapp/cash/licensee/SpdxId;
 	public static final field Unlicense Lapp/cash/licensee/SpdxId;
+	public static final field Unlicense_libtelnet Lapp/cash/licensee/SpdxId;
+	public static final field Unlicense_libwhirlpool Lapp/cash/licensee/SpdxId;
 	public static final field VOSTROM Lapp/cash/licensee/SpdxId;
 	public static final field VSL_10 Lapp/cash/licensee/SpdxId;
 	public static final field Vim Lapp/cash/licensee/SpdxId;
@@ -755,6 +770,8 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field gtkbook Lapp/cash/licensee/SpdxId;
 	public static final field hdparm Lapp/cash/licensee/SpdxId;
 	public static final field iMatix Lapp/cash/licensee/SpdxId;
+	public static final field jove Lapp/cash/licensee/SpdxId;
+	public static final field libpng_1635 Lapp/cash/licensee/SpdxId;
 	public static final field libpng_20 Lapp/cash/licensee/SpdxId;
 	public static final field libselinux_10 Lapp/cash/licensee/SpdxId;
 	public static final field libtiff Lapp/cash/licensee/SpdxId;
@@ -762,10 +779,12 @@ public final class app/cash/licensee/SpdxId : java/io/Serializable {
 	public static final field lsof Lapp/cash/licensee/SpdxId;
 	public static final field magaz Lapp/cash/licensee/SpdxId;
 	public static final field mailprio Lapp/cash/licensee/SpdxId;
+	public static final field man2html Lapp/cash/licensee/SpdxId;
 	public static final field metamail Lapp/cash/licensee/SpdxId;
 	public static final field mpi_permissive Lapp/cash/licensee/SpdxId;
 	public static final field mpich2 Lapp/cash/licensee/SpdxId;
 	public static final field mplus Lapp/cash/licensee/SpdxId;
+	public static final field ngrep Lapp/cash/licensee/SpdxId;
 	public static final field pkgconf Lapp/cash/licensee/SpdxId;
 	public static final field pnmstitch Lapp/cash/licensee/SpdxId;
 	public static final field psfrag Lapp/cash/licensee/SpdxId;
