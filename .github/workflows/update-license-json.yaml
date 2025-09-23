@@ -19,13 +19,6 @@ jobs:
       - run: ./gradlew downloadLicensesJson
       - run: ./gradlew generateSpdx
       - run: ./gradlew updateLegacyAbi
-        # TODO: generate tokens for triggering workflows for the created PRs.
-#      - name: Generate Github Token
-#        uses: actions/create-github-app-token@v2
-#        id: generate_token
-#        with:
-#          app-id: ${{ secrets.APP_ID }}
-#          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - uses: peter-evans/create-pull-request@v7
         with:
           commit-message: Update license JSON
