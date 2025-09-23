@@ -16,7 +16,9 @@ jobs:
           distribution: 'zulu'
           java-version-file: .github/workflows/.java-version
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew downloadLicensesJson generateSpdx updateLegacyAbi
+      - run: ./gradlew downloadLicensesJson
+      - run: ./gradlew generateSpdx
+      - run: ./gradlew updateLegacyAbi
       - uses: peter-evans/create-pull-request@v7
         with:
           commit-message: |
