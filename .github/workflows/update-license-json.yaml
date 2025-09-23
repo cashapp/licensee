@@ -2,13 +2,13 @@ name: update license json
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */12 * * *'
   workflow_dispatch:
 
 jobs:
   update-start-scripts:
     runs-on: ubuntu-24.04-arm
-#    if: github.event.repository.fork == false
+    if: github.event.repository.fork == false
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
@@ -19,6 +19,13 @@ jobs:
       - run: ./gradlew downloadLicensesJson
       - run: ./gradlew generateSpdx
       - run: ./gradlew updateLegacyAbi
+        # TODO: generate tokens for triggering workflows for the created PRs.
+#      - name: Generate Github Token
+#        uses: actions/create-github-app-token@v2
+#        id: generate_token
+#        with:
+#          app-id: ${{ secrets.APP_ID }}
+#          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - uses: peter-evans/create-pull-request@v7
         with:
           commit-message: |
