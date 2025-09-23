@@ -13,6 +13,7 @@
       androidAssetReportPath = "example/licenses.json"
     }
     ```
+- Update SPDX database to version 3.27.0 (2025-07-01).
 
 **Changed**
 
