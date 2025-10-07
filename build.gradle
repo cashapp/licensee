@@ -1,5 +1,6 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
@@ -61,7 +62,7 @@ tasks.withType(KotlinJvmCompile).configureEach { task ->
     apiVersion = KotlinVersion.KOTLIN_2_2
     languageVersion = KotlinVersion.KOTLIN_2_2
     jvmTarget = JvmTarget.JVM_17
-    freeCompilerArgs.add('-jvm-default=no-compatibility')
+    jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
   }
 }
 
