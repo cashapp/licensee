@@ -1,7 +1,13 @@
 # Change Log
 
 ## [Unreleased]
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.13.0...HEAD]
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.14.0...HEAD]
+
+Nothing yet!
+
+
+## [1.14.0] - 2025-10-07
+[1.14.0]: https://github.com/cashapp/licensee/releases/tag/1.13.0
 
 **New**
 
@@ -14,10 +20,15 @@
     }
     ```
 
+- Update SPDX database to version 3.27 (2025-07-01).
+
 **Changed**
 
 - In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.
-- Limit the plugin used Kotlin language version to 1.8.
+
+- Limit the plugin used Kotlin language version to 1.8 to ensure support for Gradle 8.
+
+  **This is the last release with Gradle 8 support.**
 
 
 ## [1.13.0] - 2025-03-20
