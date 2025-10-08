@@ -3,7 +3,9 @@
 ## [Unreleased]
 [Unreleased]: https://github.com/cashapp/licensee/compare/1.14.0...HEAD]
 
-Nothing yet!
+**Changed**
+
+- The minimum-supported Gradle version is now 9.0.
 
 
 ## [1.14.0] - 2025-10-07

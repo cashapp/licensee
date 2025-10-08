@@ -40,8 +40,10 @@ class LicenseePlugin : Plugin<Project> {
   override fun apply(project: Project) {
     // HEY! If you update the minimum-supported Gradle version check to see if the Kotlin language version
     // can be bumped. See https://docs.gradle.org/current/userguide/compatibility.html#kotlin.
-    require(GradleVersion.current() >= GradleVersion.version("8.0")) {
-      "Licensee plugin requires Gradle 8.0 or later. Found ${GradleVersion.current()}"
+    val current = GradleVersion.current()
+    val required = GradleVersion.version("9.0")
+    require(current >= required) {
+      "Licensee plugin requires $required or later. Found $current"
     }
 
     val extension = project.objects.newInstance(MutableLicenseeExtension::class.java)
