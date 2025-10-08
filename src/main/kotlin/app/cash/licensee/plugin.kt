@@ -26,7 +26,6 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin.CHECK_TASK_NAME
 import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
@@ -38,14 +37,6 @@ private const val REPORT_FOLDER = "licensee"
 @Suppress("unused") // Instantiated reflectively by Gradle.
 class LicenseePlugin : Plugin<Project> {
   override fun apply(project: Project) {
-    // HEY! If you update the minimum-supported Gradle version check to see if the Kotlin language version
-    // can be bumped. See https://docs.gradle.org/current/userguide/compatibility.html#kotlin.
-    val current = GradleVersion.current()
-    val required = GradleVersion.version("9.0")
-    require(current >= required) {
-      "Licensee plugin requires $required or later. Found $current"
-    }
-
     val extension = project.objects.newInstance(MutableLicenseeExtension::class.java)
     project.extensions.add(LicenseeExtension::class.java, "licensee", extension)
 

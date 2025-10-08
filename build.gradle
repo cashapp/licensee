@@ -58,11 +58,22 @@ tasks.withType(JavaCompile).configureEach { task ->
 
 tasks.withType(KotlinJvmCompile).configureEach { task ->
   task.compilerOptions {
-    // Ensure compatibility with old Gradle versions. Keep in sync with LicenseePlugin.kt.
+    // Ensure compatibility with old Gradle versions. Keep in sync with the Gradle attribute.
     apiVersion = KotlinVersion.KOTLIN_2_2
     languageVersion = KotlinVersion.KOTLIN_2_2
     jvmTarget = JvmTarget.JVM_17
     jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
+  }
+}
+
+// HEY! If you update the minimum-supported Gradle version check to see if the Kotlin language version
+// can be bumped. See https://docs.gradle.org/current/userguide/compatibility.html#kotlin.
+configurations.apiElements {
+  attributes {
+    attribute(
+      GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+      objects.named(GradlePluginApiVersion, "9.0.0")
+    )
   }
 }
 
