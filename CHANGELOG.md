@@ -5,7 +5,7 @@
 
 **Changed**
 
-- The minimum-supported Gradle version is now 9.0.
+- The minimum-supported Gradle version is now 8.12.
 
 
 ## [1.14.0] - 2025-10-07
