@@ -52,30 +52,30 @@ dependencies {
   lintChecks libs.androidx.gradlePluginLints
 }
 
-tasks.withType(JavaCompile).configureEach { task ->
-  task.sourceCompatibility = '17'
-  task.targetCompatibility = '17'
-}
-
-tasks.withType(KotlinJvmCompile).configureEach { task ->
-  task.compilerOptions {
-    // Ensure compatibility with old Gradle versions. Keep in sync with the Gradle attribute.
-    apiVersion = KotlinVersion.KOTLIN_2_2
-    languageVersion = KotlinVersion.KOTLIN_2_2
-    jvmTarget = JvmTarget.JVM_17
-    jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
-  }
-}
-
-// HEY! If you update the minimum-supported Gradle version check to see if the Kotlin language version
-// can be bumped. See https://docs.gradle.org/current/userguide/compatibility.html#kotlin.
-def minimumGradleVersion = "9.0.0"
+// HEY! If you update the minimum-supported Gradle version check to see if the Kotlin language version or
+// Java targets below can be bumped. See https://docs.gradle.org/current/userguide/compatibility.html.
+def minimumGradleVersion = "8.12"
 configurations.apiElements {
   attributes {
     attribute(
       GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
       objects.named(GradlePluginApiVersion, minimumGradleVersion)
     )
+  }
+}
+
+tasks.withType(JavaCompile).configureEach { task ->
+  task.sourceCompatibility = '11'
+  task.targetCompatibility = '11'
+}
+
+tasks.withType(KotlinJvmCompile).configureEach { task ->
+  task.compilerOptions {
+    // Ensure compatibility with old Gradle versions. Keep in sync with the Gradle attribute.
+    apiVersion = KotlinVersion.KOTLIN_1_8
+    languageVersion = KotlinVersion.KOTLIN_1_8
+    jvmTarget = JvmTarget.JVM_11
+    jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
   }
 }
 

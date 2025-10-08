@@ -362,7 +362,7 @@ class LicenseePluginFixtureTest(
     File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
     return GradleRunner.create()
       .apply {
-        if (gradleVersion != "latest") {
+        if (gradleVersion != LATEST_GRADLE_VERSION) {
           withGradleVersion(gradleVersion)
         }
       }
