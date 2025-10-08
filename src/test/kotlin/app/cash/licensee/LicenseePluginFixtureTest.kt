@@ -36,7 +36,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(TestParameterInjector::class)
-class LicenseePluginFixtureTest {
+class LicenseePluginFixtureTest(
+  @param:TestParameter(LATEST_GRADLE_VERSION, MINIMUM_GRADLE_VERSION)
+  private val gradleVersion: String,
+) {
   @Test fun success(
     @TestParameter(
       "artifact-with-classifier",
@@ -132,12 +135,7 @@ class LicenseePluginFixtureTest {
     assertExpectedFiles(fixtureDir)
 
     // Ensure up-to-date functionality works.
-    val secondRun = GradleRunner.create()
-      .withProjectDir(fixtureDir)
-      .withDebug(true) // Run in-process
-      .withArguments("licensee", "--stacktrace", "--configuration-cache", versionProperty)
-      .forwardOutput()
-      .build()
+    val secondRun = createRunner(fixtureDir, "licensee").build()
     secondRun.tasks.filter { it.path.contains(":licensee") }.forEach {
       assertEquals("Second invocation of ${it.path}", UP_TO_DATE, it.outcome)
     }
@@ -152,12 +150,7 @@ class LicenseePluginFixtureTest {
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
 
-    GradleRunner.create()
-      .withProjectDir(fixtureDir)
-      .withDebug(true) // Run in-process
-      .withArguments("clean", "licenseeFoo", "--configuration-cache", versionProperty)
-      .forwardOutput()
-      .build()
+    createRunner(fixtureDir, "clean", "licenseeFoo").build()
     assertExpectedFiles(fixtureDir)
   }
 
@@ -169,12 +162,7 @@ class LicenseePluginFixtureTest {
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
 
-    GradleRunner.create()
-      .withProjectDir(fixtureDir)
-      .withDebug(true) // Run in-process
-      .withArguments("clean", "myCopy", "--configuration-cache", versionProperty)
-      .forwardOutput()
-      .build()
+    createRunner(fixtureDir, "clean", "myCopy").build()
     assertExpectedFiles(fixtureDir)
   }
 
@@ -222,7 +210,7 @@ class LicenseePluginFixtureTest {
     @TestParameter("bundle-android-asset") fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
-    createRunner(fixtureDir, "assemble").build()
+    createRunner(fixtureDir, "clean", "assemble").build()
     assertExpectedFiles(fixtureDir)
 
     // Ensure the asset made it into the APK at the expected relative path.
@@ -237,7 +225,7 @@ class LicenseePluginFixtureTest {
     @TestParameter("bundle-android-asset-with-custom-asset-file") fixtureName: String,
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
-    createRunner(fixtureDir, "assemble").build()
+    createRunner(fixtureDir, "clean", "assemble").build()
     assertExpectedFiles(fixtureDir)
 
     // Ensure the asset made it into the APK at the expected relative path.
@@ -366,17 +354,21 @@ class LicenseePluginFixtureTest {
     assertThat(actualDirs).isEqualTo(expectedDirs)
   }
 
-  private fun createRunner(fixtureDir: File, vararg tasks: String = arrayOf("licensee")): GradleRunner {
+  private fun createRunner(
+    fixtureDir: File,
+    vararg tasks: String = arrayOf("clean", "licensee"),
+  ): GradleRunner {
     val gradleRoot = File(fixtureDir, "gradle").also { it.mkdir() }
     File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
-    val androidSdkFile = File("local.properties")
-    if (androidSdkFile.exists()) {
-      androidSdkFile.copyTo(File(fixtureDir, "local.properties"), overwrite = true)
-    }
     return GradleRunner.create()
+      .apply {
+        if (gradleVersion != "latest") {
+          withGradleVersion(gradleVersion)
+        }
+      }
       .withProjectDir(fixtureDir)
       .withDebug(true) // Run in-process
-      .withArguments("clean", *tasks, "--stacktrace", "--continue", "--configuration-cache", versionProperty)
+      .withArguments(*tasks, "--stacktrace", "--continue", "--configuration-cache", VERSION_PROPERTY)
       .forwardOutput()
   }
 
@@ -399,7 +391,8 @@ class LicenseePluginFixtureTest {
 }
 
 private val fixturesDir = File("src/test/fixtures")
-private val versionProperty = "-PlicenseeVersion=${System.getProperty("licenseeVersion")!!}"
+private const val VERSION_PROPERTY = "-PlicenseeVersion=$LICENSEE_VERSION"
+private const val LATEST_GRADLE_VERSION = "latest"
 
 /**
  * TODO: remove this after https://github.com/willowtreeapps/assertk/issues/515 is fixed.
