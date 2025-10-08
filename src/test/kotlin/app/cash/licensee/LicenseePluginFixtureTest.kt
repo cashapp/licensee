@@ -358,8 +358,6 @@ class LicenseePluginFixtureTest(
     fixtureDir: File,
     vararg tasks: String = arrayOf("clean", "licensee"),
   ): GradleRunner {
-    val gradleRoot = File(fixtureDir, "gradle").also { it.mkdir() }
-    File("gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
     return GradleRunner.create()
       .apply {
         if (gradleVersion != LATEST_GRADLE_VERSION) {
@@ -368,7 +366,7 @@ class LicenseePluginFixtureTest(
       }
       .withProjectDir(fixtureDir)
       .withDebug(true) // Run in-process
-      .withArguments(*tasks, "--stacktrace", "--continue", "--configuration-cache", VERSION_PROPERTY)
+      .withArguments(*tasks, "--stacktrace", "--continue", "--configuration-cache", VERSION_PROPERTY, VALIDATE_KOTLIN_METADATA)
       .forwardOutput()
   }
 
@@ -393,6 +391,7 @@ class LicenseePluginFixtureTest(
 private val fixturesDir = File("src/test/fixtures")
 private const val VERSION_PROPERTY = "-PlicenseeVersion=$LICENSEE_VERSION"
 private const val LATEST_GRADLE_VERSION = "latest"
+private const val VALIDATE_KOTLIN_METADATA = "-Porg.gradle.kotlin.dsl.skipMetadataVersionCheck=false"
 
 /**
  * TODO: remove this after https://github.com/willowtreeapps/assertk/issues/515 is fixed.
