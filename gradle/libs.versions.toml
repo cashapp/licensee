@@ -10,7 +10,7 @@ junit = "junit:junit:4.13.2"
 assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
 testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:1.19"
 
-kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1"
 
 maven-modelBuilder = "org.apache.maven:maven-model-builder:3.9.11"
 
@@ -32,5 +32,5 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 spotless = { id = "com.diffplug.spotless", version = "8.0.0" }
 publish = { id = "com.vanniktech.maven.publish", version = "0.34.0" }
 dokka = { id = "org.jetbrains.dokka", version = "2.0.0" }
-poko = { id = "dev.drewhamilton.poko", version = "0.20.0" }
+poko = { id = "dev.drewhamilton.poko", version = "0.18.7" }
 buildConfig = { id = "com.github.gmazzo.buildconfig", version = "5.7.0" }
