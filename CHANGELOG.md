@@ -1,15 +1,21 @@
 # Change Log
 
 ## [Unreleased]
-[Unreleased]: https://github.com/cashapp/licensee/compare/1.14.0...HEAD]
+[Unreleased]: https://github.com/cashapp/licensee/compare/1.14.1...HEAD]
+
+Nothing yet!
+
+
+## [1.14.1] - 2025-10-08
+[1.14.1]: https://github.com/cashapp/licensee/releases/tag/1.14.1
 
 **Changed**
 
-- The minimum-supported Gradle version is now 8.12.
+- The minimum-supported Gradle version is now (tested as) 8.12. What was it before? Entirely unspecified!
 
 
 ## [1.14.0] - 2025-10-07
-[1.14.0]: https://github.com/cashapp/licensee/releases/tag/1.13.0
+[1.14.0]: https://github.com/cashapp/licensee/releases/tag/1.14.0
 
 **New**
 
