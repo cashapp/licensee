@@ -7,7 +7,6 @@ tasks.withType(JavaCompile).configureEach { task ->
   task.targetCompatibility = '11'
 }
 
-
 tasks.withType(GroovyCompile).configureEach { task ->
   task.sourceCompatibility = '11'
   task.targetCompatibility = '11'
