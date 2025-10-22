@@ -6,6 +6,7 @@
 **Changed**
 
 - The minimum-supported Gradle version is now 9.0.
+- Deprecate allowing dependencies using multi-string notations.
 
 
 ## [1.14.1] - 2025-10-08

@@ -108,6 +108,9 @@ interface LicenseeExtension {
    *
    * Reason strings will be included in validation reports.
    */
+  @Deprecated(
+    message = "Allowing dependencies using multi-string notation has been deprecated. Use the other overloads instead.",
+  )
   fun allowDependency(
     groupId: String,
     artifactId: String,
@@ -120,13 +123,13 @@ interface LicenseeExtension {
     options: Action<AllowDependencyOptions> = Action { },
   )
 
+  @Deprecated(
+    message = "Allowing dependencies using multi-string notation has been deprecated. Use the other overloads instead.",
+  )
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun allowDependency(
-    groupId: String,
-    artifactId: String,
-    version: String,
-  ) {
+  fun allowDependency(groupId: String, artifactId: String, version: String) {
+    @Suppress("DEPRECATION") // Remove when we can break binary compatibility.
     allowDependency(groupId, artifactId, version, {})
   }
 
@@ -337,6 +340,7 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
     allowedUrls.put(url, Optional.ofNullable(option.setReason))
   }
 
+  @Suppress("OVERRIDE_DEPRECATION") // Remove when we can break binary compatibility.
   override fun allowDependency(
     groupId: String,
     artifactId: String,
