@@ -80,11 +80,9 @@ interface LicenseeExtension {
    * }
    * ```
    */
-  fun allowUrl(url: String, options: Action<AllowUrlOptions> = Action {})
+  fun allowUrl(url: String, options: Action<AllowUrlOptions>)
 
-  /** @suppress */
-  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun allowUrl(url: String) = allowUrl(url, {})
+  fun allowUrl(url: String) = allowUrl(url = url, options = {})
 
   /**
    * Allow an artifact with a specific groupId, artifactId, and version. This is useful for
@@ -113,24 +111,20 @@ interface LicenseeExtension {
     groupId: String,
     artifactId: String,
     version: String,
-    options: Action<AllowDependencyOptions> = Action {},
+    options: Action<AllowDependencyOptions>,
   )
 
   fun allowDependency(
     dependencyProvider: Provider<out Dependency>,
-    options: Action<AllowDependencyOptions> = Action {},
+    options: Action<AllowDependencyOptions>,
   )
 
-  /** @suppress */
-  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun allowDependency(groupId: String, artifactId: String, version: String) {
-    allowDependency(groupId, artifactId, version, {})
+    allowDependency(groupId = groupId, artifactId = artifactId, version = version, options = {})
   }
 
-  /** @suppress */
-  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun allowDependency(dependencyProvider: Provider<out Dependency>) {
-    allowDependency(dependencyProvider, {})
+    allowDependency(dependencyProvider = dependencyProvider, options = {})
   }
 
   /**
@@ -175,26 +169,20 @@ interface LicenseeExtension {
    */
   fun ignoreDependencies(
     groupId: String,
-    artifactId: String? = null,
-    options: Action<IgnoreDependencyOptions> = Action {},
+    artifactId: String?,
+    options: Action<IgnoreDependencyOptions>,
   )
 
-  /** @suppress */
-  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun ignoreDependencies(groupId: String) {
-    ignoreDependencies(groupId, options = {})
+    ignoreDependencies(groupId = groupId, artifactId = null, options = {})
   }
 
-  /** @suppress */
-  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun ignoreDependencies(groupId: String, options: Action<IgnoreDependencyOptions>) {
     ignoreDependencies(groupId = groupId, artifactId = null, options = options)
   }
 
-  /** @suppress */
-  @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun ignoreDependencies(groupId: String, artifactId: String) {
-    ignoreDependencies(groupId, artifactId, {})
+    ignoreDependencies(groupId = groupId, artifactId = artifactId, options = {})
   }
 
   /**
