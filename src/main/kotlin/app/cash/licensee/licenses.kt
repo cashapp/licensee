@@ -51,7 +51,9 @@ private val detailsComparator =
 
 private fun PomLicense.toSpdx(): List<SpdxLicense> = when {
   url != null -> {
-    val licenses = SpdxId.findByUrl(url)
+    val licenses = SpdxId.findByUrl(url).ifEmpty {
+      SpdxId.findByUrl(normalizeUrl(url))
+    }
     licenses.map { license ->
       license.toSpdxLicense()
     }
