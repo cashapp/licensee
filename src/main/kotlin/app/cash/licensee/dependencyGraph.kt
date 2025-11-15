@@ -199,8 +199,10 @@ internal fun loadPomInfo(
     when (parentScm?.childScmUrlInheritAppendPath?.toBoolean()) {
       // No opt-out, use pom first, then parent pom because we don't want to use the /artifactId.
       null -> pomScm?.url?.removeSuffix("/${pom.artifactId}") ?: parentScm?.url
+
       // Explicit opt-out, so use the parent url.
       false -> parentScm.url
+
       // Explicit opt-in, the model already appends the path.
       true -> pomScm?.url
     }
