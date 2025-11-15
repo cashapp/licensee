@@ -120,14 +120,17 @@ abstract class LicenseeTask : DefaultTask() {
         return FileModelSource(pomFile)
       }
 
-      override fun resolveModel(groupId: String, artifactId: String, version: String): ModelSource2 =
-        resolve(DependencyCoordinates(groupId, artifactId, version))
+      override fun resolveModel(groupId: String, artifactId: String, version: String): ModelSource2 {
+        return resolve(DependencyCoordinates(groupId, artifactId, version))
+      }
 
-      override fun resolveModel(parent: Parent): ModelSource2 =
-        resolve(DependencyCoordinates(parent.groupId, parent.artifactId, parent.version))
+      override fun resolveModel(parent: Parent): ModelSource2 {
+        return resolve(DependencyCoordinates(parent.groupId, parent.artifactId, parent.version))
+      }
 
-      override fun resolveModel(dependency: Dependency): ModelSource2 =
-        resolve(DependencyCoordinates(dependency.groupId, dependency.artifactId, dependency.version))
+      override fun resolveModel(dependency: Dependency): ModelSource2 {
+        return resolve(DependencyCoordinates(dependency.groupId, dependency.artifactId, dependency.version))
+      }
 
       override fun addRepository(repository: Repository) { }
       override fun addRepository(repository: Repository, replace: Boolean) { }

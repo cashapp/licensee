@@ -56,6 +56,7 @@ private fun PomLicense.toSpdx(): List<SpdxLicense> = when {
       license.toSpdxLicense()
     }
   }
+
   name != null -> {
     // Only fallback to name-based matching if the URL is null.
     val license = SpdxId.findByIdentifier(name)
@@ -65,6 +66,7 @@ private fun PomLicense.toSpdx(): List<SpdxLicense> = when {
       emptyList()
     }
   }
+
   else -> emptyList()
 }
 
