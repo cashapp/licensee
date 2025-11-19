@@ -16,7 +16,7 @@
 package app.cash.licensee
 
 internal fun normalizeLicenseInfo(
-  coordinateToPomInfo: Map<DependencyCoordinates, PomInfo>,
+  coordinateToPomInfo: Map<DependencyCoordinates, PomInfo>
 ): List<ArtifactDetail> {
   val artifactDetails = mutableListOf<ArtifactDetail>()
   for ((id, pomInfo) in coordinateToPomInfo) {
@@ -31,15 +31,16 @@ internal fun normalizeLicenseInfo(
       }
     }
 
-    artifactDetails += ArtifactDetail(
-      id.group,
-      id.artifact,
-      id.version,
-      pomInfo.name,
-      spdxLicenses,
-      unknownLicenses,
-      pomInfo.scm?.url?.let(::ArtifactScm),
-    )
+    artifactDetails +=
+      ArtifactDetail(
+        id.group,
+        id.artifact,
+        id.version,
+        pomInfo.name,
+        spdxLicenses,
+        unknownLicenses,
+        pomInfo.scm?.url?.let(::ArtifactScm),
+      )
   }
 
   artifactDetails.sortWith(detailsComparator)
@@ -49,29 +50,24 @@ internal fun normalizeLicenseInfo(
 private val detailsComparator =
   compareBy(ArtifactDetail::groupId, ArtifactDetail::artifactId, ArtifactDetail::version)
 
-private fun PomLicense.toSpdx(): List<SpdxLicense> = when {
-  url != null -> {
-    val licenses = SpdxId.findByUrl(url)
-    licenses.map { license ->
-      license.toSpdxLicense()
+private fun PomLicense.toSpdx(): List<SpdxLicense> =
+  when {
+    url != null -> {
+      val licenses = SpdxId.findByUrl(url)
+      licenses.map { license -> license.toSpdxLicense() }
     }
+
+    name != null -> {
+      // Only fallback to name-based matching if the URL is null.
+      val license = SpdxId.findByIdentifier(name)
+      if (license != null) {
+        listOf(license.toSpdxLicense())
+      } else {
+        emptyList()
+      }
+    }
+
+    else -> emptyList()
   }
 
-  name != null -> {
-    // Only fallback to name-based matching if the URL is null.
-    val license = SpdxId.findByIdentifier(name)
-    if (license != null) {
-      listOf(license.toSpdxLicense())
-    } else {
-      emptyList()
-    }
-  }
-
-  else -> emptyList()
-}
-
-internal fun SpdxId.toSpdxLicense() = SpdxLicense(
-  identifier = id,
-  name = name,
-  url = url,
-)
+internal fun SpdxId.toSpdxLicense() = SpdxLicense(identifier = id, name = name, url = url)

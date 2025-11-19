@@ -56,49 +56,36 @@ import org.gradle.api.tasks.TaskAction
 
 @CacheableTask
 abstract class LicenseeTask : DefaultTask() {
-  @get:Input
-  internal abstract val dependencyConfig: Property<DependencyConfig>
+  @get:Input internal abstract val dependencyConfig: Property<DependencyConfig>
 
-  @get:Input
-  internal abstract val validationConfig: Property<ValidationConfig>
+  @get:Input internal abstract val validationConfig: Property<ValidationConfig>
 
-  @get:Input
-  internal abstract val violationAction: Property<ViolationAction>
+  @get:Input internal abstract val violationAction: Property<ViolationAction>
 
-  @get:Input
-  internal abstract val unusedAction: Property<UnusedAction>
+  @get:Input internal abstract val unusedAction: Property<UnusedAction>
 
-  @get:Input
-  internal abstract val coordinatesToPomInfo: MapProperty<DependencyCoordinates, PomInfo>
+  @get:Input internal abstract val coordinatesToPomInfo: MapProperty<DependencyCoordinates, PomInfo>
 
   fun configurationToCheck(configuration: Configuration) {
     loadDependenciesFromConfiguration(configuration.incoming.resolutionResult.rootComponent)
   }
 
   fun configurationToCheck(configuration: Provider<Configuration>) {
-    loadDependenciesFromConfiguration(configuration.flatMap { it.incoming.resolutionResult.rootComponent })
+    loadDependenciesFromConfiguration(
+      configuration.flatMap { it.incoming.resolutionResult.rootComponent }
+    )
   }
 
   private fun loadDependenciesFromConfiguration(root: Provider<ResolvedComponentResult>) {
     val dependencies = project.dependencies
     val configurations = project.configurations
-    val pomInfos: Provider<Map<DependencyCoordinates, PomInfo>> = root.zip(dependencyConfig) { root, depConfig ->
-      val directDependencies = loadDependencyCoordinates(
-        logger,
-        root,
-        depConfig,
-      )
-      val directPomFiles = directDependencies.coordinates.fetchPomFiles(
-        root.variants,
-        dependencies,
-        configurations,
-      )
-      directPomFiles.getPomInfo(
-        root.variants,
-        dependencies,
-        configurations,
-      )
-    }
+    val pomInfos: Provider<Map<DependencyCoordinates, PomInfo>> =
+      root.zip(dependencyConfig) { root, depConfig ->
+        val directDependencies = loadDependencyCoordinates(logger, root, depConfig)
+        val directPomFiles =
+          directDependencies.coordinates.fetchPomFiles(root.variants, dependencies, configurations)
+        directPomFiles.getPomInfo(root.variants, dependencies, configurations)
+      }
 
     this.coordinatesToPomInfo.set(pomInfos)
   }
@@ -109,46 +96,53 @@ abstract class LicenseeTask : DefaultTask() {
     configurations: ConfigurationContainer,
   ): Map<DependencyCoordinates, PomInfo> {
     val builder = DefaultModelBuilderFactory().newInstance()
-    val resolver = object : ModelResolver {
-      fun resolve(dependencyCoordinates: DependencyCoordinates): FileModelSource {
-        val pomFile =
-          setOf(dependencyCoordinates).fetchPomFiles(
-            variants,
-            dependencies,
-            configurations,
-          ).single().pomFile
-        return FileModelSource(pomFile)
-      }
+    val resolver =
+      object : ModelResolver {
+        fun resolve(dependencyCoordinates: DependencyCoordinates): FileModelSource {
+          val pomFile =
+            setOf(dependencyCoordinates)
+              .fetchPomFiles(variants, dependencies, configurations)
+              .single()
+              .pomFile
+          return FileModelSource(pomFile)
+        }
 
-      override fun resolveModel(groupId: String, artifactId: String, version: String): ModelSource2 {
-        return resolve(DependencyCoordinates(groupId, artifactId, version))
-      }
+        override fun resolveModel(
+          groupId: String,
+          artifactId: String,
+          version: String,
+        ): ModelSource2 {
+          return resolve(DependencyCoordinates(groupId, artifactId, version))
+        }
 
-      override fun resolveModel(parent: Parent): ModelSource2 {
-        return resolve(DependencyCoordinates(parent.groupId, parent.artifactId, parent.version))
-      }
+        override fun resolveModel(parent: Parent): ModelSource2 {
+          return resolve(DependencyCoordinates(parent.groupId, parent.artifactId, parent.version))
+        }
 
-      override fun resolveModel(dependency: Dependency): ModelSource2 {
-        return resolve(DependencyCoordinates(dependency.groupId, dependency.artifactId, dependency.version))
-      }
+        override fun resolveModel(dependency: Dependency): ModelSource2 {
+          return resolve(
+            DependencyCoordinates(dependency.groupId, dependency.artifactId, dependency.version)
+          )
+        }
 
-      override fun addRepository(repository: Repository) { }
-      override fun addRepository(repository: Repository, replace: Boolean) { }
-      override fun newCopy(): ModelResolver = this
-    }
+        override fun addRepository(repository: Repository) {}
+
+        override fun addRepository(repository: Repository, replace: Boolean) {}
+
+        override fun newCopy(): ModelResolver = this
+      }
 
     return associate { (coordinates, file) ->
-      val req = DefaultModelBuildingRequest().apply {
-        isProcessPlugins = false
-        pomFile = file
-        isTwoPhaseBuilding = true
-        modelResolver = resolver
-        validationLevel = ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL
-      }
+      val req =
+        DefaultModelBuildingRequest().apply {
+          isProcessPlugins = false
+          pomFile = file
+          isTwoPhaseBuilding = true
+          modelResolver = resolver
+          validationLevel = ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL
+        }
       val result = builder.build(req)
-      coordinates to loadPomInfo(result.effectiveModel) { modelId ->
-        result.getRawModel(modelId)
-      }
+      coordinates to loadPomInfo(result.effectiveModel) { modelId -> result.getRawModel(modelId) }
     }
   }
 
@@ -157,46 +151,50 @@ abstract class LicenseeTask : DefaultTask() {
     dependencies: DependencyHandler,
     configurations: ConfigurationContainer,
   ): List<DependencyCoordinatesWithPomFile> {
-    val pomDependencies = map {
-      dependencies.create(it.pomCoordinate())
-    }.toTypedArray()
+    val pomDependencies = map { dependencies.create(it.pomCoordinate()) }.toTypedArray()
 
-    val withVariants = configurations.detachedConfiguration(*pomDependencies).apply {
-      for (variant in variants) {
-        attributes {
-          val variantAttrs = variant.attributes
-          for (attrs in variantAttrs.keySet()) {
-            @Suppress("UNCHECKED_CAST")
-            it.attribute(attrs as Attribute<Any>, variantAttrs.getAttribute(attrs)!!)
+    val withVariants =
+      configurations
+        .detachedConfiguration(*pomDependencies)
+        .apply {
+          for (variant in variants) {
+            attributes {
+              val variantAttrs = variant.attributes
+              for (attrs in variantAttrs.keySet()) {
+                @Suppress("UNCHECKED_CAST")
+                it.attribute(attrs as Attribute<Any>, variantAttrs.getAttribute(attrs)!!)
+              }
+            }
           }
         }
-      }
-    }.artifacts()
+        .artifacts()
 
     val withoutVariants = configurations.detachedConfiguration(*pomDependencies).artifacts()
 
-    return (withVariants + withoutVariants).map {
-      // Cast is safe because all resolved artifacts are pom files.
-      val coordinates = (it.id.componentIdentifier as ModuleComponentIdentifier).toDependencyCoordinates()
-      DependencyCoordinatesWithPomFile(coordinates, it.file)
-    }.distinctBy { it.dependencyCoordinates }
+    return (withVariants + withoutVariants)
+      .map {
+        // Cast is safe because all resolved artifacts are pom files.
+        val coordinates =
+          (it.id.componentIdentifier as ModuleComponentIdentifier).toDependencyCoordinates()
+        DependencyCoordinatesWithPomFile(coordinates, it.file)
+      }
+      .distinctBy { it.dependencyCoordinates }
   }
 
-  private fun Configuration.artifacts() = resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap { it.allModuleArtifacts }
+  private fun Configuration.artifacts() =
+    resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap {
+      it.allModuleArtifacts
+    }
 
-  @get:OutputDirectory
-  abstract val outputDir: DirectoryProperty
+  @get:OutputDirectory abstract val outputDir: DirectoryProperty
 
-  @Internal
-  val jsonOutput: Provider<RegularFile> = outputDir.file("artifacts.json")
+  @Internal val jsonOutput: Provider<RegularFile> = outputDir.file("artifacts.json")
 
-  @Internal
-  val validationOutput: Provider<RegularFile> = outputDir.file("validation.txt")
+  @Internal val validationOutput: Provider<RegularFile> = outputDir.file("validation.txt")
 
   private val logger: Logger = Logging.getLogger(LicenseeTask::class.java)
 
-  @Internal
-  override fun getLogger() = logger
+  @Internal override fun getLogger() = logger
 
   @TaskAction
   fun execute() {
@@ -220,7 +218,7 @@ abstract class LicenseeTask : DefaultTask() {
             append(artifactDetail.spdxLicenses)
             append(' ')
             append(artifactDetail.unknownLicenses)
-          },
+          }
         )
       }
     }
@@ -241,7 +239,7 @@ abstract class LicenseeTask : DefaultTask() {
       logger.info("")
       logger.info("Allowed identifiers:")
       logger.info(
-        validationConfig.allowedIdentifiers.ifEmpty { listOf("None") }.joinToString(prefix = "  "),
+        validationConfig.allowedIdentifiers.ifEmpty { listOf("None") }.joinToString(prefix = "  ")
       )
       logger.info("Allowed URLs:")
       if (validationConfig.allowedUrls.isEmpty()) {
@@ -268,7 +266,7 @@ abstract class LicenseeTask : DefaultTask() {
                 append(" because ")
                 append(reason)
               }
-            },
+            }
           )
         }
       }
@@ -289,7 +287,12 @@ abstract class LicenseeTask : DefaultTask() {
 
     val lifecycleLevel = if (violationAction == ViolationAction.IGNORE) INFO else LIFECYCLE
 
-    fun logResult(configResult: ValidationResult, error: LogLevel, warning: LogLevel, prefix: String = "") {
+    fun logResult(
+      configResult: ValidationResult,
+      error: LogLevel,
+      warning: LogLevel,
+      prefix: String = "",
+    ) {
       when (configResult) {
         is ValidationResult.Error -> {
           val message = prefix + "ERROR: " + configResult.message
@@ -313,7 +316,9 @@ abstract class LicenseeTask : DefaultTask() {
     for (configResult in validationResult.configResults) {
       logResult(configResult, unusedErrorLevel, unusedWarningLevel)
     }
-    if (validationResult.configResults.isNotEmpty() && validationResult.artifactResults.isNotEmpty()) {
+    if (
+      validationResult.configResults.isNotEmpty() && validationResult.artifactResults.isNotEmpty()
+    ) {
       validationReport.appendLine()
       // We know these are always at warning or error level, so use lifecycle for space.
       if (unusedWarningLevel > INFO || unusedErrorLevel > INFO || logger.isInfoEnabled) {
@@ -355,20 +360,12 @@ private data class DependencyCoordinatesWithPomFile(
   val pomFile: File,
 )
 
-internal data class PomInfo(
-  val name: String?,
-  val licenses: Set<PomLicense>,
-  val scm: PomScm?,
-) : Serializable
+internal data class PomInfo(val name: String?, val licenses: Set<PomLicense>, val scm: PomScm?) :
+  Serializable
 
-internal data class PomLicense(
-  val name: String?,
-  val url: String?,
-) : Serializable
+internal data class PomLicense(val name: String?, val url: String?) : Serializable
 
-internal data class PomScm(
-  val url: String?,
-) : Serializable
+internal data class PomScm(val url: String?) : Serializable
 
 private val outputFormat = Json { prettyPrint = true }
 private val listOfArtifactDetail = ListSerializer(ArtifactDetail.serializer())

@@ -41,8 +41,7 @@ abstract class GenerateSpdxIdTask : DefaultTask() {
   @get:PathSensitive(PathSensitivity.RELATIVE)
   abstract val inputJson: RegularFileProperty
 
-  @get:OutputDirectory
-  abstract val generatedSpdx: DirectoryProperty
+  @get:OutputDirectory abstract val generatedSpdx: DirectoryProperty
 
   init {
     group = "generateSpdx"
@@ -68,80 +67,90 @@ private val SpdxId: ClassName = ClassName("app.cash.licensee", "SpdxId")
 private val SpdxIdCompanion: ClassName = SpdxId.nestedClass("Companion")
 
 private val SpdxLicenseJson.identifier: String
-  get() = when (id) {
-    // Special-case IDs which start with a digit:
-    "0BSD" -> "ZeroBSD"
-    "3D-Slicer-1.0" -> "ThreeD_Slicer_10"
-    else -> {
-      id
-        .replace("-", "_")
-        .replace(".", "")
-        .replace("+", "Plus")
+  get() =
+    when (id) {
+      // Special-case IDs which start with a digit:
+      "0BSD" -> "ZeroBSD"
+      "3D-Slicer-1.0" -> "ThreeD_Slicer_10"
+      else -> {
+        id.replace("-", "_").replace(".", "").replace("+", "Plus")
+      }
     }
-  }
 
-private fun SpdxLicenses.addSpdxIdInterface(): TypeSpec = TypeSpec.classBuilder("SpdxId").apply {
-  addAnnotation(ClassName("dev.drewhamilton.poko", "Poko"))
+private fun SpdxLicenses.addSpdxIdInterface(): TypeSpec =
+  TypeSpec.classBuilder("SpdxId")
+    .apply {
+      addAnnotation(ClassName("dev.drewhamilton.poko", "Poko"))
 
-  primaryConstructor(
-    FunSpec.constructorBuilder()
-      .addParameter("id", STRING)
-      .addParameter("name", STRING)
-      .addParameter("url", STRING)
-      .build(),
-  )
-  addProperty(PropertySpec.builder("id", STRING).initializer("id").build())
-  addProperty(PropertySpec.builder("name", STRING).initializer("name").build())
-  addProperty(PropertySpec.builder("url", STRING).initializer("url").build())
-  addSuperinterface(java.io.Serializable::class)
+      primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("id", STRING)
+          .addParameter("name", STRING)
+          .addParameter("url", STRING)
+          .build()
+      )
+      addProperty(PropertySpec.builder("id", STRING).initializer("id").build())
+      addProperty(PropertySpec.builder("name", STRING).initializer("name").build())
+      addProperty(PropertySpec.builder("url", STRING).initializer("url").build())
+      addSuperinterface(java.io.Serializable::class)
 
-  addType(spdxIdCompanion())
-}.build()
-
-private fun SpdxLicenses.spdxIdCompanion(): TypeSpec = TypeSpec.companionObjectBuilder().apply {
-  for ((_, license) in identifierToLicense) {
-    addProperty(
-      PropertySpec.builder(license.identifier, SpdxId)
-        .addAnnotation(JvmField::class)
-        .addKdoc(license.name)
-        .initializer("%T(%S, %S, %S)", SpdxId, license.id, license.name, license.targetUrl)
-        .build(),
-    )
-  }
-
-  addFunction(findByIdentifier())
-  addFunction(findByUrl())
-}.build()
-
-private fun SpdxLicenses.findByIdentifier(): FunSpec = FunSpec.builder("findByIdentifier").apply {
-  addAnnotation(JvmStatic::class)
-  addParameter("id", STRING)
-  returns(SpdxId.copy(nullable = true))
-
-  beginControlFlow("return when (id)")
-  for ((_, license) in identifierToLicense) {
-    addCode("%S -> %M\n", license.id, SpdxIdCompanion.member(license.identifier))
-  }
-  addCode("else -> null\n")
-  endControlFlow()
-}.build()
-
-private fun SpdxLicenses.findByUrl(): FunSpec = FunSpec.builder("findByUrl").apply {
-  addParameter("url", STRING)
-  addModifiers(KModifier.INTERNAL)
-  returns(LIST.parameterizedBy(SpdxId))
-
-  beginControlFlow("return when (url)")
-  for ((urls, licenses) in simplified) {
-    for (url in urls) {
-      addCode("%S,\n", url)
+      addType(spdxIdCompanion())
     }
-    addCode(" -> listOf(")
-    for (license in licenses) {
-      addCode("\n%M,", SpdxIdCompanion.member(license.identifier))
+    .build()
+
+private fun SpdxLicenses.spdxIdCompanion(): TypeSpec =
+  TypeSpec.companionObjectBuilder()
+    .apply {
+      for ((_, license) in identifierToLicense) {
+        addProperty(
+          PropertySpec.builder(license.identifier, SpdxId)
+            .addAnnotation(JvmField::class)
+            .addKdoc(license.name)
+            .initializer("%T(%S, %S, %S)", SpdxId, license.id, license.name, license.targetUrl)
+            .build()
+        )
+      }
+
+      addFunction(findByIdentifier())
+      addFunction(findByUrl())
     }
-    addCode("\n)\n")
-  }
-  addCode("else -> emptyList()\n")
-  endControlFlow()
-}.build()
+    .build()
+
+private fun SpdxLicenses.findByIdentifier(): FunSpec =
+  FunSpec.builder("findByIdentifier")
+    .apply {
+      addAnnotation(JvmStatic::class)
+      addParameter("id", STRING)
+      returns(SpdxId.copy(nullable = true))
+
+      beginControlFlow("return when (id)")
+      for ((_, license) in identifierToLicense) {
+        addCode("%S -> %M\n", license.id, SpdxIdCompanion.member(license.identifier))
+      }
+      addCode("else -> null\n")
+      endControlFlow()
+    }
+    .build()
+
+private fun SpdxLicenses.findByUrl(): FunSpec =
+  FunSpec.builder("findByUrl")
+    .apply {
+      addParameter("url", STRING)
+      addModifiers(KModifier.INTERNAL)
+      returns(LIST.parameterizedBy(SpdxId))
+
+      beginControlFlow("return when (url)")
+      for ((urls, licenses) in simplified) {
+        for (url in urls) {
+          addCode("%S,\n", url)
+        }
+        addCode(" -> listOf(")
+        for (license in licenses) {
+          addCode("\n%M,", SpdxIdCompanion.member(license.identifier))
+        }
+        addCode("\n)\n")
+      }
+      addCode("else -> emptyList()\n")
+      endControlFlow()
+    }
+    .build()

@@ -47,9 +47,10 @@ class LicenseePlugin : Plugin<Project> {
       it.unusedAction.convention(extension.unusedAction)
 
       it.outputDir.convention(
-        project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(
-          REPORT_FOLDER,
-        ),
+        project.extensions
+          .getByType(ReportingExtension::class.java)
+          .baseDirectory
+          .dir(REPORT_FOLDER)
       )
     }
 
@@ -57,7 +58,8 @@ class LicenseePlugin : Plugin<Project> {
     // Note: org.jetbrains.kotlin.jvm applies java so we only need to look for the latter.
     project.pluginManager.withPlugin("org.gradle.java") {
       // Special case: KMP with JVM withJava():
-      // withKotlinMultiPlatformPlugin did already run, so the jvm target is already set, ignore another setup.
+      // withKotlinMultiPlatformPlugin did already run, so the jvm target is already set, ignore
+      // another setup.
       if (!project.pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
         configureJavaPlugin(project)
       }
@@ -67,7 +69,11 @@ class LicenseePlugin : Plugin<Project> {
       configureJavaPlugin(project)
     }
 
-    withKotlinMultiPlatformPlugin(project, withAndroid = false, extension = extension) // see android logic below
+    withKotlinMultiPlatformPlugin(
+      project,
+      withAndroid = false,
+      extension = extension,
+    ) // see android logic below
 
     project.pluginManager.withPlugin("com.android.application") {
       configureAndroidPlugin(project, extension)
@@ -81,21 +87,19 @@ class LicenseePlugin : Plugin<Project> {
 
     project.afterEvaluate {
       require(BASE_TASK_NAME in project.tasks.names) {
-        val name = if (project.path == ":") {
-          "root project"
-        } else {
-          "project ${project.path}"
-        }
+        val name =
+          if (project.path == ":") {
+            "root project"
+          } else {
+            "project ${project.path}"
+          }
         "'app.cash.licensee' requires compatible language/platform plugin to be applied ($name)"
       }
     }
   }
 }
 
-private fun configureAndroidPlugin(
-  project: Project,
-  extension: MutableLicenseeExtension,
-) {
+private fun configureAndroidPlugin(project: Project, extension: MutableLicenseeExtension) {
   val rootTask = registerRootTask(project, "all Android variants")
   configureAndroidVariants(project, rootTask, extension)
   withKotlinMultiPlatformPlugin(project, withAndroid = true, extension)
@@ -115,23 +119,19 @@ private fun withKotlinMultiPlatformPlugin(
   }
 }
 
-private fun registerRootTask(
-  project: Project,
-  target: String,
-): TaskProvider<Task> {
-  val rootTask = if (BASE_TASK_NAME in project.tasks.names) {
-    project.tasks.named(BASE_TASK_NAME)
-  } else {
-    project.tasks.register(BASE_TASK_NAME)
-  }
+private fun registerRootTask(project: Project, target: String): TaskProvider<Task> {
+  val rootTask =
+    if (BASE_TASK_NAME in project.tasks.names) {
+      project.tasks.named(BASE_TASK_NAME)
+    } else {
+      project.tasks.register(BASE_TASK_NAME)
+    }
 
   rootTask.configure {
     it.group = VERIFICATION_GROUP
     it.description = taskDescription(target)
   }
-  project.tasks.named(CHECK_TASK_NAME).configure {
-    it.dependsOn(rootTask)
-  }
+  project.tasks.named(CHECK_TASK_NAME).configure { it.dependsOn(rootTask) }
   return rootTask
 }
 
@@ -145,19 +145,22 @@ private fun configureAndroidVariants(
     val suffix = variant.name.replaceFirstChar { it.titlecase(ROOT) }
     val taskName = "${BASE_TASK_NAME}Android$suffix"
 
-    val task = project.tasks.configure(taskName) {
-      it.group = VERIFICATION_GROUP
-      it.description = taskDescription("Android ${variant.name} variant")
+    val task =
+      project.tasks.configure(taskName) {
+        it.group = VERIFICATION_GROUP
+        it.description = taskDescription("Android ${variant.name} variant")
 
-      it.configurationToCheck(variant.runtimeConfiguration)
+        it.configurationToCheck(variant.runtimeConfiguration)
 
-      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(REPORT_FOLDER)
-      it.outputDir.set(reportBase.map { it.dir("android$suffix") })
-    }
+        val reportBase =
+          project.extensions
+            .getByType(ReportingExtension::class.java)
+            .baseDirectory
+            .dir(REPORT_FOLDER)
+        it.outputDir.set(reportBase.map { it.dir("android$suffix") })
+      }
 
-    rootTask.configure {
-      it.dependsOn(task)
-    }
+    rootTask.configure { it.dependsOn(task) }
 
     if (extension.bundleAndroidAsset.get()) {
       val capitalizedVariantName = variant.name.replaceFirstChar { it.titlecase(ROOT) }
@@ -178,10 +181,7 @@ private fun configureAndroidVariants(
   }
 }
 
-private fun configureKotlinMultiplatformTargets(
-  project: Project,
-  rootTask: TaskProvider<Task>,
-) {
+private fun configureKotlinMultiplatformTargets(project: Project, rootTask: TaskProvider<Task>) {
   val kotlin = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
   val targets = kotlin.targets
   targets.configureEach { target ->
@@ -193,47 +193,53 @@ private fun configureKotlinMultiplatformTargets(
     }
 
     val suffix = target.name.replaceFirstChar { it.titlecase(ROOT) }
-    val task = project.tasks.configure("$BASE_TASK_NAME$suffix") {
+    val task =
+      project.tasks.configure("$BASE_TASK_NAME$suffix") {
+        it.group = VERIFICATION_GROUP
+        it.description = taskDescription("Kotlin ${target.name} target")
+
+        val compilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        // Fallback to compile dependencies when runtime isn't supported, e.g. Kotlin/Native.
+        val runtimeConfigurationName =
+          compilation.runtimeDependencyConfigurationName
+            ?: compilation.compileDependencyConfigurationName
+
+        val runtimeConfiguration = project.configurations.named(runtimeConfigurationName)
+        it.configurationToCheck(runtimeConfiguration)
+
+        val reportBase =
+          project.extensions
+            .getByType(ReportingExtension::class.java)
+            .baseDirectory
+            .dir(REPORT_FOLDER)
+        it.outputDir.set(reportBase.map { it.dir(target.name) })
+      }
+
+    rootTask.configure { it.dependsOn(task) }
+  }
+}
+
+private fun configureJavaPlugin(project: Project) {
+  val task =
+    project.tasks.configure(BASE_TASK_NAME) {
       it.group = VERIFICATION_GROUP
-      it.description = taskDescription("Kotlin ${target.name} target")
+      it.description = taskDescription()
 
-      val compilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-      // Fallback to compile dependencies when runtime isn't supported, e.g. Kotlin/Native.
-      val runtimeConfigurationName = compilation.runtimeDependencyConfigurationName ?: compilation.compileDependencyConfigurationName
-
-      val runtimeConfiguration = project.configurations.named(runtimeConfigurationName)
-      it.configurationToCheck(runtimeConfiguration)
-
-      val reportBase = project.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(REPORT_FOLDER)
-      it.outputDir.set(reportBase.map { it.dir(target.name) })
+      val configuration = project.configurations.named(RUNTIME_CLASSPATH_CONFIGURATION_NAME)
+      it.configurationToCheck(configuration)
     }
-
-    rootTask.configure {
-      it.dependsOn(task)
-    }
-  }
+  project.tasks.named(CHECK_TASK_NAME).configure { it.dependsOn(task) }
 }
 
-private fun configureJavaPlugin(
-  project: Project,
-) {
-  val task = project.tasks.configure(BASE_TASK_NAME) {
-    it.group = VERIFICATION_GROUP
-    it.description = taskDescription()
-
-    val configuration = project.configurations.named(RUNTIME_CLASSPATH_CONFIGURATION_NAME)
-    it.configurationToCheck(configuration)
+private fun TaskContainer.configure(
+  name: String,
+  config: (LicenseeTask) -> Unit,
+): TaskProvider<LicenseeTask> =
+  if (name in names) {
+    named(name, LicenseeTask::class.java, config)
+  } else {
+    register(name, LicenseeTask::class.java, config)
   }
-  project.tasks.named(CHECK_TASK_NAME).configure {
-    it.dependsOn(task)
-  }
-}
-
-private fun TaskContainer.configure(name: String, config: (LicenseeTask) -> Unit): TaskProvider<LicenseeTask> = if (name in names) {
-  named(name, LicenseeTask::class.java, config)
-} else {
-  register(name, LicenseeTask::class.java, config)
-}
 
 private fun taskDescription(target: String? = null) = buildString {
   append("Run Licensee dependency license validation")

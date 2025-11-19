@@ -34,10 +34,7 @@ internal data class DependencyConfig(
   val ignoredCoordinates: Map<String, Map<String, IgnoredData>>,
 ) : Serializable
 
-internal data class IgnoredData(
-  val reason: String?,
-  val transitive: Boolean,
-) : Serializable
+internal data class IgnoredData(val reason: String?, val transitive: Boolean) : Serializable
 
 internal fun loadDependencyCoordinates(
   logger: Logger,
@@ -60,7 +57,16 @@ internal fun loadDependencyCoordinates(
   }
 
   val coordinates = mutableSetOf<DependencyCoordinates>()
-  loadDependencyCoordinates(logger, root, config, unusedGroupIds, unusedCoordinates, coordinates, mutableSetOf(), depth = 1)
+  loadDependencyCoordinates(
+    logger,
+    root,
+    config,
+    unusedGroupIds,
+    unusedCoordinates,
+    coordinates,
+    mutableSetOf(),
+    depth = 1,
+  )
 
   for (unusedGroupId in unusedGroupIds) {
     warnings += "Dependency ignore for $unusedGroupId is unused"
@@ -77,7 +83,8 @@ internal data class DependencyResolutionResult(
   val configWarnings: List<String>,
 )
 
-internal fun ModuleComponentIdentifier.toDependencyCoordinates() = DependencyCoordinates(group, module, version)
+internal fun ModuleComponentIdentifier.toDependencyCoordinates() =
+  DependencyCoordinates(group, module, version)
 
 private fun loadDependencyCoordinates(
   logger: Logger,
@@ -109,11 +116,12 @@ private fun loadDependencyCoordinates(
         // Assuming flat-dir repository dependency, do nothing.
         ignoreSuffix = " ignoring because flat-dir repository artifact has no metadata"
       } else {
-        val ignoredData = null
-          ?: config.ignoredGroupIds[id.group]
-            ?.also { unusedGroupIds -= id.group }
-          ?: config.ignoredCoordinates[id.group]?.get(id.module)
-            ?.also { unusedCoordinates -= id.group to id.module }
+        val ignoredData =
+          null
+            ?: config.ignoredGroupIds[id.group]?.also { unusedGroupIds -= id.group }
+            ?: config.ignoredCoordinates[id.group]?.get(id.module)?.also {
+              unusedCoordinates -= id.group to id.module
+            }
         if (ignoredData != null) {
           ignoreSuffix = buildString {
             append(" ignoring")
@@ -138,14 +146,12 @@ private fun loadDependencyCoordinates(
   if (logger.isInfoEnabled) {
     logger.info(
       buildString {
-        repeat(depth) {
-          append("  ")
-        }
+        repeat(depth) { append("  ") }
         append(id)
         if (ignoreSuffix != null) {
           append(ignoreSuffix)
         }
-      },
+      }
     )
   }
 
@@ -176,45 +182,46 @@ private fun ResolvedComponentResult.isPlatform(): Boolean {
   val stringAttribute = Attribute.of(CATEGORY_ATTRIBUTE.name, String::class.java)
   val category = singleVariant.attributes.getAttribute(stringAttribute) ?: return false
   return when (category) {
-    ENFORCED_PLATFORM, REGULAR_PLATFORM -> true
+    ENFORCED_PLATFORM,
+    REGULAR_PLATFORM -> true
     else -> false
   }
 }
 
-internal fun loadPomInfo(
-  pom: Model,
-  getRawModel: (String) -> Model?,
-): PomInfo {
-  val parentRawModel = pom.parent?.let {
-    getRawModel("${it.groupId}:${it.artifactId}:${it.version}")
-  }
+internal fun loadPomInfo(pom: Model, getRawModel: (String) -> Model?): PomInfo {
+  val parentRawModel =
+    pom.parent?.let { getRawModel("${it.groupId}:${it.artifactId}:${it.version}") }
   val pomScm: Scm? = pom.scm
-  val url = if (parentRawModel != null) {
-    // https://maven.apache.org/ref/3.6.1/maven-model-builder/
-    // When depending on a parent, Maven adds a /artifactId to the url of the child,
-    // if the pom file does not opt out of this behavior:
-    // <scm child.scm.url.inherit.append.path="false">
-    // We don't want to handle the /artifactId, so we use the parent clean url instead.
-    val parentScm: Scm? = parentRawModel.scm
-    when (parentScm?.childScmUrlInheritAppendPath?.toBoolean()) {
-      // No opt-out, use pom first, then parent pom because we don't want to use the /artifactId.
-      null -> pomScm?.url?.removeSuffix("/${pom.artifactId}") ?: parentScm?.url
+  val url =
+    if (parentRawModel != null) {
+      // https://maven.apache.org/ref/3.6.1/maven-model-builder/
+      // When depending on a parent, Maven adds a /artifactId to the url of the child,
+      // if the pom file does not opt out of this behavior:
+      // <scm child.scm.url.inherit.append.path="false">
+      // We don't want to handle the /artifactId, so we use the parent clean url instead.
+      val parentScm: Scm? = parentRawModel.scm
+      when (parentScm?.childScmUrlInheritAppendPath?.toBoolean()) {
+        // No opt-out, use pom first, then parent pom because we don't want to use the /artifactId.
+        null -> pomScm?.url?.removeSuffix("/${pom.artifactId}") ?: parentScm?.url
 
-      // Explicit opt-out, so use the parent url.
-      false -> parentScm.url
+        // Explicit opt-out, so use the parent url.
+        false -> parentScm.url
 
-      // Explicit opt-in, the model already appends the path.
-      true -> pomScm?.url
+        // Explicit opt-in, the model already appends the path.
+        true -> pomScm?.url
+      }
+    } else {
+      pomScm?.url
     }
-  } else {
-    pomScm?.url
-  }
 
   return PomInfo(
     name = pom.name ?: parentRawModel?.name,
-    licenses = (pom.licenses.takeUnless { it.isEmpty() } ?: parentRawModel?.licenses)?.mapTo(mutableSetOf()) {
-      PomLicense(it.name, it.url)
-    } ?: emptySet(),
+    licenses =
+      (pom.licenses.takeUnless { it.isEmpty() } ?: parentRawModel?.licenses)?.mapTo(
+        mutableSetOf()
+      ) {
+        PomLicense(it.name, it.url)
+      } ?: emptySet(),
     scm = PomScm(url),
   )
 }

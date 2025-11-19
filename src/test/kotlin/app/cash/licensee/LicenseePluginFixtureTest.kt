@@ -38,9 +38,10 @@ import org.junit.runner.RunWith
 @RunWith(TestParameterInjector::class)
 class LicenseePluginFixtureTest(
   @param:TestParameter(LATEST_GRADLE_VERSION, MINIMUM_GRADLE_VERSION)
-  private val gradleVersion: String,
+  private val gradleVersion: String
 ) {
-  @Test fun success(
+  @Test
+  fun success(
     @TestParameter(
       "artifact-with-classifier",
       "artifact-with-extension",
@@ -128,7 +129,8 @@ class LicenseePluginFixtureTest(
       "url-allowed-kts",
       "url-missing-name-fallback-is-spdx",
       "url-mapping-to-multiple-licenses",
-    ) fixtureName: String,
+    )
+    fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     createRunner(fixtureDir).build()
@@ -136,17 +138,14 @@ class LicenseePluginFixtureTest(
 
     // Ensure up-to-date functionality works.
     val secondRun = createRunner(fixtureDir, "licensee").build()
-    secondRun.tasks.filter { it.path.contains(":licensee") }.forEach {
-      assertEquals("Second invocation of ${it.path}", UP_TO_DATE, it.outcome)
-    }
+    secondRun.tasks
+      .filter { it.path.contains(":licensee") }
+      .forEach { assertEquals("Second invocation of ${it.path}", UP_TO_DATE, it.outcome) }
   }
 
   @Test
   fun customConfig(
-    @TestParameter(
-      "plugin-java-custom-config",
-      "plugin-java-custom-config-kts",
-    ) fixtureName: String,
+    @TestParameter("plugin-java-custom-config", "plugin-java-custom-config-kts") fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
 
@@ -156,9 +155,7 @@ class LicenseePluginFixtureTest(
 
   @Test
   fun consumeArtifactsJson(
-    @TestParameter(
-      "consume-artifact-json-as-task-input",
-    ) fixtureName: String,
+    @TestParameter("consume-artifact-json-as-task-input") fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
 
@@ -166,7 +163,8 @@ class LicenseePluginFixtureTest(
     assertExpectedFiles(fixtureDir)
   }
 
-  @Test fun failure(
+  @Test
+  fun failure(
     @TestParameter(
       "coordinate-version-mismatch",
       "multiple-not-allowed-reports-all",
@@ -174,183 +172,196 @@ class LicenseePluginFixtureTest(
       "spdx-not-allowed",
       "url-missing-name-fallback-no-match",
       "url-not-allowed",
-    ) fixtureName: String,
+    )
+    fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     createRunner(fixtureDir).buildAndFail()
     assertExpectedFiles(fixtureDir)
   }
 
-  @Test fun transitiveReasonRequired(
+  @Test
+  fun transitiveReasonRequired(
     @TestParameter(
       "ignore-group-artifact-transitive-requires-reason",
       "ignore-group-artifact-transitive-requires-reason-kts",
       "ignore-group-transitive-requires-reason",
       "ignore-group-transitive-requires-reason-kts",
-    ) fixtureName: String,
+    )
+    fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
-    assertThat(result.output).containsMatch(
-      "Transitive dependency ignore on 'com\\.example(:example)?' is dangerous and requires a reason string".toRegex(),
-    )
+    assertThat(result.output)
+      .containsMatch(
+        "Transitive dependency ignore on 'com\\.example(:example)?' is dangerous and requires a reason string"
+          .toRegex()
+      )
   }
 
-  @Test fun invalidSpdxFails(
-    @TestParameter("allow-with-invalid-spdx") fixtureName: String,
-  ) {
+  @Test
+  fun invalidSpdxFails(@TestParameter("allow-with-invalid-spdx") fixtureName: String) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
-    assertThat(result.output).contains(
-      "ASDF is not a valid SPDX id.",
-    )
+    assertThat(result.output).contains("ASDF is not a valid SPDX id.")
   }
 
-  @Test fun bundleAndroidAsset(
-    @TestParameter("bundle-android-asset") fixtureName: String,
-  ) {
+  @Test
+  fun bundleAndroidAsset(@TestParameter("bundle-android-asset") fixtureName: String) {
     val fixtureDir = File(fixturesDir, fixtureName)
     createRunner(fixtureDir, "clean", "assemble").build()
     assertExpectedFiles(fixtureDir)
 
     // Ensure the asset made it into the APK at the expected relative path.
-    val apk = fixtureDir.resolve("build/outputs/apk/release/bundle-android-asset-release-unsigned.apk")
+    val apk =
+      fixtureDir.resolve("build/outputs/apk/release/bundle-android-asset-release-unsigned.apk")
     FileSystems.newFileSystem(apk.absoluteFile.toPath(), null as ClassLoader?).use {
       val json = it.rootDirectories.single().resolve("assets/app/cash/licensee/artifacts.json")
       assertThat(json).isRegularFile()
     }
   }
 
-  @Test fun bundleAndroidAssetWithCustomAssetFile(
-    @TestParameter("bundle-android-asset-with-custom-asset-file") fixtureName: String,
+  @Test
+  fun bundleAndroidAssetWithCustomAssetFile(
+    @TestParameter("bundle-android-asset-with-custom-asset-file") fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     createRunner(fixtureDir, "clean", "assemble").build()
     assertExpectedFiles(fixtureDir)
 
     // Ensure the asset made it into the APK at the expected relative path.
-    val apk = fixtureDir.resolve("build/outputs/apk/release/bundle-android-asset-with-custom-asset-file-release-unsigned.apk")
+    val apk =
+      fixtureDir.resolve(
+        "build/outputs/apk/release/bundle-android-asset-with-custom-asset-file-release-unsigned.apk"
+      )
     FileSystems.newFileSystem(apk.absoluteFile.toPath(), null as ClassLoader?).use {
       val json = it.rootDirectories.single().resolve("assets/example/licenses.json")
       assertThat(json).isRegularFile()
     }
   }
 
-  @Test fun pluginMissingOnRootFails(
-    @TestParameter("plugin-missing-on-root-fails") fixtureName: String,
+  @Test
+  fun pluginMissingOnRootFails(@TestParameter("plugin-missing-on-root-fails") fixtureName: String) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir).buildAndFail()
+    assertThat(result.output)
+      .contains(
+        "'app.cash.licensee' requires compatible language/platform plugin to be applied (root project)"
+      )
+  }
+
+  @Test
+  fun pluginMissingOnSubprojectFails(
+    @TestParameter("plugin-missing-on-subproject-fails") fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
-    assertThat(result.output).contains(
-      "'app.cash.licensee' requires compatible language/platform plugin to be applied (root project)",
-    )
+    assertThat(result.output)
+      .contains(
+        "'app.cash.licensee' requires compatible language/platform plugin to be applied (project :some:thing)"
+      )
   }
 
-  @Test fun pluginMissingOnSubprojectFails(
-    @TestParameter("plugin-missing-on-subproject-fails") fixtureName: String,
+  @Test
+  fun allowDependencyWithoutVersionFails(
+    @TestParameter("coordinate-allowed-with-reason-version-catalog-null-version")
+    fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
-    assertThat(result.output).contains(
-      "'app.cash.licensee' requires compatible language/platform plugin to be applied (project :some:thing)",
-    )
+    assertThat(result.output).contains("version was null in allowDependency for exam")
   }
 
-  @Test fun allowDependencyWithoutVersionFails(
-    @TestParameter(
-      "coordinate-allowed-with-reason-version-catalog-null-version",
-    ) fixtureName: String,
-  ) {
-    val fixtureDir = File(fixturesDir, fixtureName)
-    val result = createRunner(fixtureDir).buildAndFail()
-    assertThat(result.output).contains(
-      "version was null in allowDependency for exam",
-    )
-  }
-
-  @Test fun violationsLogged(
-    @TestParameter(
-      "spdx-not-allowed-log",
-      "spdx-not-allowed-log-kts",
-    ) fixtureName: String,
+  @Test
+  fun violationsLogged(
+    @TestParameter("spdx-not-allowed-log", "spdx-not-allowed-log-kts") fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).build()
     assertExpectedFiles(fixtureDir)
-    assertThat(result.output).contains(
-      """
-      |com.example:example:1.0.0
-      | - ERROR: SPDX identifier 'Apache-2.0' is NOT allowed
-      |
-      """.trimMargin(),
-    )
+    assertThat(result.output)
+      .contains(
+        """
+        |com.example:example:1.0.0
+        | - ERROR: SPDX identifier 'Apache-2.0' is NOT allowed
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun violationsIgnored(
-    @TestParameter(
-      "spdx-not-allowed-ignore",
-      "spdx-not-allowed-ignore-kts",
-    ) fixtureName: String,
+  @Test
+  fun violationsIgnored(
+    @TestParameter("spdx-not-allowed-ignore", "spdx-not-allowed-ignore-kts") fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).build()
     assertExpectedFiles(fixtureDir)
-    assertThat(result.output).doesNotContain(
-      """
-      |com.example:example:1.0.0
-      | - ERROR: SPDX identifier 'Apache-2.0' is NOT allowed
-      |
-      """.trimMargin(),
-    )
+    assertThat(result.output)
+      .doesNotContain(
+        """
+        |com.example:example:1.0.0
+        | - ERROR: SPDX identifier 'Apache-2.0' is NOT allowed
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun unusedIgnored(
+  @Test
+  fun unusedIgnored(
     @TestParameter(
       "coordinate-allow-unused-ignored",
       "coordinate-allow-unused-ignored-kts",
       "spdx-allow-unused-ignored",
       "url-allow-unused-ignored",
-    ) fixtureName: String,
+    )
+    fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).build()
     assertExpectedFiles(fixtureDir)
-    assertThat(result.output).doesNotContainMatch(
-      """
-      |WARNING: Allowed .*? is unused
-      """.trimMargin().toRegex(),
-    )
+    assertThat(result.output)
+      .doesNotContainMatch(
+        """
+        |WARNING: Allowed .*? is unused
+        """
+          .trimMargin()
+          .toRegex()
+      )
     assertThat(result.output).doesNotContain("\n\n> Task :licensee")
   }
 
-  @Test fun unusedWarn(
+  @Test
+  fun unusedWarn(
     @TestParameter(
       "coordinate-allow-unused-warn",
       "coordinate-allow-unused-warn-kts",
       "spdx-allow-unused-warn",
       "url-allow-unused-warn",
-    ) fixtureName: String,
+    )
+    fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).build()
     assertExpectedFiles(fixtureDir)
-    assertThat(result.output).containsMatch(
-      """
-      |WARNING: Allowed .*? is unused
-      """.trimMargin().toRegex(),
-    )
+    assertThat(result.output)
+      .containsMatch(
+        """
+        |WARNING: Allowed .*? is unused
+        """
+          .trimMargin()
+          .toRegex()
+      )
   }
 
-  @Test fun allFixturesCovered() {
-    val expectedDirs = javaClass.declaredMethods
-      .filter { it.isAnnotationPresent(Test::class.java) }
-      .filter { it.parameterCount == 1 } // Assume single parameter means test parameter.
-      .flatMap { it.parameters[0].getAnnotation(TestParameter::class.java).value.toList() }
-      .sorted()
-    val actualDirs = fixturesDir.listFiles()!!
-      .filter { it.isDirectory }
-      .map { it.name }
-      .sorted()
+  @Test
+  fun allFixturesCovered() {
+    val expectedDirs =
+      javaClass.declaredMethods
+        .filter { it.isAnnotationPresent(Test::class.java) }
+        .filter { it.parameterCount == 1 } // Assume single parameter means test parameter.
+        .flatMap { it.parameters[0].getAnnotation(TestParameter::class.java).value.toList() }
+        .sorted()
+    val actualDirs = fixturesDir.listFiles()!!.filter { it.isDirectory }.map { it.name }.sorted()
     assertThat(actualDirs).isEqualTo(expectedDirs)
   }
 
@@ -366,7 +377,14 @@ class LicenseePluginFixtureTest(
       }
       .withProjectDir(fixtureDir)
       .withDebug(true) // Run in-process
-      .withArguments(*tasks, "--stacktrace", "--continue", "--configuration-cache", VERSION_PROPERTY, VALIDATE_KOTLIN_METADATA)
+      .withArguments(
+        *tasks,
+        "--stacktrace",
+        "--continue",
+        "--configuration-cache",
+        VERSION_PROPERTY,
+        VALIDATE_KOTLIN_METADATA,
+      )
       .forwardOutput()
   }
 
@@ -391,11 +409,10 @@ class LicenseePluginFixtureTest(
 private val fixturesDir = File("src/test/fixtures")
 private const val VERSION_PROPERTY = "-PlicenseeVersion=$LICENSEE_VERSION"
 private const val LATEST_GRADLE_VERSION = "latest"
-private const val VALIDATE_KOTLIN_METADATA = "-Porg.gradle.kotlin.dsl.skipMetadataVersionCheck=false"
+private const val VALIDATE_KOTLIN_METADATA =
+  "-Porg.gradle.kotlin.dsl.skipMetadataVersionCheck=false"
 
-/**
- * TODO: remove this after https://github.com/willowtreeapps/assertk/issues/515 is fixed.
- */
+/** TODO: remove this after https://github.com/willowtreeapps/assertk/issues/515 is fixed. */
 private fun Assert<CharSequence>.doesNotContainMatch(regex: Regex) = given { actual ->
   if (!regex.containsMatchIn(actual)) return
   expected("to not contain match:${show(regex)} but was:${show(actual)}")
