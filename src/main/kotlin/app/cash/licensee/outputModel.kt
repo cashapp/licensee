@@ -31,23 +31,8 @@ class ArtifactDetail(
   val scm: ArtifactScm? = null,
 )
 
-@Poko
-@Serializable
-class SpdxLicense(
-  val identifier: String,
-  val name: String,
-  val url: String,
-)
+@Poko @Serializable class SpdxLicense(val identifier: String, val name: String, val url: String)
 
-@Poko
-@Serializable
-class UnknownLicense(
-  val name: String?,
-  val url: String?,
-)
+@Poko @Serializable class UnknownLicense(val name: String?, val url: String?)
 
-@Poko
-@Serializable
-class ArtifactScm(
-  val url: String,
-)
+@Poko @Serializable class ArtifactScm(val url: String)

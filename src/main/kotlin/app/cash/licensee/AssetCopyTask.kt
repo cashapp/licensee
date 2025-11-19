@@ -29,21 +29,19 @@ import org.gradle.work.DisableCachingByDefault
 
 @DisableCachingByDefault
 internal abstract class AssetCopyTask : DefaultTask() {
-  @get:OutputDirectory
-  abstract val assetDirectory: DirectoryProperty
+  @get:OutputDirectory abstract val assetDirectory: DirectoryProperty
 
   @get:PathSensitive(PathSensitivity.RELATIVE)
   @get:InputFile
   abstract val inputFile: RegularFileProperty
 
-  @get:Input
-  abstract val outputFilePath: Property<String>
+  @get:Input abstract val outputFilePath: Property<String>
 
   @TaskAction
   fun action() {
-    inputFile.get().asFile.copyTo(
-      target = assetDirectory.dir(outputFilePath).get().asFile,
-      overwrite = true,
-    )
+    inputFile
+      .get()
+      .asFile
+      .copyTo(target = assetDirectory.dir(outputFilePath).get().asFile, overwrite = true)
   }
 }

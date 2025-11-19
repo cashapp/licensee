@@ -22,42 +22,29 @@ internal class SpdxLicenses(
   private val urlToLicense: Map<String, List<SpdxLicenseJson>>,
 ) {
   fun findByIdentifier(id: String): SpdxLicenseJson? = identifierToLicense[id]
+
   fun findByUrl(url: String): List<SpdxLicenseJson>? = urlToLicense[url]
 
   val simplified: List<Pair<List<String>, List<SpdxLicenseJson>>> = urlToLicense.simplify()
 
   companion object {
-    private val format: Json = Json {
-      ignoreUnknownKeys = true
-    }
+    private val format: Json = Json { ignoreUnknownKeys = true }
 
     internal fun parseJson(
       json: String,
       withFallbackUrls: FallbackBuilder.() -> Unit,
     ): SpdxLicenses {
-      val licenses = format.decodeFromString(
-        SpdxLicensesJson.serializer(),
-        json,
-      ).licenses.sortedBy {
-        it.id
-      }
+      val licenses =
+        format.decodeFromString(SpdxLicensesJson.serializer(), json).licenses.sortedBy { it.id }
 
       val identifierToLicense = licenses.associateBy { it.id }
 
       val mapUrls = licenses.mapUrls()
-      val urlToLicense = mapUrls.mapValues {
-        it.value.toList()
-      }
-      val withFallbacks = mapUrls.addFallbackUrls(
-        identifierToLicense,
-        urlToLicense,
-        withFallbackUrls,
-      )
+      val urlToLicense = mapUrls.mapValues { it.value.toList() }
+      val withFallbacks =
+        mapUrls.addFallbackUrls(identifierToLicense, urlToLicense, withFallbackUrls)
 
-      return SpdxLicenses(
-        identifierToLicense,
-        withFallbacks,
-      )
+      return SpdxLicenses(identifierToLicense, withFallbacks)
     }
   }
 }
@@ -84,13 +71,8 @@ internal fun Map<String, List<SpdxLicenseJson>>.addFallbackUrls(
   idToLicense: Map<String, SpdxLicenseJson>,
   urlToLicenses: Map<String, List<SpdxLicenseJson>>,
   action: FallbackBuilder.() -> Unit,
-): Map<String, List<SpdxLicenseJson>> = toMutableMap().apply {
-  FallbackBuilder(
-    idToLicense,
-    urlToLicenses,
-    this,
-  ).action()
-}
+): Map<String, List<SpdxLicenseJson>> =
+  toMutableMap().apply { FallbackBuilder(idToLicense, urlToLicenses, this).action() }
 
 internal class FallbackBuilder(
   private val findByIdentifier: Map<String, SpdxLicenseJson>,
@@ -98,35 +80,35 @@ internal class FallbackBuilder(
   private val result: MutableMap<String, List<SpdxLicenseJson>>,
 ) {
   fun putLicense(vararg spdxIds: String, urls: MutableList<String>.() -> Unit) {
-    val licenses = spdxIds.map {
-      requireNotNull(findByIdentifier[it]) {
-        "No SPDX identifier '$it' in the embedded set"
+    val licenses =
+      spdxIds.map {
+        requireNotNull(findByIdentifier[it]) { "No SPDX identifier '$it' in the embedded set" }
       }
-    }
 
     for (url in buildList(urls)) {
       require(findByUrl[url].orEmpty().isEmpty()) {
         "$url is canonical and does not need to be a fallback"
       }
-      require(result.put(url, licenses) == null) {
-        "$url specified twice"
-      }
+      require(result.put(url, licenses) == null) { "$url specified twice" }
     }
   }
 }
 
-internal fun Map<String, List<SpdxLicenseJson>>.simplify(): List<Pair<List<String>, List<SpdxLicenseJson>>> =
-  entries.groupBy({ it.value }, { it.key }).toList().map {
-    it.second.sorted() to it.first
-  }.sortedBy {
-    it.first.first()
-  }
+internal fun Map<String, List<SpdxLicenseJson>>.simplify():
+  List<Pair<List<String>, List<SpdxLicenseJson>>> =
+  entries
+    .groupBy({ it.value }, { it.key })
+    .toList()
+    .map { it.second.sorted() to it.first }
+    .sortedBy { it.first.first() }
 
-internal val SpdxLicenseJson.targetUrl get() = (otherUrls.firstOrNull() ?: spdxUrl).let { firstUrl ->
-  if (firstUrl.startsWith("http://")) {
-    // Assume an 'https' variant is reachable.
-    "https" + firstUrl.substring(4)
-  } else {
-    firstUrl
-  }
-}
+internal val SpdxLicenseJson.targetUrl
+  get() =
+    (otherUrls.firstOrNull() ?: spdxUrl).let { firstUrl ->
+      if (firstUrl.startsWith("http://")) {
+        // Assume an 'https' variant is reachable.
+        "https" + firstUrl.substring(4)
+      } else {
+        firstUrl
+      }
+    }

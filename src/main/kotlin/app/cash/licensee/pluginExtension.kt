@@ -31,8 +31,8 @@ import org.gradle.api.provider.SetProperty
 interface LicenseeExtension {
 
   /**
-   * Enable asset generation. Will copy licensee report to
-   * android asset directory making it available in [androidAssetReportPath] under `assets/` in the APK.
+   * Enable asset generation. Will copy licensee report to android asset directory making it
+   * available in [androidAssetReportPath] under `assets/` in the APK.
    */
   val bundleAndroidAsset: Property<Boolean>
 
@@ -80,15 +80,15 @@ interface LicenseeExtension {
    * }
    * ```
    */
-  fun allowUrl(url: String, options: Action<AllowUrlOptions> = Action { })
+  fun allowUrl(url: String, options: Action<AllowUrlOptions> = Action {})
 
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
   fun allowUrl(url: String) = allowUrl(url, {})
 
   /**
-   * Allow an artifact with a specific groupId, artifactId, and version.
-   * This is useful for artifacts which contain no license data or have invalid/incorrect license data.
+   * Allow an artifact with a specific groupId, artifactId, and version. This is useful for
+   * artifacts which contain no license data or have invalid/incorrect license data.
    *
    * ```groovy
    * licensee {
@@ -96,7 +96,8 @@ interface LicenseeExtension {
    * }
    * ```
    *
-   * A reason string can be supplied to document why the dependency is being allowed despite missing or invalid license data.
+   * A reason string can be supplied to document why the dependency is being allowed despite missing
+   * or invalid license data.
    *
    * ```groovy
    * licensee {
@@ -112,38 +113,33 @@ interface LicenseeExtension {
     groupId: String,
     artifactId: String,
     version: String,
-    options: Action<AllowDependencyOptions> = Action { },
+    options: Action<AllowDependencyOptions> = Action {},
   )
 
   fun allowDependency(
     dependencyProvider: Provider<out Dependency>,
-    options: Action<AllowDependencyOptions> = Action { },
+    options: Action<AllowDependencyOptions> = Action {},
   )
 
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun allowDependency(
-    groupId: String,
-    artifactId: String,
-    version: String,
-  ) {
+  fun allowDependency(groupId: String, artifactId: String, version: String) {
     allowDependency(groupId, artifactId, version, {})
   }
 
   /** @suppress */
   @JvmSynthetic // For Groovy build scripts, hide from normal callers.
-  fun allowDependency(
-    dependencyProvider: Provider<out Dependency>,
-  ) {
+  fun allowDependency(dependencyProvider: Provider<out Dependency>) {
     allowDependency(dependencyProvider, {})
   }
 
   /**
-   *
    * Ignore a single dependency or group of dependencies during dependency graph resolution.
-   * Artifacts targeted with this method will not be analyzed for license information and will not show up in any report files.
+   * Artifacts targeted with this method will not be analyzed for license information and will not
+   * show up in any report files.
    *
-   * This function can be used to ignore internal, closed-source libraries and commercial libraries for which you've purchased a license.
+   * This function can be used to ignore internal, closed-source libraries and commercial libraries
+   * for which you've purchased a license.
    *
    * There are overloads which accept either a groupId or a groupId:artifactId pair.
    *
@@ -164,9 +160,9 @@ interface LicenseeExtension {
    * }
    * ```
    *
-   * An ignore can be marked as transitive which will ignore an entire branch of the dependency tree.
-   * This will ignore the target artifact's dependencies regardless of the artifact coordinates or license info.
-   * Since it is especially dangerous, a reason string is required.
+   * An ignore can be marked as transitive which will ignore an entire branch of the dependency
+   * tree. This will ignore the target artifact's dependencies regardless of the artifact
+   * coordinates or license info. Since it is especially dangerous, a reason string is required.
    *
    * ```groovy
    * licensee {
@@ -180,7 +176,7 @@ interface LicenseeExtension {
   fun ignoreDependencies(
     groupId: String,
     artifactId: String? = null,
-    options: Action<IgnoreDependencyOptions> = Action { },
+    options: Action<IgnoreDependencyOptions> = Action {},
   )
 
   /** @suppress */
@@ -223,8 +219,8 @@ interface LicenseeExtension {
    * Build behavior when a declared license is not found in any dependencies of the project.
    *
    * This is intended for the case where you have a restricted list of allowed licenses for your
-   * organisation, so you can simply list them all in the Licensee config block and not have to
-   * fish through unnecessary warnings in your Gradle logs.
+   * organisation, so you can simply list them all in the Licensee config block and not have to fish
+   * through unnecessary warnings in your Gradle logs.
    *
    * ```
    * licensee {
@@ -251,6 +247,7 @@ interface LicenseeExtension {
 
   interface IgnoreDependencyOptions {
     fun because(reason: String)
+
     var transitive: Boolean
   }
 }
@@ -292,33 +289,28 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
     return ignoredGroupIds.map { ignoredGroupIds ->
       DependencyConfig(
         ignoredGroupIds.toMap(),
-        ignoredCoordinates.groupBy({ it.name }) {
-          it.ignoredDatas.get()
-        }.mapValues {
-          it.value.single()
-        },
+        ignoredCoordinates
+          .groupBy({ it.name }) { it.ignoredDatas.get() }
+          .mapValues { it.value.single() },
       )
     }
   }
 
   fun toLicenseValidationConfig(): Provider<ValidationConfig> {
-    return allowedIdentifiers.zip2(allowedUrls, allowedDependencies) { allowedIdentifiers, allowedUrls, allowedDependencies ->
+    return allowedIdentifiers.zip2(allowedUrls, allowedDependencies) {
+      allowedIdentifiers,
+      allowedUrls,
+      allowedDependencies ->
       ValidationConfig(
         allowedIdentifiers,
-        allowedUrls.mapValues {
-          it.value.orElse(null)
-        },
-        allowedDependencies.mapValues {
-          it.value.orElse(null)
-        },
+        allowedUrls.mapValues { it.value.orElse(null) },
+        allowedDependencies.mapValues { it.value.orElse(null) },
       )
     }
   }
 
   override fun allow(spdxId: String) {
-    requireNotNull(SpdxId.findByIdentifier(spdxId)) {
-      "$spdxId is not a valid SPDX id."
-    }
+    requireNotNull(SpdxId.findByIdentifier(spdxId)) { "$spdxId is not a valid SPDX id." }
     allowedIdentifiers.add(spdxId)
   }
 
@@ -327,12 +319,14 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   }
 
   override fun allowUrl(url: String, options: Action<LicenseeExtension.AllowUrlOptions>) {
-    val option = object : LicenseeExtension.AllowUrlOptions {
-      var setReason: String? = null
-      override fun because(reason: String) {
-        setReason = reason
+    val option =
+      object : LicenseeExtension.AllowUrlOptions {
+        var setReason: String? = null
+
+        override fun because(reason: String) {
+          setReason = reason
+        }
       }
-    }
     options.execute(option)
     allowedUrls.put(url, Optional.ofNullable(option.setReason))
   }
@@ -345,11 +339,15 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   ) {
     val optionsImpl = AllowDependencyOptionsImpl()
     options.execute(optionsImpl)
-    allowedDependencies.put(DependencyCoordinates(group = groupId, artifact = artifactId, version = version), Optional.ofNullable(optionsImpl.setReason))
+    allowedDependencies.put(
+      DependencyCoordinates(group = groupId, artifact = artifactId, version = version),
+      Optional.ofNullable(optionsImpl.setReason),
+    )
   }
 
   private class AllowDependencyOptionsImpl : AllowDependencyOptions {
     var setReason: String? = null
+
     override fun because(reason: String) {
       setReason = reason
     }
@@ -368,22 +366,29 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
           DependencyCoordinates(
             group = requireNotNull(it.group) { "group was null in allowDependency for ${it.name}" },
             artifact = it.name,
-            version = requireNotNull(it.version) { "version was null in allowDependency for ${it.name}" },
-          ) to Optional.ofNullable(optionsImpl.setReason),
+            version =
+              requireNotNull(it.version) { "version was null in allowDependency for ${it.name}" },
+          ) to Optional.ofNullable(optionsImpl.setReason)
         )
-      },
+      }
     )
   }
 
-  override fun ignoreDependencies(groupId: String, artifactId: String?, options: Action<IgnoreDependencyOptions>) {
-    val option = object : IgnoreDependencyOptions {
-      var setReason: String? = null
-      override fun because(reason: String) {
-        setReason = reason
-      }
+  override fun ignoreDependencies(
+    groupId: String,
+    artifactId: String?,
+    options: Action<IgnoreDependencyOptions>,
+  ) {
+    val option =
+      object : IgnoreDependencyOptions {
+        var setReason: String? = null
 
-      override var transitive: Boolean = false
-    }
+        override fun because(reason: String) {
+          setReason = reason
+        }
+
+        override var transitive: Boolean = false
+      }
 
     options.execute(option)
     if (option.transitive && option.setReason == null) {
@@ -396,16 +401,14 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
             append(artifactId)
           }
           append("' is dangerous and requires a reason string")
-        },
+        }
       )
     }
     val ignoredData = IgnoredData(option.setReason, option.transitive)
     if (artifactId == null) {
       ignoredGroupIds.put(groupId, ignoredData)
     } else {
-      ignoredCoordinates.configure(groupId) {
-        it.ignoredDatas.put(artifactId, ignoredData)
-      }
+      ignoredCoordinates.configure(groupId) { it.ignoredDatas.put(artifactId, ignoredData) }
     }
   }
 
@@ -423,11 +426,7 @@ private fun <T : Any, L : Any, R : Any, V : Any> Provider<T>.zip2(
   right: Provider<R>,
   merge: (T, L, R) -> V,
 ): Provider<V> {
-  return zip(left) { t, l ->
-    t to l
-  }.zip(right) { (t, l), r ->
-    merge(t, l, r)
-  }
+  return zip(left) { t, l -> t to l }.zip(right) { (t, l), r -> merge(t, l, r) }
 }
 
 private fun <T : Any> NamedDomainObjectContainer<T>.configure(name: String, config: Action<T>) {

@@ -23,29 +23,43 @@ import java.io.File
 import org.junit.Test
 
 class SpdxLicensesTest {
-  @Test fun embeddedDatabaseLitmusTest() {
-    assertThat(
-      SpdxId.findByIdentifier("MIT-0")?.toSpdxLicense(),
-    ).isEqualTo(
-      SpdxLicense("MIT-0", "MIT No Attribution", "https://github.com/aws/mit-0"),
-    )
+  @Test
+  fun embeddedDatabaseLitmusTest() {
+    assertThat(SpdxId.findByIdentifier("MIT-0")?.toSpdxLicense())
+      .isEqualTo(SpdxLicense("MIT-0", "MIT No Attribution", "https://github.com/aws/mit-0"))
   }
 
-  @Test fun fallbackDatabaseLitmusTest() {
+  @Test
+  fun fallbackDatabaseLitmusTest() {
     assertThat(
-      SpdxId.findByUrl("https://api.github.com/licenses/bsd-2-clause").map { it.toSpdxLicense() },
-    ).containsExactly(
-      SpdxLicense("BSD-2-Clause", "BSD 2-Clause \"Simplified\" License", "https://opensource.org/licenses/BSD-2-Clause"),
-    )
+        SpdxId.findByUrl("https://api.github.com/licenses/bsd-2-clause").map { it.toSpdxLicense() }
+      )
+      .containsExactly(
+        SpdxLicense(
+          "BSD-2-Clause",
+          "BSD 2-Clause \"Simplified\" License",
+          "https://opensource.org/licenses/BSD-2-Clause",
+        )
+      )
     assertThat(
-      SpdxId.findByUrl("https://api.github.com/licenses/gpl-2.0").map { it.toSpdxLicense() },
-    ).containsExactly(
-      SpdxLicense("GPL-2.0", "GNU General Public License v2.0 only", "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html"),
-      SpdxLicense("GPL-2.0-or-later", "GNU General Public License v2.0 or later", "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html"),
-    )
+        SpdxId.findByUrl("https://api.github.com/licenses/gpl-2.0").map { it.toSpdxLicense() }
+      )
+      .containsExactly(
+        SpdxLicense(
+          "GPL-2.0",
+          "GNU General Public License v2.0 only",
+          "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html",
+        ),
+        SpdxLicense(
+          "GPL-2.0-or-later",
+          "GNU General Public License v2.0 or later",
+          "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html",
+        ),
+      )
   }
 
-  @Test fun spdxIdsAreValidGroovy() {
+  @Test
+  fun spdxIdsAreValidGroovy() {
     val file = File(System.getProperty("generatedSpdxFile")).readText()
     assertThat(file).doesNotContain("`")
   }
