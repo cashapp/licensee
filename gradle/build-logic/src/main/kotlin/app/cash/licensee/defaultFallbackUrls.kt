@@ -44,6 +44,7 @@ internal val defaultFallbackUrls: FallbackBuilder.() -> Unit = {
   putLicense("MIT") {
     add("http://opensource.org/licenses/mit-license")
     add("https://opensource.org/licenses/mit-license")
+    add("https://opensource.org/license/mit")
     add("http://www.opensource.org/licenses/mit-license.php")
     add("https://www.opensource.org/licenses/mit-license.php")
     add("http://api.github.com/licenses/mit")
