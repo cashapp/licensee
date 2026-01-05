@@ -262,6 +262,17 @@ class LicenseePluginFixtureTest(
       )
   }
 
+  @Test fun oldGradleVersionFails(
+    @TestParameter("8.9") gradleVersion: String,
+    @TestParameter("plugin-java") fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir, gradleVersion = gradleVersion).buildAndFail()
+    assertThat(result.output).contains(
+      "Incompatible because this component declares a component, as well as attribute 'org.gradle.plugin.api-version' with value '9.0' and the consumer needed a component, as well as attribute 'org.gradle.plugin.api-version' with value '8.9",
+    )
+  }
+
   @Test
   fun allowDependencyWithoutVersionFails(
     @TestParameter("coordinate-allowed-with-reason-version-catalog-null-version")
@@ -368,6 +379,7 @@ class LicenseePluginFixtureTest(
   private fun createRunner(
     fixtureDir: File,
     vararg tasks: String = arrayOf("clean", "licensee"),
+    gradleVersion: String = this.gradleVersion,
   ): GradleRunner {
     return GradleRunner.create()
       .apply {
