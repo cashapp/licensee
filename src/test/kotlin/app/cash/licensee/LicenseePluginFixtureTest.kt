@@ -269,7 +269,10 @@ class LicenseePluginFixtureTest(
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir, gradleVersion = gradleVersion).buildAndFail()
     assertThat(result.output).contains(
-      "Incompatible because this component declares a component, as well as attribute 'org.gradle.plugin.api-version' with value '9.0' and the consumer needed a component, as well as attribute 'org.gradle.plugin.api-version' with value '8.9",
+      "Plugin app.cash.licensee:licensee-gradle-plugin",
+    )
+    assertThat(result.output).contains(
+      "requires at least Gradle 9.0. This build uses Gradle 8.9",
     )
   }
 
