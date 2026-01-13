@@ -59,8 +59,8 @@ configurations.configureEach {
   if (it.canBeConsumed) {
     attributes {
       attribute(
-              GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-              objects.named(GradlePluginApiVersion, minimumGradleVersion)
+        GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+        objects.named(GradlePluginApiVersion, minimumGradleVersion)
       )
     }
   }
