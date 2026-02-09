@@ -408,7 +408,7 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
     if (artifactId == null) {
       ignoredGroupIds.put(groupId, ignoredData)
     } else {
-      ignoredCoordinates.configure(groupId) { it.ignoredDatas.put(artifactId, ignoredData) }
+      ignoredCoordinates.maybeRegister(groupId) { it.ignoredDatas.put(artifactId, ignoredData) }
     }
   }
 
@@ -429,7 +429,8 @@ private fun <T : Any, L : Any, R : Any, V : Any> Provider<T>.zip2(
   return zip(left) { t, l -> t to l }.zip(right) { (t, l), r -> merge(t, l, r) }
 }
 
-private fun <T : Any> NamedDomainObjectContainer<T>.configure(name: String, config: Action<T>) {
+// TODO: https://github.com/gradle/gradle/issues/8057
+private fun <T : Any> NamedDomainObjectContainer<T>.maybeRegister(name: String, config: Action<T>) {
   if (name in names) {
     named(name, config)
   } else {

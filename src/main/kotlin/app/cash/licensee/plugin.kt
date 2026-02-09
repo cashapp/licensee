@@ -146,7 +146,7 @@ private fun configureAndroidVariants(
     val taskName = "${BASE_TASK_NAME}Android$suffix"
 
     val task =
-      project.tasks.configure(taskName) {
+      project.tasks.maybeRegister(taskName) {
         it.group = VERIFICATION_GROUP
         it.description = taskDescription("Android ${variant.name} variant")
 
@@ -194,7 +194,7 @@ private fun configureKotlinMultiplatformTargets(project: Project, rootTask: Task
 
     val suffix = target.name.replaceFirstChar { it.titlecase(ROOT) }
     val task =
-      project.tasks.configure("$BASE_TASK_NAME$suffix") {
+      project.tasks.maybeRegister("$BASE_TASK_NAME$suffix") {
         it.group = VERIFICATION_GROUP
         it.description = taskDescription("Kotlin ${target.name} target")
 
@@ -221,7 +221,7 @@ private fun configureKotlinMultiplatformTargets(project: Project, rootTask: Task
 
 private fun configureJavaPlugin(project: Project) {
   val task =
-    project.tasks.configure(BASE_TASK_NAME) {
+    project.tasks.maybeRegister(BASE_TASK_NAME) {
       it.group = VERIFICATION_GROUP
       it.description = taskDescription()
 
@@ -231,7 +231,8 @@ private fun configureJavaPlugin(project: Project) {
   project.tasks.named(CHECK_TASK_NAME).configure { it.dependsOn(task) }
 }
 
-private fun TaskContainer.configure(
+// TODO: https://github.com/gradle/gradle/issues/8057
+private fun TaskContainer.maybeRegister(
   name: String,
   config: (LicenseeTask) -> Unit,
 ): TaskProvider<LicenseeTask> =
