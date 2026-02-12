@@ -7,9 +7,6 @@
 
 - The minimum-supported Gradle version is now 9.0.
 
-**Removed**
-
-- Eliminate redundant synthetic overloads in LicenseeExtension.
 
 ## [1.14.1] - 2025-10-08
 [1.14.1]: https://github.com/cashapp/licensee/releases/tag/1.14.1
