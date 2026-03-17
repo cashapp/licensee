@@ -80,10 +80,9 @@ internal class FallbackBuilder(
   private val result: MutableMap<String, List<SpdxLicenseJson>>,
 ) {
   fun putLicense(vararg spdxIds: String, urls: MutableList<String>.() -> Unit) {
-    val licenses =
-      spdxIds.map {
-        requireNotNull(findByIdentifier[it]) { "No SPDX identifier '$it' in the embedded set" }
-      }
+    val licenses = spdxIds.map {
+      requireNotNull(findByIdentifier[it]) { "No SPDX identifier '$it' in the embedded set" }
+    }
 
     for (url in buildList(urls)) {
       require(findByUrl[url].orEmpty().isEmpty()) {
