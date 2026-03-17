@@ -16,7 +16,7 @@ maven-modelBuilder = "org.apache.maven:maven-model-builder:3.9.14"
 
 androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0-alpha05"
 # Dummy to get renovate updates, the version is used in rootProject build.gradle with spotless.
-ktfmt = "com.facebook:ktfmt:0.61"
+ktfmt = "com.facebook:ktfmt:0.62"
 
 kotlinpoet = "com.squareup:kotlinpoet:2.2.0"
 
