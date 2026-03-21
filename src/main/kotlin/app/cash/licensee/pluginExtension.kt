@@ -128,6 +128,45 @@ interface LicenseeExtension {
   }
 
   /**
+   * ```groovy
+   * licensee {
+   *   ignoreDependenciesByRegex('com.mycompany.internal')
+   *   ignoreDependenciesByRegex('com.mycompany.utils', 'utils')
+   * }
+   * ```
+   *
+   * A reason string can be supplied to document why the dependencies are being ignored.
+   *
+   * ```groovy
+   * licensee {
+   *   ignoreDependenciesByRegex('com.example.sdk', 'sdk') {
+   *     because "commercial SDK"
+   *   }
+   * }
+   * ```
+   *
+   * An ignore can be marked as transitive which will ignore an entire branch of the dependency
+   * tree. This will ignore the target artifact's dependencies regardless of the artifact
+   * coordinates or license info. Since it is especially dangerous, a reason string is required.
+   *
+   * ```groovy
+   * licensee {
+   *   ignoreDependenciesByRegex('com.other.sdk', 'sdk') {
+   *     transitive = true
+   *     because "commercial SDK"
+   *   }
+   * }
+   * ```
+   *
+   * @see ignoreDependencies
+   */
+  fun ignoreDependenciesByRegex(regex: String, options: Action<IgnoreDependencyOptions>)
+
+  fun ignoreDependenciesByRegex(regex: String) {
+    ignoreDependenciesByRegex(regex = regex, options = {})
+  }
+
+  /**
    * Ignore a single dependency or group of dependencies during dependency graph resolution.
    * Artifacts targeted with this method will not be analyzed for license information and will not
    * show up in any report files.
@@ -166,6 +205,8 @@ interface LicenseeExtension {
    *   }
    * }
    * ```
+   *
+   * @see ignoreDependenciesByRegex
    */
   fun ignoreDependencies(
     groupId: String,
@@ -262,6 +303,7 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   internal abstract val allowedUrls: MapProperty<String, Optional<String>>
   internal abstract val allowedDependencies: MapProperty<DependencyCoordinates, Optional<String>>
   internal abstract val ignoredGroupIds: MapProperty<String, IgnoredData>
+  internal abstract val ignoredRegexes: MapProperty<String, IgnoredData>
   internal abstract val ignoredCoordinates: NamedDomainObjectContainer<IgnoredCoordinate>
   internal abstract val violationAction: Property<ViolationAction>
   internal abstract val unusedAction: Property<UnusedAction>
@@ -274,12 +316,13 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   }
 
   fun toDependencyTreeConfig(): Provider<DependencyConfig> {
-    return ignoredGroupIds.map { ignoredGroupIds ->
+    return ignoredGroupIds.zip(ignoredRegexes) { ignoredGroupIds, ignoredRegexes ->
       DependencyConfig(
         ignoredGroupIds.toMap(),
         ignoredCoordinates
           .groupBy({ it.name }) { it.ignoredDatas.get() }
           .mapValues { it.value.single() },
+        ignoredRegexes,
       )
     }
   }
@@ -367,17 +410,7 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
     artifactId: String?,
     options: Action<IgnoreDependencyOptions>,
   ) {
-    val option =
-      object : IgnoreDependencyOptions {
-        var setReason: String? = null
-
-        override fun because(reason: String) {
-          setReason = reason
-        }
-
-        override var transitive: Boolean = false
-      }
-
+    val option = DefaultIgnoreDependencyOptions()
     options.execute(option)
     if (option.transitive && option.setReason == null) {
       throw RuntimeException(
@@ -400,6 +433,22 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
     }
   }
 
+  override fun ignoreDependenciesByRegex(regex: String, options: Action<IgnoreDependencyOptions>) {
+    val option = DefaultIgnoreDependencyOptions()
+    options.execute(option)
+    if (option.transitive && option.setReason == null) {
+      throw RuntimeException(
+        buildString {
+          append("Transitive dependency ignore on regex '")
+          append(regex)
+          append("' is dangerous and requires a reason string")
+        }
+      )
+    }
+    val ignoredData = IgnoredData(option.setReason, option.transitive)
+    ignoredRegexes.put(regex, ignoredData)
+  }
+
   override fun violationAction(level: ViolationAction) {
     violationAction.set(level)
   }
@@ -407,6 +456,16 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
   override fun unusedAction(level: UnusedAction) {
     unusedAction.set(level)
   }
+}
+
+private class DefaultIgnoreDependencyOptions : IgnoreDependencyOptions {
+  var setReason: String? = null
+
+  override fun because(reason: String) {
+    setReason = reason
+  }
+
+  override var transitive: Boolean = false
 }
 
 private fun <T : Any, L : Any, R : Any, V : Any> Provider<T>.zip2(

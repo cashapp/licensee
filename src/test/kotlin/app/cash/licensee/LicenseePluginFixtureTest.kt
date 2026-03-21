@@ -66,6 +66,7 @@ class LicenseePluginFixtureTest(
       "flat-dir-repository-ignored",
       "gson-broken-plugin",
       "ignore-group",
+      "ignore-group-regex",
       "ignore-group-artifact",
       "ignore-group-artifact-kts",
       "ignore-group-artifact-transitive",
@@ -187,16 +188,19 @@ class LicenseePluginFixtureTest(
       "ignore-group-artifact-transitive-requires-reason-kts",
       "ignore-group-transitive-requires-reason",
       "ignore-group-transitive-requires-reason-kts",
+      "ignore-group-regex-transitive-requires-reason",
     )
     fixtureName: String
   ) {
     val fixtureDir = File(fixturesDir, fixtureName)
     val result = createRunner(fixtureDir).buildAndFail()
-    assertThat(result.output)
-      .containsMatch(
+    val expected =
+      if (fixtureName.contains("regex")) {
+        "Transitive dependency ignore on regex 'com\\\\.example:.*' is dangerous and requires a reason string"
+      } else {
         "Transitive dependency ignore on 'com\\.example(:example)?' is dangerous and requires a reason string"
-          .toRegex()
-      )
+      }
+    assertThat(result.output).containsMatch(expected.toRegex())
   }
 
   @Test
