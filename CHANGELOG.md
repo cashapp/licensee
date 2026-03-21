@@ -6,6 +6,7 @@
 **Changed**
 
 - The minimum-supported Gradle version is now 9.0.
+- Minify the JSON file bundled under APK asset.
 
 
 ## [1.14.1] - 2025-10-08

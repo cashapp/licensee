@@ -15,6 +15,8 @@
  */
 package app.cash.licensee
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -39,9 +41,17 @@ internal abstract class AssetCopyTask : DefaultTask() {
 
   @TaskAction
   fun action() {
-    inputFile
+    assetDirectory
+      .dir(outputFilePath)
       .get()
       .asFile
-      .copyTo(target = assetDirectory.dir(outputFilePath).get().asFile, overwrite = true)
+      .apply { parentFile?.mkdirs() }
+      .writeText(minifyJson(inputFile.get().asFile.readText()))
   }
+}
+
+internal fun minifyJson(json: String): String {
+  val outputFormat = Json { prettyPrint = false }
+  val element = outputFormat.decodeFromString<JsonElement>(json)
+  return outputFormat.encodeToString(element)
 }
