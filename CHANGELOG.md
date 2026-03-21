@@ -19,7 +19,7 @@
 ## [1.14.0] - 2025-10-07
 [1.14.0]: https://github.com/cashapp/licensee/releases/tag/1.14.0
 
-**New**
+**Added**
 
 - Support overriding `artifacts.json` report path bundled into your Android APK (under `assets/` path).
 
@@ -44,7 +44,7 @@
 ## [1.13.0] - 2025-03-20
 [1.13.0]: https://github.com/cashapp/licensee/releases/tag/1.13.0
 
-**New**
+**Added**
 
 - DSL now has a type-safe version of `allow` which accepts a `SpdxId` constant.
 
@@ -77,7 +77,7 @@
 
 ## [1.11.0] - 2024-03-29
 
-**New**
+**Added**
 
 - `LicenseeTask` exposes `jsonOutput` and `validationOutput` properties which are providers of the generated file that you can use to copy elsewhere or bundle into binaries.
 
@@ -89,7 +89,7 @@
 
 ## [1.10.0] - 2024-03-28
 
-**New**
+**Added**
 
 - Gradle platform dependencies (also sometimes called BOMs) are now ignored since they only contribute version constraints and no code.
 
