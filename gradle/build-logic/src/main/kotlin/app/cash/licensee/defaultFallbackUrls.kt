@@ -37,7 +37,6 @@ internal val defaultFallbackUrls: FallbackBuilder.() -> Unit = {
     add("http://www.opensource.org/licenses/LGPL-2.1")
     add("https://www.opensource.org/licenses/LGPL-2.1")
     add("http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html")
-    add("https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html")
     add("http://api.github.com/licenses/lgpl-2.1")
     add("https://api.github.com/licenses/lgpl-2.1")
   }

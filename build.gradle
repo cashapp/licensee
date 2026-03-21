@@ -142,14 +142,6 @@ def checkFixtureJars = tasks.register('checkFixtureJars') { task ->
   }
 }
 
-tasks.named('check') { check ->
-  check.dependsOn(
-    checkFixtureJars,
-    // TODO: https://youtrack.jetbrains.com/issue/KT-78525
-    tasks.named('checkLegacyAbi'),
-  )
-}
-
 Directory jsonFolder = layout.projectDirectory.dir("src/main/resources/app/cash/licensee")
 RegularFile jsonFile = jsonFolder.file("licenses.json")
 

@@ -18,7 +18,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - run: ./gradlew downloadLicensesJson
       - run: ./gradlew generateSpdx
-      - run: ./gradlew updateLegacyAbi
+      - run: ./gradlew updateKotlinAbi
       - uses: peter-evans/create-pull-request@v8
         with:
           commit-message: Update license JSON
