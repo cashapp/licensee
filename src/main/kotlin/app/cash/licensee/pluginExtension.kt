@@ -322,7 +322,7 @@ internal abstract class MutableLicenseeExtension : LicenseeExtension {
         ignoredCoordinates
           .groupBy({ it.name }) { it.ignoredDatas.get() }
           .mapValues { it.value.single() },
-        ignoredRegexes,
+        ignoredRegexes.mapKeys { (regex, _) -> regex.toRegex() },
       )
     }
   }

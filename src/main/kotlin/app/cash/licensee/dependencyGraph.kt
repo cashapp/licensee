@@ -32,7 +32,7 @@ import org.gradle.api.logging.Logger
 internal data class DependencyConfig(
   val ignoredGroupIds: Map<String, IgnoredData>,
   val ignoredCoordinates: Map<String, Map<String, IgnoredData>>,
-  val ignoredRegexes: Map<String, IgnoredData>,
+  val ignoredRegexes: Map<Regex, IgnoredData>,
 ) : Serializable
 
 internal data class IgnoredData(val reason: String?, val transitive: Boolean) : Serializable
@@ -98,7 +98,7 @@ private fun loadDependencyCoordinates(
   config: DependencyConfig,
   unusedGroupIds: MutableSet<String>,
   unusedCoordinates: MutableSet<Pair<String, String>>,
-  unusedRegexes: MutableSet<String>,
+  unusedRegexes: MutableSet<Regex>,
   destination: MutableSet<DependencyCoordinates>,
   seen: MutableSet<ComponentIdentifier>,
   depth: Int,
@@ -123,6 +123,7 @@ private fun loadDependencyCoordinates(
         // Assuming flat-dir repository dependency, do nothing.
         ignoreSuffix = " ignoring because flat-dir repository artifact has no metadata"
       } else {
+        val moduleCoordinate = "${id.group}:${id.module}"
         val ignoredData =
           null
             ?: config.ignoredGroupIds[id.group]?.also { unusedGroupIds -= id.group }
@@ -130,7 +131,7 @@ private fun loadDependencyCoordinates(
               unusedCoordinates -= id.group to id.module
             }
             ?: config.ignoredRegexes.entries
-              .find { (regex, _) -> regex.toRegex().matches("${id.group}:${id.module}") }
+              .find { (regex, _) -> regex.matches(moduleCoordinate) }
               ?.also { (regex, _) -> unusedRegexes -= regex }
               ?.value
         if (ignoredData != null) {
