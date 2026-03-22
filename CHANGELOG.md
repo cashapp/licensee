@@ -3,7 +3,7 @@
 ## [Unreleased]
 [Unreleased]: https://github.com/cashapp/licensee/compare/1.14.1...HEAD]
 
-**New**
+**Added**
 
 - Support ignoring dependencies by regex.
 
