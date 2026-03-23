@@ -42,11 +42,11 @@ internal abstract class AssetCopyTask : DefaultTask() {
   @TaskAction
   fun action() {
     val inputJson = inputFile.get().asFile.readText()
-    
+
     val format = Json { prettyPrint = false }
     val parsedElement = format.decodeFromString(inputJson, JsonElement.serializer())
     val minifiedJson = format.encodeToString(parsedElement)
-    
+
     val outputFile = assetDirectory.dir(outputFilePath).get().asFile
     outputFile.parentFile.mkdirs()
     outputFile.writeText(minifyJson())
