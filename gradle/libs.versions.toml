@@ -14,7 +14,7 @@ kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0
 
 maven-modelBuilder = "org.apache.maven:maven-model-builder:3.9.15"
 
-androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0-alpha06"
+androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0-beta01"
 # Dummy to get renovate updates, the version is used in rootProject build.gradle with spotless.
 ktfmt = "com.facebook:ktfmt:0.62"
 
