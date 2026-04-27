@@ -66,6 +66,8 @@ public abstract interface class app/cash/licensee/LicenseeExtension {
 	public fun ignoreDependencies (Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun ignoreDependencies (Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public fun ignoreDependencies (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public fun ignoreDependenciesByRegex (Ljava/lang/String;)V
+	public abstract fun ignoreDependenciesByRegex (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public abstract fun unusedAction (Lapp/cash/licensee/UnusedAction;)V
 	public abstract fun violationAction (Lapp/cash/licensee/ViolationAction;)V
 }

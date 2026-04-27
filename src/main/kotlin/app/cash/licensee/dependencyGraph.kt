@@ -32,6 +32,7 @@ import org.gradle.api.logging.Logger
 internal data class DependencyConfig(
   val ignoredGroupIds: Map<String, IgnoredData>,
   val ignoredCoordinates: Map<String, Map<String, IgnoredData>>,
+  val ignoredRegexes: Map<Regex, IgnoredData>,
 ) : Serializable
 
 internal data class IgnoredData(val reason: String?, val transitive: Boolean) : Serializable
@@ -45,6 +46,7 @@ internal fun loadDependencyCoordinates(
 
   val unusedGroupIds = config.ignoredGroupIds.keys.toMutableSet()
   val unusedCoordinates = mutableSetOf<Pair<String, String>>()
+  val unusedRegexes = config.ignoredRegexes.keys.toMutableSet()
   for ((groupId, artifacts) in config.ignoredCoordinates) {
     val redundant = groupId in config.ignoredGroupIds
     for (artifactId in artifacts.keys) {
@@ -63,6 +65,7 @@ internal fun loadDependencyCoordinates(
     config,
     unusedGroupIds,
     unusedCoordinates,
+    unusedRegexes,
     coordinates,
     mutableSetOf(),
     depth = 1,
@@ -73,6 +76,9 @@ internal fun loadDependencyCoordinates(
   }
   for ((groupId, artifactId) in unusedCoordinates) {
     warnings += "Dependency ignore for $groupId:$artifactId is unused"
+  }
+  for (unusedRegex in unusedRegexes) {
+    warnings += "Dependency ignore for regex '$unusedRegex' is unused"
   }
 
   return DependencyResolutionResult(coordinates, warnings)
@@ -92,6 +98,7 @@ private fun loadDependencyCoordinates(
   config: DependencyConfig,
   unusedGroupIds: MutableSet<String>,
   unusedCoordinates: MutableSet<Pair<String, String>>,
+  unusedRegexes: MutableSet<Regex>,
   destination: MutableSet<DependencyCoordinates>,
   seen: MutableSet<ComponentIdentifier>,
   depth: Int,
@@ -116,12 +123,17 @@ private fun loadDependencyCoordinates(
         // Assuming flat-dir repository dependency, do nothing.
         ignoreSuffix = " ignoring because flat-dir repository artifact has no metadata"
       } else {
+        val moduleCoordinate = "${id.group}:${id.module}"
         val ignoredData =
           null
             ?: config.ignoredGroupIds[id.group]?.also { unusedGroupIds -= id.group }
             ?: config.ignoredCoordinates[id.group]?.get(id.module)?.also {
               unusedCoordinates -= id.group to id.module
             }
+            ?: config.ignoredRegexes.entries
+              .find { (regex, _) -> regex.matches(moduleCoordinate) }
+              ?.also { (regex, _) -> unusedRegexes -= regex }
+              ?.value
         if (ignoredData != null) {
           ignoreSuffix = buildString {
             append(" ignoring")
@@ -166,6 +178,7 @@ private fun loadDependencyCoordinates(
             config,
             unusedGroupIds,
             unusedCoordinates,
+            unusedRegexes,
             destination,
             seen,
             depth + 1,

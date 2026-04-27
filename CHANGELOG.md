@@ -3,6 +3,10 @@
 ## [Unreleased]
 [Unreleased]: https://github.com/cashapp/licensee/compare/1.14.1...HEAD]
 
+**Added**
+
+- Support ignoring dependencies by regex.
+
 **Changed**
 
 - The minimum-supported Gradle version is now 9.0.
