@@ -130,8 +130,7 @@ interface LicenseeExtension {
   /**
    * ```groovy
    * licensee {
-   *   ignoreDependenciesByRegex('com.mycompany.internal')
-   *   ignoreDependenciesByRegex('com.mycompany.utils', 'utils')
+   *   ignoreDependenciesByRegex('com\\.example:.*')
    * }
    * ```
    *
@@ -139,8 +138,8 @@ interface LicenseeExtension {
    *
    * ```groovy
    * licensee {
-   *   ignoreDependenciesByRegex('com.example.sdk', 'sdk') {
-   *     because "commercial SDK"
+   *   ignoreDependenciesByRegex('com\\.example:.*') {
+   *     because 'commercial SDK'
    *   }
    * }
    * ```
@@ -151,9 +150,9 @@ interface LicenseeExtension {
    *
    * ```groovy
    * licensee {
-   *   ignoreDependenciesByRegex('com.other.sdk', 'sdk') {
+   *   ignoreDependenciesByRegex('com\\.example:.*') {
    *     transitive = true
-   *     because "commercial SDK"
+   *     because 'commercial SDK'
    *   }
    * }
    * ```
