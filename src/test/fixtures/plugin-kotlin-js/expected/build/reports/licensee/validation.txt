@@ -1,8 +1,0 @@
-com.example:example:1.0.0
- - SPDX identifier 'Apache-2.0' allowed
-org.jetbrains.kotlin:kotlin-dom-api-compat:2.3.21
- - SPDX identifier 'Apache-2.0' allowed
-org.jetbrains.kotlin:kotlin-stdlib:2.3.21
- - SPDX identifier 'Apache-2.0' allowed
-org.jetbrains.kotlin:kotlin-stdlib-js:2.3.21
- - SPDX identifier 'Apache-2.0' allowed

@@ -90,7 +90,6 @@ class LicenseePluginFixtureTest(
       "plugin-java-typed",
       "plugin-java-library",
       "plugin-java-report-dir",
-      "plugin-kotlin-js",
       "plugin-kotlin-jvm",
       "plugin-kotlin-mpp",
       "plugin-kotlin-mpp-jvm-with-java",

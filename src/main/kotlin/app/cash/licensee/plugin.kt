@@ -64,10 +64,6 @@ class LicenseePlugin : Plugin<Project> {
         configureJavaPlugin(project)
       }
     }
-    project.pluginManager.withPlugin("org.jetbrains.kotlin.js") {
-      // The JS plugin uses the same runtime configuration name as the Java plugin.
-      configureJavaPlugin(project)
-    }
 
     withKotlinMultiPlatformPlugin(
       project,
