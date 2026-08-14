@@ -15,7 +15,7 @@
 
 **Fixed**
 
-- Replace to-be-deprecated `lenientConfiguration` with `ArtifactView` API instead. Fixes ([#607](https://github.com/cashapp/licensee/issues/607)).
+- Replace usage of Gradle's to-be-deprecated `lenientConfiguration` API with `ArtifactView`.
 
 
 ## [1.14.1] - 2025-10-08
