@@ -33,6 +33,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.attributes.Attribute
@@ -181,10 +182,8 @@ abstract class LicenseeTask : DefaultTask() {
       .distinctBy { it.dependencyCoordinates }
   }
 
-  private fun Configuration.artifacts() =
-    resolvedConfiguration.lenientConfiguration.allModuleDependencies.flatMap {
-      it.allModuleArtifacts
-    }
+  private fun Configuration.artifacts(): Set<ResolvedArtifactResult> =
+    incoming.artifactView { it.isLenient = true }.artifacts.artifacts
 
   @get:OutputDirectory abstract val outputDir: DirectoryProperty
 

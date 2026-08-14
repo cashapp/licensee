@@ -13,6 +13,10 @@
 - Minify the JSON file bundled under APK asset.
 - Remove support for the `org.jetbrains.kotlin.js` plugin.
 
+**Fixed**
+
+- Replace usage of Gradle's to-be-deprecated `lenientConfiguration` API with `ArtifactView`.
+
 
 ## [1.14.1] - 2025-10-08
 [1.14.1]: https://github.com/cashapp/licensee/releases/tag/1.14.1
