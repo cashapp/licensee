@@ -39,6 +39,7 @@ tasks.named("validatePlugins") {
 }
 
 dependencies {
+  compileOnly libs.gradle.minimum
   compileOnly libs.androidGradleApi
   compileOnly libs.kotlinGradlePlugin
   implementation libs.kotlinx.serialization
