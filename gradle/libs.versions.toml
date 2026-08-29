@@ -9,7 +9,7 @@ kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ver
 # If you update the minimum-supported Gradle version check to see if our plugin's Kotlin language
 # version or Java targets can be bumped.
 # See https://docs.gradle.org/current/userguide/compatibility.html.
-gradle-minimum = "org.gradle.experimental:gradle-public-api:9.0.0"
+gradle-minimum = "org.gradle.experimental:gradle-public-api:9.7.1"
 
 junit = "junit:junit:4.13.2"
 assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
