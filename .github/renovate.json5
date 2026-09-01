@@ -23,4 +23,12 @@
       extractVersionTemplate: '^(?<version>\\d+)',
     },
   ],
+  packageRules: [
+    {
+      packagePatterns: [
+        '^org.gradle.experimental:gradle-public-api',
+      ],
+      enabled: false,
+    },
+  ],
 }
