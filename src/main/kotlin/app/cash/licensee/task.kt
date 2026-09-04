@@ -359,12 +359,19 @@ private data class DependencyCoordinatesWithPomFile(
   val pomFile: File,
 )
 
-internal data class PomInfo(val name: String?, val licenses: Set<PomLicense>, val scm: PomScm?) :
-  Serializable
+internal data class PomInfo(
+  val name: String?,
+  val licenses: Set<PomLicense>,
+  val scm: PomScm?,
+  val developers: List<PomDeveloper>,
+) : Serializable
 
 internal data class PomLicense(val name: String?, val url: String?) : Serializable
 
 internal data class PomScm(val url: String?) : Serializable
+
+internal data class PomDeveloper(val id: String?, val name: String?, val url: String?) :
+  Serializable
 
 private val outputFormat = Json { prettyPrint = true }
 private val listOfArtifactDetail = ListSerializer(ArtifactDetail.serializer())
