@@ -34,7 +34,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-spotless = { id = "com.diffplug.spotless", version = "8.10.1" }
+spotless = { id = "com.diffplug.spotless", version = "8.10.2" }
 publish = { id = "com.vanniktech.maven.publish", version = "0.37.0" }
 dokka = { id = "org.jetbrains.dokka", version = "2.2.0" }
 poko = { id = "dev.drewhamilton.poko", version = "0.23.1" }
