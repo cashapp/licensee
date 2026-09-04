@@ -265,6 +265,20 @@ class LicenseePluginFixtureTest(
       )
   }
 
+  @Test fun oldGradleVersionFails(
+    @TestParameter("8.9") gradleVersion: String,
+    @TestParameter("plugin-java") fixtureName: String,
+  ) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir, gradleVersion = gradleVersion).buildAndFail()
+    assertThat(result.output).contains(
+      "Plugin app.cash.licensee:licensee-gradle-plugin",
+    )
+    assertThat(result.output).contains(
+      "requires at least Gradle 9.0. This build uses Gradle 8.9",
+    )
+  }
+
   @Test
   fun allowDependencyWithoutVersionFails(
     @TestParameter("coordinate-allowed-with-reason-version-catalog-null-version")
@@ -371,6 +385,7 @@ class LicenseePluginFixtureTest(
   private fun createRunner(
     fixtureDir: File,
     vararg tasks: String = arrayOf("clean", "licensee"),
+    gradleVersion: String = this.gradleVersion,
   ): GradleRunner {
     return GradleRunner.create()
       .apply {
