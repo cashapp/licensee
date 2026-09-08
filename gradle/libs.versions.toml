@@ -23,7 +23,7 @@ androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0"
 # Dummy to get renovate updates, the version is used in rootProject build.gradle with spotless.
 ktfmt = "com.facebook:ktfmt:0.64"
 
-kotlinpoet = "com.squareup:kotlinpoet:2.3.0"
+kotlinpoet = "com.squareup:kotlinpoet:2.4.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
