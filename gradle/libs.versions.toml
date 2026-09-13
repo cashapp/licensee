@@ -38,4 +38,4 @@ spotless = { id = "com.diffplug.spotless", version = "8.10.2" }
 publish = { id = "com.vanniktech.maven.publish", version = "0.37.0" }
 dokka = { id = "org.jetbrains.dokka", version = "2.2.0" }
 poko = { id = "dev.drewhamilton.poko", version = "0.23.1" }
-buildConfig = { id = "com.github.gmazzo.buildconfig", version = "6.0.10" }
+buildConfig = { id = "com.github.gmazzo.buildconfig", version = "6.1.0" }
