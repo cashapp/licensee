@@ -13,7 +13,7 @@ gradle-minimum = "org.gradle.experimental:gradle-public-api:9.0.0"
 
 junit = "junit:junit:4.13.2"
 assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
-testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:1.22"
+testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:1.23"
 
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0"
 
