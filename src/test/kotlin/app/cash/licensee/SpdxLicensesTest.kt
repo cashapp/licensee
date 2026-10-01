@@ -38,7 +38,7 @@ class SpdxLicensesTest {
         SpdxLicense(
           "BSD-2-Clause",
           "BSD 2-Clause \"Simplified\" License",
-          "https://opensource.org/licenses/BSD-2-Clause",
+          "https://opensource.org/license/BSD-2-Clause",
         )
       )
     assertThat(
