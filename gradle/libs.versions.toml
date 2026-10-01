@@ -17,7 +17,7 @@ testParameterInjector = "com.google.testparameterinjector:test-parameter-injecto
 
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0"
 
-maven-modelBuilder = "org.apache.maven:maven-model-builder:3.9.16"
+maven-modelBuilder = "org.apache.maven:maven-model-builder:3.10.0"
 
 androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0"
 # Dummy to get renovate updates, the version is used in rootProject build.gradle with spotless.
