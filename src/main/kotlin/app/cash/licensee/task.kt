@@ -334,12 +334,17 @@ abstract class LicenseeTask : DefaultTask() {
       }
       validationReport.appendLine(coordinateHeader)
 
-      val hasNonInfo = results.any { it !is ValidationResult.Info }
-      if (hasNonInfo) {
-        logger.log(lifecycleLevel, coordinateHeader)
-      } else {
-        logger.info(coordinateHeader)
-      }
+      // Log the header at the most severe level of its results so that it is visible whenever
+      // any of them are (e.g., errors and warnings are still shown with --quiet).
+      val headerLevel =
+        results.maxOfOrNull {
+          when (it) {
+            is ValidationResult.Error -> violationErrorLevel
+            is ValidationResult.Warning -> violationWarningLevel
+            is ValidationResult.Info -> INFO
+          }
+        } ?: INFO
+      logger.log(headerLevel, coordinateHeader)
       for (result in results) {
         logResult(result, violationErrorLevel, violationWarningLevel, prefix = " - ")
       }

@@ -16,6 +16,7 @@
 **Fixed**
 
 - Replace usage of Gradle's to-be-deprecated `lenientConfiguration` API with `ArtifactView`.
+- Print artifact coordinates alongside their errors and warnings when running with `--quiet`.
 
 
 ## [1.14.1] - 2025-10-08
