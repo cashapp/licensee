@@ -293,6 +293,21 @@ class LicenseePluginFixtureTest(
   }
 
   @Test
+  fun violationsLoggedQuiet(@TestParameter("spdx-not-allowed-log-quiet") fixtureName: String) {
+    val fixtureDir = File(fixturesDir, fixtureName)
+    val result = createRunner(fixtureDir, "clean", "licensee", "--quiet").build()
+    assertExpectedFiles(fixtureDir)
+    assertThat(result.output)
+      .contains(
+        """
+        |com.example:example:1.0.0
+        | - ERROR: SPDX identifier 'Apache-2.0' is NOT allowed
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun violationsIgnored(
     @TestParameter("spdx-not-allowed-ignore", "spdx-not-allowed-ignore-kts") fixtureName: String
   ) {
