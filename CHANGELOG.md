@@ -6,6 +6,7 @@
 **Added**
 
 - Support ignoring dependencies by regex.
+- Add developers into the reports.
 
 **Changed**
 
