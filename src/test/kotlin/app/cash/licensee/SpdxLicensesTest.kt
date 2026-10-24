@@ -42,6 +42,18 @@ class SpdxLicensesTest {
         )
       )
     assertThat(
+        SpdxId.findByUrl("http://www.eclipse.org/org/documents/edl-v10.php").map {
+          it.toSpdxLicense()
+        }
+      )
+      .containsExactly(
+        SpdxLicense(
+          "BSD-3-Clause",
+          "BSD 3-Clause \"New\" or \"Revised\" License",
+          "https://opensource.org/license/BSD-3-Clause",
+        )
+      )
+    assertThat(
         SpdxId.findByUrl("https://api.github.com/licenses/gpl-2.0").map { it.toSpdxLicense() }
       )
       .containsExactly(

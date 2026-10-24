@@ -6,6 +6,7 @@
 **Added**
 
 - Support ignoring dependencies by regex.
+- Add `http://www.eclipse.org/org/documents/edl-v10.php` as a fallback URL for `BSD-3-Clause`.
 
 **Changed**
 
