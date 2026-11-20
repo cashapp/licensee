@@ -56,12 +56,14 @@ dependencies {
 // HEY! If you update the minimum-supported Gradle version check to see if the Kotlin language version or
 // Java targets below can be bumped. See https://docs.gradle.org/current/userguide/compatibility.html.
 def minimumGradleVersion = "9.0"
-configurations.apiElements {
-  attributes {
-    attribute(
-      GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-      objects.named(GradlePluginApiVersion, minimumGradleVersion)
-    )
+configurations.configureEach {
+  if (it.canBeConsumed) {
+    attributes {
+      attribute(
+        GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+        objects.named(GradlePluginApiVersion, minimumGradleVersion)
+      )
+    }
   }
 }
 
