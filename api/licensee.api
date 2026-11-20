@@ -1,9 +1,10 @@
 public final class app/cash/licensee/ArtifactDetail {
 	public static final field Companion Lapp/cash/licensee/ArtifactDetail$Companion;
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;Lapp/cash/licensee/ArtifactScm;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;Lapp/cash/licensee/ArtifactScm;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;Lapp/cash/licensee/ArtifactScm;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;Lapp/cash/licensee/ArtifactScm;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getArtifactId ()Ljava/lang/String;
+	public final fun getDevelopers ()Ljava/util/List;
 	public final fun getGroupId ()Ljava/lang/String;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getScm ()Lapp/cash/licensee/ArtifactScm;
@@ -25,6 +26,33 @@ public final synthetic class app/cash/licensee/ArtifactDetail$$serializer : kotl
 }
 
 public final class app/cash/licensee/ArtifactDetail$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class app/cash/licensee/ArtifactDeveloper {
+	public static final field Companion Lapp/cash/licensee/ArtifactDeveloper$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class app/cash/licensee/ArtifactDeveloper$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lapp/cash/licensee/ArtifactDeveloper$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lapp/cash/licensee/ArtifactDeveloper;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/licensee/ArtifactDeveloper;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class app/cash/licensee/ArtifactDeveloper$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
