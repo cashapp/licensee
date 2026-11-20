@@ -59,6 +59,7 @@ internal val defaultFallbackUrls: FallbackBuilder.() -> Unit = {
   }
   putLicense("BSD-3-Clause") {
     add("http://opensource.org/licenses/BSD-3-Clause")
+    add("http://www.eclipse.org/org/documents/edl-v10.php")
     add("http://api.github.com/licenses/bsd-3-clause")
     add("https://api.github.com/licenses/bsd-3-clause")
   }
