@@ -236,5 +236,6 @@ internal fun loadPomInfo(pom: Model, getRawModel: (String) -> Model?): PomInfo {
         PomLicense(it.name, it.url)
       } ?: emptySet(),
     scm = PomScm(url),
+    developers = pom.developers.map { PomDeveloper(it.id, it.name, it.url) },
   )
 }

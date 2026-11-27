@@ -29,6 +29,7 @@ class ArtifactDetail(
   val spdxLicenses: Set<SpdxLicense> = emptySet(),
   val unknownLicenses: Set<UnknownLicense> = emptySet(),
   val scm: ArtifactScm? = null,
+  val developers: List<ArtifactDeveloper> = emptyList(),
 )
 
 @Poko @Serializable class SpdxLicense(val identifier: String, val name: String, val url: String)
@@ -36,3 +37,7 @@ class ArtifactDetail(
 @Poko @Serializable class UnknownLicense(val name: String?, val url: String?)
 
 @Poko @Serializable class ArtifactScm(val url: String)
+
+@Poko
+@Serializable
+class ArtifactDeveloper(val id: String? = null, val name: String? = null, val url: String? = null)

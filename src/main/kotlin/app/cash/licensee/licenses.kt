@@ -40,6 +40,7 @@ internal fun normalizeLicenseInfo(
         spdxLicenses,
         unknownLicenses,
         pomInfo.scm?.url?.let(::ArtifactScm),
+        pomInfo.developers.map { ArtifactDeveloper(it.id, it.name, it.url) },
       )
   }
 
